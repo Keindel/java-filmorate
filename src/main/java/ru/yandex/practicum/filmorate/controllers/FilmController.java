@@ -22,14 +22,15 @@ public class FilmController {
 
     @PostMapping()
     public void create(@RequestBody Film film) throws FilmValidationException {
-        if (films.containsKey(film.getId())) throw new FilmValidationException();
         validateFilm(film);
+        if (films.containsKey(film.getId())) throw new FilmValidationException();
         films.put(film.getId(), film);
         log.info("film created, total number = " + films.size());
     }
 
     private void validateFilm(Film film) throws FilmValidationException {
-        if (film.getName().isBlank()
+        if (film == null
+                || film.getName().isBlank()
                 || film.getDescription().length() > 200
                 || film.getReleaseDate().isBefore(CINEMA_BIRTHDATE)
                 || film.getDuration().isNegative()

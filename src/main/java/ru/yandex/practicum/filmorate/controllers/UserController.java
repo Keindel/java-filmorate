@@ -21,8 +21,8 @@ public class UserController {
 
     @PostMapping()
     public void create(@RequestBody User user) throws UserValidationException {
-        if (users.containsKey(user.getId())) throw new UserValidationException();
         validateUser(user);
+        if (users.containsKey(user.getId())) throw new UserValidationException();
         users.put(user.getId(), user);
         log.info("user created, total number = " + users.size());
     }
