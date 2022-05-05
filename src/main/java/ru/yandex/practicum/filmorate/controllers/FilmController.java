@@ -6,26 +6,25 @@ import ru.yandex.practicum.filmorate.exceptions.FilmValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    Set<Film> films = new HashSet<>();
+    Map<Integer, Film> films = new HashMap<>();
     public static final LocalDate CINEMA_BIRTHDATE = LocalDate.of(1895, 12, 28);
 
     @GetMapping()
-    public Set<Film> findAll() {
-        return films;
+    public Collection<Film> findAll() {
+        return films.values();
     }
 
     @PostMapping()
     public void create(@RequestBody Film film) throws FilmValidationException {
-        if (films.contains(film)) throw new FilmValidationException();
+        if (films.containsKey(film.getId())) throw new FilmValidationException();
         validateFilm(film);
-        films.add(film);
+        films.put(film.getId(), film);
         log.info("film created, total number = " + films.size());
     }
 
@@ -35,7 +34,7 @@ public class FilmController {
                 || film.getReleaseDate().isBefore(CINEMA_BIRTHDATE)
                 || film.getDuration().isNegative()
                 || film.getDuration().isZero()) {
-            log.info("film validation fail");
+            log.warn("film validation fail");
             throw new FilmValidationException();
         }
     }
@@ -43,8 +42,7 @@ public class FilmController {
     @PutMapping
     public void update(@RequestBody Film film) throws FilmValidationException {
         validateFilm(film);
-        films.remove(film);
-        films.add(film);
+        films.put(film.getId(), film);
         log.info("film updated or created with id = " + film.getId());
     }
 }

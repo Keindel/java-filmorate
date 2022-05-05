@@ -6,25 +6,24 @@ import ru.yandex.practicum.filmorate.exceptions.UserValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    Set<User> users = new HashSet<>();
+    Map<Integer, User> users = new HashMap<>();
 
     @GetMapping()
-    public Set<User> findAll() {
-        return users;
+    public Collection<User> findAll() {
+        return users.values();
     }
 
     @PostMapping()
     public void create(@RequestBody User user) throws UserValidationException {
-        if (users.contains(user)) throw new UserValidationException();
+        if (users.containsKey(user.getId())) throw new UserValidationException();
         validateUser(user);
-        users.add(user);
+        users.put(user.getId(), user);
         log.info("user created, total number = " + users.size());
     }
 
@@ -35,7 +34,7 @@ public class UserController {
                 || user.getLogin().isBlank()
                 || user.getLogin().contains("\\s")
                 || user.getBirthday().isAfter(LocalDate.now())) {
-            log.info("user validation fail");
+            log.warn("user validation fail");
             throw new UserValidationException();
         }
     }
@@ -43,8 +42,7 @@ public class UserController {
     @PutMapping
     public void update(@RequestBody User user) throws UserValidationException {
         validateUser(user);
-        users.remove(user);
-        users.add(user);
+        users.put(user.getId(), user);
         log.info("user updated or created with id = " + user.getId());
     }
 }
