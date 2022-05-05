@@ -30,7 +30,6 @@ public class ValidationTest {
     @Test
     public void shouldValidate() throws FilmValidationException, UserValidationException, IOException, InterruptedException {
         Film okFilm = Film.builder()
-                .id(1)
                 .name("name")
                 .description("description")
                 .releaseDate(LocalDate.of(2022, 1, 1))
@@ -42,21 +41,18 @@ public class ValidationTest {
 
         assertThrows(FilmValidationException.class, () -> filmController.create(null));
         assertThrows(FilmValidationException.class, () -> filmController.create(Film.builder()
-                .id(1)
                 .name("")
                 .description("description")
                 .releaseDate(LocalDate.of(2022, 1, 1))
                 .duration(Duration.ofMinutes(120))
                 .build()));
         assertThrows(FilmValidationException.class, () -> filmController.create(Film.builder()
-                .id(1)
                 .name("name")
                 .description("description")
                 .releaseDate(LocalDate.of(1022, 1, 1))
                 .duration(Duration.ofMinutes(120))
                 .build()));
         assertThrows(FilmValidationException.class, () -> filmController.create(Film.builder()
-                .id(1)
                 .name("")
                 .description("description")
                 .releaseDate(LocalDate.of(2022, 1, 1))
@@ -67,7 +63,6 @@ public class ValidationTest {
 
 
         User okUser = User.builder()
-                .id(1)
                 .email("valid@gmail.com")
                 .login("login")
                 .name("")
@@ -79,21 +74,18 @@ public class ValidationTest {
 
         assertThrows(UserValidationException.class, () -> userController.create(null));
         assertThrows(UserValidationException.class, () -> userController.create(User.builder()
-                .id(1)
                 .email("valid@gmail.com")
                 .login("login")
                 .name("")
                 .birthday(LocalDate.of(2022, 2, 2))
                 .build()));
         assertThrows(UserValidationException.class, () -> userController.create(User.builder()
-                .id(1)
                 .email("gmail.com")
                 .login("lo gin")
                 .name("")
                 .birthday(LocalDate.of(2022, 2, 2))
                 .build()));
         assertThrows(UserValidationException.class, () -> userController.create(User.builder()
-                .id(1)
                 .email("valid@gmail.com")
                 .login("login")
                 .name("")

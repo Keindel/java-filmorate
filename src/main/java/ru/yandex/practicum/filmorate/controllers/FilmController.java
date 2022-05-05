@@ -14,6 +14,7 @@ import java.util.*;
 public class FilmController {
     Map<Integer, Film> films = new HashMap<>();
     public static final LocalDate CINEMA_BIRTHDATE = LocalDate.of(1895, 12, 28);
+    private static int nextId = 1;
 
     @GetMapping()
     public Collection<Film> findAll() {
@@ -21,11 +22,14 @@ public class FilmController {
     }
 
     @PostMapping()
-    public void create(@RequestBody Film film) throws FilmValidationException {
+    public Film create(@RequestBody Film film) throws FilmValidationException {
         validateFilm(film);
-        if (films.containsKey(film.getId())) throw new FilmValidationException();
+        if (films.containsValue(film)) throw new FilmValidationException();
+        film.setId(nextId);
+        nextId++;
         films.put(film.getId(), film);
-        log.info("film created, total number = " + films.size());
+        log.info("film created with id = {}, number of films = {}", film.getId(), films.size());
+        return film;
     }
 
     private void validateFilm(Film film) throws FilmValidationException {
