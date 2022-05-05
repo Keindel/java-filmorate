@@ -15,7 +15,6 @@ class FilmorateApplicationTests {
 	@AfterAll
 
 
-
 	@Test
 	void contextLoads() {
 	}
