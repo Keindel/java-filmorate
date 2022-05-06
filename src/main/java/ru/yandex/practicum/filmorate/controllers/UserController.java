@@ -7,12 +7,13 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private Map<Integer, User> users = new HashMap<>();
+    private Map<Integer, User> users = new ConcurrentHashMap<>();
     private static int nextId = 1;
 
     @GetMapping()
