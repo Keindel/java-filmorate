@@ -3,8 +3,11 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
+//import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import java.time.Duration;
 import java.time.LocalDate;
 
@@ -13,9 +16,9 @@ import java.time.LocalDate;
 public class Film {
     @EqualsAndHashCode.Exclude
     private int id;
-    @NonNull
+    @NotBlank
     private String name;
-    @NonNull
+    @NotBlank
     private String description;
     @NonNull
     private LocalDate releaseDate;
