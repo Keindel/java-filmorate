@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import org.springframework.lang.NonNull;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
 import java.time.Duration;
 import java.time.LocalDate;
 
