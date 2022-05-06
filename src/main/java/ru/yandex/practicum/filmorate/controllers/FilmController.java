@@ -36,6 +36,7 @@ public class FilmController {
         if (film == null
                 || film.getName().isBlank()
                 || film.getDescription().length() > 200
+                || film.getDescription().isBlank()
                 || film.getReleaseDate().isBefore(CINEMA_BIRTHDATE)
                 || film.getDuration().isNegative()
                 || film.getDuration().isZero()) {
