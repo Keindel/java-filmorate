@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.UserValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
@@ -13,7 +12,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    Map<Integer, User> users = new HashMap<>();
+    private Map<Integer, User> users = new HashMap<>();
     private static int nextId = 1;
 
     @GetMapping()
@@ -22,9 +21,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public User create(@Valid @RequestBody @NonNull User user) throws UserValidationException {
-//        validateUser(user);
-        if (users.containsValue(user)) throw new UserValidationException();
+    public User create(@Valid @RequestBody @NonNull User user) {
         user.setId(nextId);
         nextId++;
         users.put(user.getId(), user);
@@ -32,22 +29,8 @@ public class UserController {
         return user;
     }
 
-    private void validateUser(@NonNull User user) throws UserValidationException {
-//        if (user == null
-//                || user.getEmail().isBlank()
-//                || !user.getEmail().contains("@")
-//                || user.getLogin().isBlank()
-//                || user.getLogin().contains("\\s")
-//                || user.getBirthday().isAfter(LocalDate.now()) )
-        {
-            log.warn("user validation fail");
-            throw new UserValidationException();
-        }
-    }
-
     @PutMapping
-    public void update(@Valid @RequestBody @NonNull User user) throws UserValidationException {
-//        validateUser(user);
+    public void update(@Valid @RequestBody @NonNull User user) {
         users.put(user.getId(), user);
         log.info("user updated or created with id = " + user.getId());
     }

@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-//import lombok.NonNull;
 import org.springframework.lang.NonNull;
 
 import javax.validation.constraints.Email;
@@ -14,8 +13,9 @@ import java.time.LocalDate;
 
 @Data
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
-    @EqualsAndHashCode.Exclude
+    @EqualsAndHashCode.Include
     private int id;
     @NonNull
     @Email
