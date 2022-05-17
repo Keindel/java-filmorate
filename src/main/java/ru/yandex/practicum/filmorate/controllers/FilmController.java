@@ -35,10 +35,7 @@ public class FilmController {
     }
 
     private void validateFilm(@NonNull Film film) throws FilmValidationException {
-        if (film.getDescription().length() > 200
-                || film.getReleaseDate().isBefore(CINEMA_BIRTHDATE)
-                || film.getDuration().isNegative()
-                || film.getDuration().isZero()) {
+        if (film.getReleaseDate().isBefore(CINEMA_BIRTHDATE)) {
             log.warn("film validation fail");
             throw new FilmValidationException();
         }
