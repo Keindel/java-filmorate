@@ -17,15 +17,14 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-
     public void makeFriends(Long userId, Long friendToAddId) {
         userStorage.getById(userId).addFriend(friendToAddId);
         userStorage.getById(friendToAddId).addFriend(userId);
     }
 
-    public void deleteFriend(Long userId, Long friendToDelId) {
-        userStorage.getById(userId).deleteFriend(friendToDelId);
-        userStorage.getById(friendToDelId).deleteFriend(userId);
+    public void deleteFriend(Long userId, Long friendToDellId) {
+        userStorage.getById(userId).deleteFriend(friendToDellId);
+        userStorage.getById(friendToDellId).deleteFriend(userId);
     }
 
     public Collection<Long> getMutualFriendsIds(Long user1Id, Long user2Id) {
@@ -41,10 +40,3 @@ public class UserService {
         return userStorage.getById(userId).getFriends().size();
     }
 }
-
-/*
- * Создайте UserService, который будет отвечать за такие операции с пользователями,
- *  как добавление в друзья, удаление из друзей, вывод списка общих друзей.
- *  Пока пользователям не надо одобрять заявки в друзья — добавляем сразу.
- *  То есть если Лена стала другом Саши, то это значит, что Саша теперь друг Лены.
- * */

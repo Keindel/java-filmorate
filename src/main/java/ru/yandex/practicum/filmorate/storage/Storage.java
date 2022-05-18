@@ -6,7 +6,7 @@ public interface Storage<T> {
 
     long getSize();
 
-    T getById(long id);
+    T getById(Long id);
 
     Collection<T> findAll();
 
@@ -14,5 +14,5 @@ public interface Storage<T> {
 
     void update(T t);
 
-    void deleteById(long id);
+    void deleteById(Long id);
 }
