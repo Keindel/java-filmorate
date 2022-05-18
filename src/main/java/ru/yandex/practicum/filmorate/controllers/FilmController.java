@@ -1,36 +1,42 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.FilmValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private Map<Integer, Film> films = new ConcurrentHashMap<>();
+
     public static final LocalDate CINEMA_BIRTHDATE = LocalDate.of(1895, 12, 28);
-    private static int nextId = 1;
+    private final Storage<Film> filmStorage;
+    private final FilmService filmService;
+    @Autowired
+    public FilmController(Storage<Film> filmStorage, FilmService filmService) {
+        this.filmStorage = filmStorage;
+        this.filmService = filmService;
+    }
 
     @GetMapping()
     public Collection<Film> findAll() {
-        return films.values();
+        return filmStorage.findAll();
     }
 
     @PostMapping()
     public Film create(@Valid @RequestBody @NonNull Film film) throws FilmValidationException {
         validateFilm(film);
-        film.setId(nextId);
-        nextId++;
-        films.put(film.getId(), film);
-        log.info("film created with id = {}, number of films = {}", film.getId(), films.size());
+        film = filmStorage.create(film);
+        log.info("film created with id = {}, number of films = {}", film.getId(), filmStorage.getSize());
         return film;
     }
 
@@ -44,7 +50,7 @@ public class FilmController {
     @PutMapping
     public void update(@Valid @RequestBody @NonNull Film film) throws FilmValidationException {
         validateFilm(film);
-        films.put(film.getId(), film);
-        log.info("film updated or created with id = " + film.getId());
+        filmStorage.update(film);
+        log.info("film with id {} updated or created", film.getId());
     }
 }

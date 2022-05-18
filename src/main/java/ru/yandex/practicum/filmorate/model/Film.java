@@ -10,13 +10,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Film {
     @EqualsAndHashCode.Include
-    private int id;
+    private long id;
     @NotBlank
     private String name;
     @NotBlank
@@ -27,4 +28,13 @@ public class Film {
     @NonNull
     @DurationMin(seconds = 1)
     private Duration duration;
+    private final Set<Long> usersIdsLiked;
+
+    public void addLike(Long userId) {
+        usersIdsLiked.add(userId);
+    }
+
+    public void removeLike(Long userId) {
+        usersIdsLiked.remove(userId);
+    }
 }

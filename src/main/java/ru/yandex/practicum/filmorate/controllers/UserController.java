@@ -1,38 +1,43 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
 import javax.validation.Valid;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private Map<Integer, User> users = new ConcurrentHashMap<>();
-    private static int nextId = 1;
+    private final Storage<User> userStorage;
+    private final UserService userService;
+    @Autowired
+    public UserController(Storage<User> userStorage, UserService userService) {
+        this.userStorage = userStorage;
+        this.userService = userService;
+    }
 
     @GetMapping()
     public Collection<User> findAll() {
-        return users.values();
+        return userStorage.findAll();
     }
 
     @PostMapping()
     public User create(@Valid @RequestBody @NonNull User user) {
-        user.setId(nextId);
-        nextId++;
-        users.put(user.getId(), user);
-        log.info("user created with id = {}, number of users = {}", user.getId(), users.size());
+        user = userStorage.create(user);
+        log.info("user created with id = {}, number of users = {}", user.getId(), userStorage.getSize());
         return user;
     }
 
     @PutMapping
     public void update(@Valid @RequestBody @NonNull User user) {
-        users.put(user.getId(), user);
-        log.info("user updated or created with id = " + user.getId());
+        userStorage.update(user);
+        log.info("user with id = {} updated or created", user.getId());
     }
 }

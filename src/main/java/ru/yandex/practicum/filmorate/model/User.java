@@ -10,13 +10,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
     @EqualsAndHashCode.Include
-    private int id;
+    private long id;
     @NonNull
     @Email
     private String email;
@@ -28,4 +29,13 @@ public class User {
     @NonNull
     @PastOrPresent
     private LocalDate birthday;
+    private final Set<Long> friends;
+
+    public void addFriend(Long id) {
+        friends.add(id);
+    }
+
+    public void deleteFriend(Long id) {
+        friends.remove(id);
+    }
 }
