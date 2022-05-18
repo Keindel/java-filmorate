@@ -6,6 +6,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +31,7 @@ public class UserService {
 
     public Collection<Long> getMutualFriendsIds(Long user1Id, Long user2Id) {
         long userIdWithLessFriends = Long.min(getFriendsNum(user1Id), getFriendsNum(user2Id));
+        if (userIdWithLessFriends == 0) return Collections.emptyList();
         long otherUserId = user1Id - userIdWithLessFriends + user2Id ;
 
         return userStorage.getById(userIdWithLessFriends).getFriends().stream()
@@ -37,6 +40,8 @@ public class UserService {
     }
 
     private int getFriendsNum(Long userId) {
-        return userStorage.getById(userId).getFriends().size();
+        Set<Long> friends = userStorage.getById(userId).getFriends();
+        if (friends == null) return 0;
+        return friends.size();
     }
 }

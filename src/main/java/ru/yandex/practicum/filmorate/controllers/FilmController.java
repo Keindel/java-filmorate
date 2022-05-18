@@ -56,10 +56,11 @@ public class FilmController {
     }
 
     @PutMapping
-    public void update(@Valid @RequestBody @NonNull Film film) throws FilmValidationException {
+    public Film update(@Valid @RequestBody @NonNull Film film) throws FilmValidationException {
         validateFilm(film);
         filmStorage.update(film);
         log.info("film with id {} updated", film.getId());
+        return film;
     }
 
     @PutMapping("/{id}/like/{userId}")

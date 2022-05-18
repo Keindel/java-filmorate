@@ -58,9 +58,10 @@ public class UserController {
     }
 
     @PutMapping
-    public void update(@Valid @RequestBody @NonNull User user) {
+    public User update(@Valid @RequestBody @NonNull User user) {
         userStorage.update(user);
         log.info("user with id = {} updated or created", user.getId());
+        return user;
     }
 
     @PutMapping("/{id}/friends/{friendId}")

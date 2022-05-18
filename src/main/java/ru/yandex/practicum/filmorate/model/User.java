@@ -38,4 +38,9 @@ public class User {
     public void deleteFriend(Long id) {
         friends.remove(id);
     }
+
+    public String getName(){
+        if (name.isBlank()) return login;
+        return name;
+    }
 }
