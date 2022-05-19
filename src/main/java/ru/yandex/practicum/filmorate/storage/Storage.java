@@ -9,7 +9,7 @@ public interface Storage<T> {
 
     long getSize();
 
-    T getById(Long id);
+    T getById(Long id) throws UserNotFoundException, FilmNotFoundException;
 
     Collection<T> findAll();
 

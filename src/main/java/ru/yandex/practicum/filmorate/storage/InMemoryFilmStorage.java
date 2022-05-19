@@ -19,9 +19,8 @@ public class InMemoryFilmStorage implements FilmStorage{
         return films.size();
     }
 
-    @SneakyThrows
     @Override
-    public Film getById(Long id) {
+    public Film getById(Long id) throws FilmNotFoundException {
         Film film = films.get(id);
         if (film == null) throw new FilmNotFoundException();
         return film;

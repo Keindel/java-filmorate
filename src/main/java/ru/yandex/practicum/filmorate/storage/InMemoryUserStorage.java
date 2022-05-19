@@ -19,9 +19,8 @@ public class InMemoryUserStorage implements UserStorage {
         return users.size();
     }
 
-    @SneakyThrows
     @Override
-    public User getById(Long id) {
+    public User getById(Long id) throws UserNotFoundException {
         User user = users.get(id);
         if (user == null) throw new UserNotFoundException();
         return users.get(id);
@@ -34,9 +33,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User create(User user) {
+        System.out.println("debug1");
         user.setId(nextId);
         nextId++;
         users.put(user.getId(), user);
+        System.out.println("debug2");
         return user;
     }
 
