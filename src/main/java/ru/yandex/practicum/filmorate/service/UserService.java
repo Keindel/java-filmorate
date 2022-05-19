@@ -1,22 +1,43 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final Storage<User> userStorage;
 
-    @Autowired
-    public UserService(Storage<User> userStorage) {
-        this.userStorage = userStorage;
+    public Collection<User> findAll() {
+        return userStorage.findAll();
+    }
+
+    public User getById(Long id) {
+        return userStorage.getById(id);
+    }
+
+    public long getSize() {
+        return userStorage.getSize();
+    }
+
+    public User create(@Valid @RequestBody @NonNull User user) {
+        user = userStorage.create(user);
+        return user;
+    }
+
+    public User update(@Valid @RequestBody @NonNull User user) {
+        userStorage.update(user);
+        return user;
     }
 
     public void makeFriends(Long userId, Long friendToAddId) {

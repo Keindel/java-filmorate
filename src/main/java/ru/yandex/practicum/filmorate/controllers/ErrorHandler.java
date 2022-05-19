@@ -25,7 +25,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({FilmNotFoundException.class, UserNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleNotFound(final RuntimeException e) {
+    public Map<String, String> handleNotFound(final Exception e) {
         return Map.of("error: ", "object not found");
     }
 

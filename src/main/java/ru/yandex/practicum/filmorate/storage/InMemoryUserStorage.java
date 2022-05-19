@@ -1,9 +1,8 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
@@ -20,6 +19,7 @@ public class InMemoryUserStorage implements UserStorage {
         return users.size();
     }
 
+    @SneakyThrows
     @Override
     public User getById(Long id) {
         User user = users.get(id);
@@ -40,6 +40,7 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    @SneakyThrows
     @Override
     public void update(User user) {
         if (user.getId() <= 0 || !users.containsKey(user.getId())) throw new UserNotFoundException();
