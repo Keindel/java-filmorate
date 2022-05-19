@@ -20,13 +20,17 @@ public class UserService {
     }
 
     public void makeFriends(Long userId, Long friendToAddId) {
-        userStorage.getById(userId).addFriend(friendToAddId);
-        userStorage.getById(friendToAddId).addFriend(userId);
+        User user = userStorage.getById(userId);
+        User friend = userStorage.getById(friendToAddId);
+        user.addFriend(friendToAddId);
+        friend.addFriend(userId);
     }
 
     public void deleteFriend(Long userId, Long friendToDellId) {
-        userStorage.getById(userId).deleteFriend(friendToDellId);
-        userStorage.getById(friendToDellId).deleteFriend(userId);
+        User user = userStorage.getById(userId);
+        User friend = userStorage.getById(friendToDellId);
+        user.deleteFriend(friendToDellId);
+        friend.deleteFriend(userId);
     }
 
     public Collection<Long> getMutualFriendsIds(Long user1Id, Long user2Id) {

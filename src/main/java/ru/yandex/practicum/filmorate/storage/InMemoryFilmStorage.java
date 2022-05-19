@@ -41,7 +41,7 @@ public class InMemoryFilmStorage implements FilmStorage{
 
     @Override
     public void update(Film film) {
-        if (film.getId() == 0 || !films.containsKey(film.getId())) throw new FilmNotFoundException();
+        if (film.getId() <= 0 || !films.containsKey(film.getId())) throw new FilmNotFoundException();
         films.put(film.getId(), film);
     }
 

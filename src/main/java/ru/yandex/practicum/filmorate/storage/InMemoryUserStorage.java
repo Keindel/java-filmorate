@@ -42,7 +42,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void update(User user) {
-        if (user.getId() == 0 || !users.containsKey(user.getId())) throw new FilmNotFoundException();
+        if (user.getId() <= 0 || !users.containsKey(user.getId())) throw new UserNotFoundException();
         users.put(user.getId(), user);
     }
 
