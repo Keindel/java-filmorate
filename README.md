@@ -1,7 +1,7 @@
 # java-filmorate
 Template repository for Filmorate project.
 
-You can see [db ER-diagram](https://github.com/Keindel/java-filmorate/blob/3aefd83f5cb55a375ba99d799cbd5de84ed665ae/filmorate%20ER%20diagram.png)
+You can see [db ER-diagram](https://github.com/Keindel/java-filmorate/blob/0ac815afa76e4b551ffa5aa7c34d22c2992e7cb9/filmorate%20ER%20diagram.png)
 DB request examples:
 
 - get all films
@@ -37,7 +37,7 @@ WHERE user_id = ID1
 
 - get common friends list for users ID1 and ID2
 ```
-SELECT fid
+SELECT friends_list2.fid
 FROM (SELECT f.friend_id AS fid
       FROM friends AS f
       WHERE user_id = ID1
