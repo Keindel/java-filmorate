@@ -1,7 +1,7 @@
 # java-filmorate
 Template repository for Filmorate project.
 
-You can see [db ER-diagram] (https://github.com/Keindel/java-filmorate/blob/3aefd83f5cb55a375ba99d799cbd5de84ed665ae/filmorate%20ER%20diagram.png)
+You can see [db ER-diagram](https://github.com/Keindel/java-filmorate/blob/3aefd83f5cb55a375ba99d799cbd5de84ed665ae/filmorate%20ER%20diagram.png)
 DB request examples:
 
 - get all films
