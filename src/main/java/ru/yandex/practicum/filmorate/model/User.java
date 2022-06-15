@@ -4,14 +4,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -19,6 +17,7 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
     @EqualsAndHashCode.Include
+    @Min(1)
     private long id;
     @NonNull
     @Email
@@ -31,6 +30,8 @@ public class User {
     @NonNull
     @PastOrPresent
     private LocalDate birthday;
+
+    //TODO Map<Long, FriendshipStatus> friends = new HashMap<>()
     private final Set<Long> friends = new HashSet<>();
 
     public void addFriend(Long id) {
