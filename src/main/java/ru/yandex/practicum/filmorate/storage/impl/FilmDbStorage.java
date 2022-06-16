@@ -36,8 +36,10 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException {
-        String sqlQuery = "select film_id, name, description, release_date, duration" +
-                ", MPA_ID from films";
+        String sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name" +
+                " from films as f " +
+                " left join MPA on f.mpa_id = mpa.ID" +
+                " where film_id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id);
     }
 
@@ -48,14 +50,15 @@ public class FilmDbStorage implements FilmStorage {
                 .description(rs.getString("description"))
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getInt("duration"))
-                .mpa(rs.getObject("mpa", Mpa.class))
+                .mpa(new Mpa(rs.getInt("mpa_id"), rs.getString("mpa.name")))
                 .build();
     }
 
     @Override
     public Collection<Film> findAll() {
-        String sqlQuery = "select film_id, name, description, release_date, duration" +
-                ", MPA_ID from films";
+        String sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name" +
+                " from films as f " +
+                " left join MPA on f.mpa_id = mpa.ID";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
 
