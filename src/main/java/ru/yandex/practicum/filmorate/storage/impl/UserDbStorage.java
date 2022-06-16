@@ -43,6 +43,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getById(Long id) throws UserNotFoundException {
+        //TODO get friends
         String sqlQuery = "select user_id, email, login, name, birthday" +
                 " from users where user_id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
@@ -73,11 +74,6 @@ public class UserDbStorage implements UserStorage {
     public User create(User user) {
         String sqlQuery = "insert into users (user_id, email, login, name, birthday)" +
                 "values (DEFAULT, ?, ?, ?, ?)";
-        jdbcTemplate.update(sqlQuery
-                , user.getEmail()
-                , user.getLogin()
-                , user.getName()
-                , user.getBirthday());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -97,11 +93,20 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void update(User user) {
-
+        //TODO if user not exist then SQLException?
+        String sqlQuery = "update users set email = ?, login = ?, name = ?, birthday = ?" +
+                "where user_id = ?";
+        jdbcTemplate.update(sqlQuery
+                , user.getEmail()
+                , user.getLogin()
+                , user.getName()
+                , Date.valueOf(user.getBirthday())
+                , user.getId());
     }
 
     @Override
     public void deleteById(Long id) {
-
+        String sqlQuery = "delete from users where user_id = ?";
+        jdbcTemplate.update(sqlQuery, id);
     }
 }

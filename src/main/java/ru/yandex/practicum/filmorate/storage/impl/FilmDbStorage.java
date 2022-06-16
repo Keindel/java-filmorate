@@ -1,40 +1,102 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.AgeRating;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Objects;
 
+@Component
 public class FilmDbStorage implements FilmStorage {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
     public long getSize() {
-        return 0;
+        String sqlQuery = "select COUNT(*) from films";
+        return jdbcTemplate.queryForObject(sqlQuery, Long.class);
     }
 
     @Override
     public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException {
-        return null;
+        String sqlQuery = "select film_id, name, description, release_date, duration" +
+                ", age_rating from films";
+        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id);
+    }
+
+    private Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
+        return Film.builder()
+                .id(rs.getLong("film_id"))
+                .name(rs.getString("name"))
+                .description(rs.getString("description"))
+                .releaseDate(rs.getDate("release_date").toLocalDate())
+                .duration(rs.getInt("duration"))
+                .ageRating(AgeRating.valueOf(rs.getString("age_rating")))
+                .build();
     }
 
     @Override
     public Collection<Film> findAll() {
-        return null;
+        String sqlQuery = "select film_id, name, description, release_date, duration" +
+                ", age_rating from films";
+        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
 
     @Override
     public Film create(Film film) {
-        return null;
+        String sqlQuery = "insert into films (film_id, name, description, release_date, duration, age_rating)" +
+                "values (DEFAULT, ?, ?, ?, ?, ?::AgeRating)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(con -> {
+            PreparedStatement stmt = con.prepareStatement(sqlQuery, new String[]{"film_id"});
+            stmt.setString(1, film.getName());
+            stmt.setString(2, film.getDescription());
+            stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
+            stmt.setInt(4, film.getDuration());
+            stmt.setString(5, film.getAgeRating().name());
+            return stmt;
+        }, keyHolder);
+
+        long idFromDb = Objects.requireNonNull(keyHolder.getKey()).longValue();
+        film.setId(idFromDb);
+        return film;
     }
 
     @Override
     public void update(Film film) {
-
+        String sqlQuery = "update films set name = ?, description = ?, release_date = ?, duration = ?, age_rating = ?" +
+                "where film_id = ?";
+        jdbcTemplate.update(sqlQuery
+                , film.getName()
+                , film.getDescription()
+                , Date.valueOf(film.getReleaseDate())
+                , film.getDuration()
+                , film.getAgeRating().name()
+                , film.getId());
     }
 
     @Override
     public void deleteById(Long id) {
-
+        String sqlQuery = "delete from films where film_id = ?";
+        jdbcTemplate.update(sqlQuery, id);
     }
 }
