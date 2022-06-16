@@ -17,7 +17,6 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Film {
     @EqualsAndHashCode.Include
-    @Min(1)
     private long id;
     @NotBlank
     private String name;
@@ -29,8 +28,8 @@ public class Film {
     @Min(1)
     private int duration;
     private final Set<Long> usersIdsLiked = new HashSet<>();
-    private final Set<Genre> genres = new HashSet<>();
-    private AgeRating ageRating;
+    private Set<Genre> genres = new HashSet<>();
+    private Mpa mpa;
 
     public void addLike(Long userId) {
         usersIdsLiked.add(userId);

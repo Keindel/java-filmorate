@@ -17,7 +17,6 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
     @EqualsAndHashCode.Include
-    @Min(1)
     private long id;
     @NonNull
     @Email

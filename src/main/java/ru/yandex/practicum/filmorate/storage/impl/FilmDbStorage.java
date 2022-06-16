@@ -7,8 +7,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.AgeRating;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.Date;
@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Objects;
 
-@Component
+@Component("filmDbStorage")
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -37,7 +37,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException {
         String sqlQuery = "select film_id, name, description, release_date, duration" +
-                ", age_rating from films";
+                ", MPA_ID from films";
         return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id);
     }
 
@@ -48,21 +48,21 @@ public class FilmDbStorage implements FilmStorage {
                 .description(rs.getString("description"))
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getInt("duration"))
-                .ageRating(AgeRating.valueOf(rs.getString("age_rating")))
+                .mpa(rs.getObject("mpa", Mpa.class))
                 .build();
     }
 
     @Override
     public Collection<Film> findAll() {
         String sqlQuery = "select film_id, name, description, release_date, duration" +
-                ", age_rating from films";
+                ", MPA_ID from films";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
 
     @Override
     public Film create(Film film) {
-        String sqlQuery = "insert into films (film_id, name, description, release_date, duration, age_rating)" +
-                "values (DEFAULT, ?, ?, ?, ?, ?::AgeRating)";
+        String sqlQuery = "insert into films (film_id, name, description, release_date, duration, MPA_ID)" +
+                "values (DEFAULT, ?, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -72,7 +72,7 @@ public class FilmDbStorage implements FilmStorage {
             stmt.setString(2, film.getDescription());
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
             stmt.setInt(4, film.getDuration());
-            stmt.setString(5, film.getAgeRating().name());
+            stmt.setInt(5, film.getMpa().getId());
             return stmt;
         }, keyHolder);
 
@@ -83,14 +83,14 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void update(Film film) {
-        String sqlQuery = "update films set name = ?, description = ?, release_date = ?, duration = ?, age_rating = ?" +
+        String sqlQuery = "update films set name = ?, description = ?, release_date = ?, duration = ?, MPA_ID = ?" +
                 "where film_id = ?";
         jdbcTemplate.update(sqlQuery
                 , film.getName()
                 , film.getDescription()
                 , Date.valueOf(film.getReleaseDate())
                 , film.getDuration()
-                , film.getAgeRating().name()
+                , film.getMpa().getId()
                 , film.getId());
     }
 

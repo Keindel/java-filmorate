@@ -25,7 +25,7 @@ import java.util.Objects;
 *  позволяющие сохранять пользователей и фильмы в базу данных и получать их из неё.
 * */
 
-@Component
+@Component("userDbStorage")
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
