@@ -1,10 +1,11 @@
 drop table if exists mpa, film_genre_coupling, genre_names, likes
     , friends, friendship_status, films, users;
 
-create table if not exists Mpa (
-    id int primary key,
+create table if not exists Mpa
+(
+    id   int primary key,
     name varchar(10)
-    );
+);
 
 create table if not exists genre_names
 (
@@ -34,7 +35,7 @@ create table if not exists films
     description  varchar(200) not null,
     release_date date         not null,
     duration     int CHECK (duration > 1),
-    mpa_id       int references Mpa(id)
+    mpa_id       int references Mpa (id)
 );
 
 create table if not exists friends

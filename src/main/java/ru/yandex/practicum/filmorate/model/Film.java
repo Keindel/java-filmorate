@@ -28,7 +28,7 @@ public class Film {
     @Min(1)
     private int duration;
     private final Set<Long> usersIdsLiked = new HashSet<>();
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres;// = new HashSet<>();
     private Mpa mpa;
 
     public void addLike(Long userId) {

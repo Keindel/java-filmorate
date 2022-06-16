@@ -4,19 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Component("filmDbStorage")
 public class FilmDbStorage implements FilmStorage {
@@ -40,7 +41,23 @@ public class FilmDbStorage implements FilmStorage {
                 " from films as f " +
                 " left join MPA on f.mpa_id = mpa.ID" +
                 " where film_id = ?";
-        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id);
+        Film film = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id);
+
+        String sqlGenresQuery = "select fgc.genre_id, gn.genre_name" +
+                " from film_genre_coupling as fgc" +
+                " left join genre_names as gn on fgc.genre_id = gn.genre_id" +
+                " where fgc.film_id = ?";
+        Set<Genre> genres = new HashSet<>();
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlGenresQuery, id);
+        while (rowSet.next()) {
+            int genreId = rowSet.getInt("genre_id");
+            String genreName = rowSet.getString("genre_name");
+            genres.add(new Genre(rowSet.getInt("genre_id"), rowSet.getString("genre_name")));
+        }
+        if (genres.size() > 0) {
+            film.setGenres(genres);
+        }
+        return film;
     }
 
     private Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
@@ -51,6 +68,7 @@ public class FilmDbStorage implements FilmStorage {
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .mpa(new Mpa(rs.getInt("mpa_id"), rs.getString("mpa.name")))
+//                .genres(new HashSet<>(rs.getArray("genres")))
                 .build();
     }
 
@@ -81,6 +99,14 @@ public class FilmDbStorage implements FilmStorage {
 
         long idFromDb = Objects.requireNonNull(keyHolder.getKey()).longValue();
         film.setId(idFromDb);
+
+        if (film.getGenres() != null) {
+            String sqlGenresInsert = "insert into film_genre_coupling (film_id, genre_id)" +
+                    "values (?, ?)";
+            film.getGenres().forEach(genre -> jdbcTemplate.update(sqlGenresInsert,
+                    idFromDb,
+                    genre.getId()));
+        }
         return film;
     }
 
