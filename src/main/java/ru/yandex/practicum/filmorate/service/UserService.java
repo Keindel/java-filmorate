@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
@@ -17,40 +16,41 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final Storage<User> userDbStorage;
+    @Qualifier("userDbStorage")
+    private final Storage<User> userStorage;
 
     public Collection<User> findAll() {
-        return userDbStorage.findAll();
+        return userStorage.findAll();
     }
 
     public User getById(Long id) throws UserNotFoundException, FilmNotFoundException {
-        return userDbStorage.getById(id);
+        return userStorage.getById(id);
     }
 
     public long getSize() {
-        return userDbStorage.getSize();
+        return userStorage.getSize();
     }
 
     public User create(User user) {
-        user = userDbStorage.create(user);
+        user = userStorage.create(user);
         return user;
     }
 
     public User update(User user) {
-        userDbStorage.update(user);
+        userStorage.update(user);
         return user;
     }
 
     public void makeFriends(Long userId, Long friendToAddId) throws UserNotFoundException, FilmNotFoundException {
-        User user = userDbStorage.getById(userId);
-        User friend = userDbStorage.getById(friendToAddId);
+        User user = userStorage.getById(userId);
+        User friend = userStorage.getById(friendToAddId);
         user.addFriend(friendToAddId);
         friend.addFriend(userId);
     }
 
     public void deleteFriend(Long userId, Long friendToDellId) throws UserNotFoundException, FilmNotFoundException {
-        User user = userDbStorage.getById(userId);
-        User friend = userDbStorage.getById(friendToDellId);
+        User user = userStorage.getById(userId);
+        User friend = userStorage.getById(friendToDellId);
         user.deleteFriend(friendToDellId);
         friend.deleteFriend(userId);
     }
@@ -60,10 +60,10 @@ public class UserService {
         if (userIdWithLessFriends == 0) return Collections.emptyList();
         long otherUserId = user1Id - userIdWithLessFriends + user2Id ;
 
-        return userDbStorage.getById(userIdWithLessFriends).getFriends().stream()
+        return userStorage.getById(userIdWithLessFriends).getFriends().stream()
                 .filter(friend -> {
                     try {
-                        return userDbStorage.getById(otherUserId).getFriends().contains(friend);
+                        return userStorage.getById(otherUserId).getFriends().contains(friend);
                     } catch (UserNotFoundException | FilmNotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -72,7 +72,7 @@ public class UserService {
     }
 
     private int getFriendsNum(Long userId) throws UserNotFoundException, FilmNotFoundException {
-        Set<Long> friends = userDbStorage.getById(userId).getFriends();
+        Set<Long> friends = userStorage.getById(userId).getFriends();
         if (friends == null) return 0;
         return friends.size();
     }

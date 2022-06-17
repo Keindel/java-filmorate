@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.FilmValidationException;
@@ -18,21 +19,23 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class FilmService {
-    private final Storage<Film> filmDbStorage;
-    private final Storage<User> userDbStorage;
+    @Qualifier("filmDbStorage")
+    private final Storage<Film> filmStorage;
+    @Qualifier("userDbStorage")
+    private final Storage<User> userStorage;
     public static final LocalDate CINEMA_BIRTHDATE = LocalDate.of(1895, 12, 28);
 
     public Collection<Film> findAll() {
-        return filmDbStorage.findAll();
+        return filmStorage.findAll();
     }
 
     public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException {
-        return filmDbStorage.getById(id);
+        return filmStorage.getById(id);
     }
 
     public Film create(Film film) throws FilmValidationException {
         validateFilm(film);
-        film = filmDbStorage.create(film);
+        film = filmStorage.create(film);
         return film;
     }
 
@@ -44,35 +47,35 @@ public class FilmService {
     }
 
     public long getSize() {
-        return filmDbStorage.getSize();
+        return filmStorage.getSize();
     }
 
     public Film update(Film film) throws FilmValidationException {
         validateFilm(film);
-        filmDbStorage.update(film);
+        filmStorage.update(film);
         log.info("film with id {} updated", film.getId());
         return film;
     }
 
     public void likeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
-        Film filmExistant = filmDbStorage.getById(filmId);
-        User userExistant = userDbStorage.getById(userId);
+        Film filmExistant = filmStorage.getById(filmId);
+        User userExistant = userStorage.getById(userId);
         filmExistant.addLike(userId);
     }
 
     public void unlikeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
-        Film filmExistant = filmDbStorage.getById(filmId);
-        User userExistant = userDbStorage.getById(userId);
+        Film filmExistant = filmStorage.getById(filmId);
+        User userExistant = userStorage.getById(userId);
         filmExistant.removeLike(userId);
     }
 
     private int getNumberOfLikes(Long filmId) throws UserNotFoundException, FilmNotFoundException {
-        Film filmExistant = filmDbStorage.getById(filmId);
+        Film filmExistant = filmStorage.getById(filmId);
         return filmExistant.getUsersIdsLiked().size();
     }
 
     public Collection<Long> getCountTopIds(int count) {
-        return filmDbStorage.findAll().stream()
+        return filmStorage.findAll().stream()
                 .sorted((a, b) -> {
                     try {
                         return -getNumberOfLikes(a.getId()) + getNumberOfLikes(b.getId());
