@@ -2,11 +2,9 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -18,12 +16,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Objects;
 
-
-/*
-* Эти классы будут DAO — объектами доступа к данным.
-Напишите в DAO соответствующие мапперы и методы,
-*  позволяющие сохранять пользователей и фильмы в базу данных и получать их из неё.
-* */
 
 @Component("userDbStorage")
 public class UserDbStorage implements UserStorage {
@@ -50,10 +42,8 @@ public class UserDbStorage implements UserStorage {
     }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
-        // todo
-        // (! rs.next()) здесь лучше?
+//         if (! rs.next()) throw new UserNotFoundException();
         // нужно ли вообще здесь выбрасывать исключение? сработает валидация при попытке создать пользователя
-        //if (rs.getLong("user_id") == 0) throw new UserNotFoundException();
         return User.builder()
                 .id(rs.getLong("user_id"))
                 .email(rs.getString("email"))
@@ -93,7 +83,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void update(User user) {
-        //TODO if user not exist then SQLException?
+        //TODO if user does not exist then SQLException?
         String sqlQuery = "update users set email = ?, login = ?, name = ?, birthday = ?" +
                 "where user_id = ?";
         jdbcTemplate.update(sqlQuery

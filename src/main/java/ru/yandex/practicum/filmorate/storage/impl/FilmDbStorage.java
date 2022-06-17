@@ -50,8 +50,6 @@ public class FilmDbStorage implements FilmStorage {
         Set<Genre> genres = new HashSet<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlGenresQuery, id);
         while (rowSet.next()) {
-            int genreId = rowSet.getInt("genre_id");
-            String genreName = rowSet.getString("genre_name");
             genres.add(new Genre(rowSet.getInt("genre_id"), rowSet.getString("genre_name")));
         }
         if (genres.size() > 0) {
@@ -68,7 +66,6 @@ public class FilmDbStorage implements FilmStorage {
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .mpa(new Mpa(rs.getInt("mpa_id"), rs.getString("mpa.name")))
-//                .genres(new HashSet<>(rs.getArray("genres")))
                 .build();
     }
 
