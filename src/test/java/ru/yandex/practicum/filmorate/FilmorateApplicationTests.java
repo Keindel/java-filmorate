@@ -30,18 +30,18 @@ class FilmoRateApplicationTests {
     }
 
     private void populateUserDb() {
-        Optional<User> userOptional1 = Optional.ofNullable(userDbStorage.create(User.builder()
+        userDbStorage.create(User.builder()
                 .email("abc@mail.ru")
                 .login("login1")
                 .name("name1")
                 .birthday(LocalDate.of(1011, 1, 1))
-                .build()));
-        Optional<User> userOptional2 = Optional.ofNullable(userDbStorage.create(User.builder()
+                .build());
+        userDbStorage.create(User.builder()
                 .email("abc2@mail.ru")
                 .login("login2")
                 .name("name2")
                 .birthday(LocalDate.of(2022, 2, 2))
-                .build()));
+                .build());
     }
 
     @Test

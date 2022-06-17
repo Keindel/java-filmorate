@@ -5,10 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-//@RequiredArgsConstructor
 public class RepositoryCleaner {
-    //    private final UserDbStorage userDbStorage;
-//    private final FilmDbStorage filmDbStorage;
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -21,6 +18,7 @@ public class RepositoryCleaner {
                 " DELETE FROM users;" +
                         " ALTER TABLE users ALTER COLUMN user_id RESTART START WITH 1;" +
                         " ALTER TABLE users DROP CONSTRAINT IF EXISTS CONSTRAINT_4D;" +
+                        " ALTER TABLE USERS ADD UNIQUE (email);" +
 
                         " DELETE FROM films;" +
                         " ALTER TABLE films ALTER COLUMN film_id RESTART START WITH 1;";
