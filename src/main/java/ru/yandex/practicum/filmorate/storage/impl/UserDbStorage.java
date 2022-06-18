@@ -15,7 +15,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -27,7 +26,6 @@ public class UserDbStorage implements UserStorage {
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
 
     @Override
     public long getSize() {
@@ -119,6 +117,19 @@ public class UserDbStorage implements UserStorage {
     }
 
     public void requestFriendship(Long userId, Long friendToAddId) {
+        String sqlQuery = "insert into friends(user_id, friend_id, friendship_status_id)" +
+                " values(?, ?, ?)";
+        jdbcTemplate.update(sqlQuery
+                , userId
+                , friendToAddId
+                , 1);
+    }
 
+    public void deleteFriendFromUser(Long userId, Long friendToDellId) {
+        String sqlQuery = "delete from friends" +
+                " where user_id = ? and friend_id = ?";
+        jdbcTemplate.update(sqlQuery
+                , userId
+                , friendToDellId);
     }
 }

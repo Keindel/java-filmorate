@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -44,14 +45,16 @@ public class UserService {
 
     public void requestFriendship(Long userId, Long friendToAddId) throws UserNotFoundException, FilmNotFoundException {
         User user = userStorage.getById(userId);
-        user.requestFriendship(friendToAddId);
+        User friend = userStorage.getById(friendToAddId);
+        UserDbStorage userDbStorage = (UserDbStorage) userStorage;
+        userDbStorage.requestFriendship(userId, friendToAddId);
     }
 
     public void deleteFriend(Long userId, Long friendToDellId) throws UserNotFoundException, FilmNotFoundException {
         User user = userStorage.getById(userId);
         User friend = userStorage.getById(friendToDellId);
-        user.deleteFriend(friendToDellId);
-        friend.deleteFriend(userId);
+        UserDbStorage userDbStorage = (UserDbStorage) userStorage;
+        userDbStorage.deleteFriendFromUser(userId, friendToDellId);
     }
 
     public Collection<Long> getMutualFriendsIds(Long user1Id, Long user2Id) throws UserNotFoundException, FilmNotFoundException {

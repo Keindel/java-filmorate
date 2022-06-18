@@ -31,11 +31,12 @@ public class Film {
     private Set<Genre> genres;// = new HashSet<>();
     private Mpa mpa;
 
-    public void addLike(Long userId) {
+    //TODO move to filmDb
+   /* public void addLike(Long userId) {
         usersIdsLiked.add(userId);
     }
 
     public void removeLike(Long userId) {
         usersIdsLiked.remove(userId);
-    }
+    }*/
 }
