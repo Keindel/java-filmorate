@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.FilmValidationException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
@@ -23,6 +25,10 @@ public class FilmService {
     private final Storage<Film> filmStorage;
     @Qualifier("userDbStorage")
     private final Storage<User> userStorage;
+    @Qualifier("genreDbStorage")
+    private final Storage<Genre> genreStorage;
+    @Qualifier("mpaDbStorage")
+    private final Storage<Mpa> mpaStorage;
     public static final LocalDate CINEMA_BIRTHDATE = LocalDate.of(1895, 12, 28);
 
     public Collection<Film> findAll() {
@@ -86,5 +92,21 @@ public class FilmService {
                 .limit(count)
                 .map(Film::getId)
                 .collect(Collectors.toList());
+    }
+
+    public Collection<Genre> getGenres() {
+        return genreStorage.findAll();
+    }
+
+    public Genre getGenreById(long id) throws UserNotFoundException, FilmNotFoundException {
+        return genreStorage.getById(id);
+    }
+
+    public Collection<Mpa> getMpas() {
+        return mpaStorage.findAll();
+    }
+
+    public Mpa getMpaById(long id) throws UserNotFoundException, FilmNotFoundException {
+        return mpaStorage.getById(id);
     }
 }

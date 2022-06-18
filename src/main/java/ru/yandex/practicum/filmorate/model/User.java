@@ -8,9 +8,7 @@ import org.springframework.lang.NonNull;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @Data
 @Builder
@@ -30,11 +28,15 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
 
-    //TODO Map<Long, FriendshipStatus> friends = new HashMap<>()
-    private final Set<Long> friends = new HashSet<>();
+    private Map<Long, FriendshipStatus> friends;
 
-    public void addFriend(Long id) {
-        friends.add(id);
+
+    public void requestFriendship(Long id) {
+        friends.put(id, FriendshipStatus.INCOMING_REQUEST);
+    }
+
+    public void approveFriendship(Long id) {
+        if (friends.containsKey(id)) friends.put(id, FriendshipStatus.APPROVED);
     }
 
     public void deleteFriend(Long id) {

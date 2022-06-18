@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.FilmValidationException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -27,7 +29,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilm(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException {
+    public Film getFilmById(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException {
         return filmService.getById(id);
     }
 
@@ -66,5 +68,25 @@ public class FilmController {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/genres")
+    public Collection<Genre> getGenres() {
+        return filmService.getGenres();
+    }
+
+    @GetMapping("/genres/{id}")
+    public Genre getGenreById(@PathVariable long id) throws UserNotFoundException, FilmNotFoundException {
+        return filmService.getGenreById(id);
+    }
+
+    @GetMapping("/mpa")
+    public Collection<Mpa> getMpas() {
+        return filmService.getMpas();
+    }
+
+    @GetMapping("/mpa/{id}")
+    public Mpa getMpaById(@PathVariable long id) throws UserNotFoundException, FilmNotFoundException {
+        return filmService.getMpaById(id);
     }
 }

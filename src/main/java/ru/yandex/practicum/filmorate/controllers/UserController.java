@@ -32,7 +32,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public Collection<User> getUserFriends(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException {
-        return userService.getById(id).getFriends()
+        return userService.getById(id).getFriends().keySet()
                 .stream()
                 .map(id1 -> {
                     try {
@@ -72,8 +72,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void makeFriends(@PathVariable Long id, @PathVariable Long friendId) throws UserNotFoundException, FilmNotFoundException {
-        userService.makeFriends(id, friendId);
+    public void requestFriendship(@PathVariable Long id, @PathVariable Long friendId) throws UserNotFoundException, FilmNotFoundException {
+        userService.requestFriendship(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")

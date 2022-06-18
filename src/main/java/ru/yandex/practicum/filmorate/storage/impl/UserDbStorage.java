@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -13,8 +14,9 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Component("userDbStorage")
@@ -35,10 +37,21 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getById(Long id) throws UserNotFoundException {
-        //TODO get friends
         String sqlQuery = "select user_id, email, login, name, birthday" +
                 " from users where user_id = ?";
-        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
+        User user = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
+
+        String sqlFriends = "select friends.friend_id, fs.status_name" +
+                " from friends" +
+                " left join friendship_status as fs on friends.FRIENDSHIP_STATUS_ID = fs.STATUS_NAME " +
+                " where friends.user_id = ?";
+        Map<Long, FriendshipStatus> friendsMap
+                = jdbcTemplate.query(sqlFriends, this::mapRowToFriendIdAndStatus, id)
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        user.setFriends(friendsMap);
+
+        return user;
     }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
@@ -53,6 +66,11 @@ public class UserDbStorage implements UserStorage {
                 .build();
     }
 
+    private Map.Entry<Long, FriendshipStatus> mapRowToFriendIdAndStatus(ResultSet rs, int rowNum) throws SQLException {
+        return new AbstractMap.SimpleEntry<>(rs.getLong("friend_id")
+                , FriendshipStatus.valueOf(rs.getString("status_id")));
+    }
+
     @Override
     public Collection<User> findAll() {
         String sqlQuery = "select user_id, email, login, name, birthday" +
@@ -63,7 +81,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User create(User user) {
         String sqlQuery = "insert into users (user_id, email, login, name, birthday)" +
-                "values (DEFAULT, ?, ?, ?, ?)";
+                " values (DEFAULT, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -85,7 +103,7 @@ public class UserDbStorage implements UserStorage {
     public void update(User user) {
         //TODO if user does not exist then SQLException?
         String sqlQuery = "update users set email = ?, login = ?, name = ?, birthday = ?" +
-                "where user_id = ?";
+                " where user_id = ?";
         jdbcTemplate.update(sqlQuery
                 , user.getEmail()
                 , user.getLogin()
@@ -98,5 +116,9 @@ public class UserDbStorage implements UserStorage {
     public void deleteById(Long id) {
         String sqlQuery = "delete from users where user_id = ?";
         jdbcTemplate.update(sqlQuery, id);
+    }
+
+    public void requestFriendship(Long userId, Long friendToAddId) {
+
     }
 }
