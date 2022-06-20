@@ -125,4 +125,20 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQuery = "delete from films where film_id = ?";
         jdbcTemplate.update(sqlQuery, id);
     }
+
+    public void likeFromUser(Long filmId, Long userId) {
+        String sqlQuery = "insert into likes(film_id, like_from_user)" +
+                " values(?, ?)";
+        jdbcTemplate.update(sqlQuery
+                , filmId
+                , userId);
+    }
+
+    public void unlikeFromUser(Long filmId, Long userId) {
+        String sqlQuery = "delete from likes" +
+                " where film_id = ? and like_from_user = ?";
+        jdbcTemplate.update(sqlQuery
+                , filmId
+                , userId);
+    }
 }

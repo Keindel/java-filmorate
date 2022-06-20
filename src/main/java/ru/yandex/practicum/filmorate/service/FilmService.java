@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -66,13 +67,17 @@ public class FilmService {
     public void likeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
         Film filmExistant = filmStorage.getById(filmId);
         User userExistant = userStorage.getById(userId);
-        filmExistant.addLike(userId);
+//        filmExistant.addLike(userId);
+        FilmDbStorage filmDbStorage = (FilmDbStorage) filmStorage;
+        filmDbStorage.likeFromUser(filmId, userId);
     }
 
     public void unlikeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
         Film filmExistant = filmStorage.getById(filmId);
         User userExistant = userStorage.getById(userId);
-        filmExistant.removeLike(userId);
+//        filmExistant.removeLike(userId);
+        FilmDbStorage filmDbStorage = (FilmDbStorage) filmStorage;
+        filmDbStorage.unlikeFromUser(filmId, userId);
     }
 
     private int getNumberOfLikes(Long filmId) throws UserNotFoundException, FilmNotFoundException {
