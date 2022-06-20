@@ -1,9 +1,12 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
@@ -28,10 +31,16 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
-    public Mpa getById(Long id) throws UserNotFoundException, FilmNotFoundException {
+    public Mpa getById(Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException {
         String sqlQuery = "select id, name" +
                 " from mpa where id = ?";
-        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpa, id);
+        Mpa mpa;
+        try {
+            mpa = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpa, id);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new MpaNotFoundException();
+        }
+        return mpa;
     }
 
     private Mpa mapRowToMpa(ResultSet rs, int rowNum) throws SQLException {

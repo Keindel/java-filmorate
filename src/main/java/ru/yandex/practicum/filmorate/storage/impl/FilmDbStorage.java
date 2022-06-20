@@ -40,7 +40,7 @@ public class FilmDbStorage implements FilmStorage {
     public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException {
         Film film = getWithoutGenresByIdOrThrowEx(id);
         setGenresToFilm(id, film);
-//        setUsersIdsLiked(id, film);
+        setUsersIdsLiked(id, film);
         return film;
     }
 
@@ -123,14 +123,21 @@ public class FilmDbStorage implements FilmStorage {
         long idFromDb = Objects.requireNonNull(keyHolder.getKey()).longValue();
         film.setId(idFromDb);
 
+        addFilmGenresToDb(film);
+        return film;
+    }
+
+    private void addFilmGenresToDb(Film film) {
+        String sqlGenresDelete = "delete from film_genre_coupling" +
+                " where film_id = ?";
+        jdbcTemplate.update(sqlGenresDelete, film.getId());
+        String sqlGenresInsert = "insert into film_genre_coupling (film_id, genre_id)" +
+                " values (?, ?)";
         if (film.getGenres() != null) {
-            String sqlGenresInsert = "insert into film_genre_coupling (film_id, genre_id)" +
-                    "values (?, ?)";
             film.getGenres().forEach(genre -> jdbcTemplate.update(sqlGenresInsert,
-                    idFromDb,
+                    film.getId(),
                     genre.getId()));
         }
-        return film;
     }
 
     @Override
@@ -145,6 +152,7 @@ public class FilmDbStorage implements FilmStorage {
                 , film.getMpa().getId()
                 , film.getId());
         if (filmsUpdated == 0) throw new FilmNotFoundException();
+        addFilmGenresToDb(film);
     }
 
     @Override

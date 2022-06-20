@@ -59,7 +59,8 @@ public class UserDbStorage implements UserStorage {
                 " left join friendship_status as fs on friends.FRIENDSHIP_STATUS_ID = fs.STATUS_ID" +
                 " where friends.user_id = ?";
         Map<Long, FriendshipStatus> friendsMap
-                = jdbcTemplate.queryForStream(sqlFriends, this::mapRowToFriendIdAndStatus, id)
+                = jdbcTemplate.query(sqlFriends, this::mapRowToFriendIdAndStatus, id)
+                .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         user.setFriends(friendsMap);
     }

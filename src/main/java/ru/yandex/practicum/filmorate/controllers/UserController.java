@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -26,18 +28,19 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException {
+    public User getUser(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return userService.getById(id);
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> getUserFriends(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException {
+    public Collection<User> getUserFriends(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return userService.getById(id).getFriends().keySet()
                 .stream()
                 .map(id1 -> {
                     try {
                         return userService.getById(id1);
-                    } catch (UserNotFoundException | FilmNotFoundException e) {
+                    } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
+                             GenreNotFoundException e) {
                         throw new RuntimeException(e);
                     }
                 })
@@ -45,12 +48,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getMutualFriends (@PathVariable Long id, @PathVariable Long otherId) throws UserNotFoundException, FilmNotFoundException {
+    public Collection<User> getMutualFriends (@PathVariable Long id, @PathVariable Long otherId) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return userService.getMutualFriendsIds(id, otherId).stream()
                 .map(id1 -> {
                     try {
                         return userService.getById(id1);
-                    } catch (UserNotFoundException | FilmNotFoundException e) {
+                    } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
+                             GenreNotFoundException e) {
                         throw new RuntimeException(e);
                     }
                 })

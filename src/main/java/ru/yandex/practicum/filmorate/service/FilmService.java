@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.FilmValidationException;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -37,7 +35,7 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
-    public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException {
+    public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return filmStorage.getById(id);
     }
 
@@ -81,7 +79,7 @@ public class FilmService {
         filmDbStorage.unlikeFromUser(filmId, userId);
     }
 
-    private int getNumberOfLikes(Long filmId) throws UserNotFoundException, FilmNotFoundException {
+    private int getNumberOfLikes(Long filmId) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         Film filmExistant = filmStorage.getById(filmId);
         return filmExistant.getUsersIdsLiked().size();
     }
@@ -91,7 +89,8 @@ public class FilmService {
                 .sorted((a, b) -> {
                     try {
                         return -getNumberOfLikes(a.getId()) + getNumberOfLikes(b.getId());
-                    } catch (UserNotFoundException | FilmNotFoundException e) {
+                    } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
+                             GenreNotFoundException e) {
                         throw new RuntimeException(e);
                     }
                 })
@@ -104,7 +103,7 @@ public class FilmService {
         return genreStorage.findAll();
     }
 
-    public Genre getGenreById(long id) throws UserNotFoundException, FilmNotFoundException {
+    public Genre getGenreById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return genreStorage.getById(id);
     }
 
@@ -112,7 +111,7 @@ public class FilmService {
         return mpaStorage.findAll();
     }
 
-    public Mpa getMpaById(long id) throws UserNotFoundException, FilmNotFoundException {
+    public Mpa getMpaById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return mpaStorage.getById(id);
     }
 }

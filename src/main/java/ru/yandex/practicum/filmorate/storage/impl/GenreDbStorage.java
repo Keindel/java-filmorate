@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
@@ -28,10 +30,16 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public Genre getById(Long id) throws UserNotFoundException, FilmNotFoundException {
+    public Genre getById(Long id) throws UserNotFoundException, FilmNotFoundException, GenreNotFoundException {
         String sqlQuery = "select genre_id, genre_name" +
                 " from genre_names where genre_id = ?";
-        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToGenre, id);
+        Genre genre;
+        try {
+            genre = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToGenre, id);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new GenreNotFoundException();
+        }
+        return genre;
     }
 
     private Genre mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
