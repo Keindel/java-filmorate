@@ -65,7 +65,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody @NonNull User user) {
+    public User update(@Valid @RequestBody @NonNull User user) throws UserNotFoundException, FilmNotFoundException {
         userService.update(user);
         log.info("user with id = {} updated or created", user.getId());
         return user;

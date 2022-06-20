@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -37,12 +38,27 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException {
+        Film film = getWithoutGenresByIdOrThrowEx(id);
+        setGenresToFilm(id, film);
+//        setUsersIdsLiked(id, film);
+        return film;
+    }
+
+    private Film getWithoutGenresByIdOrThrowEx(Long id) throws FilmNotFoundException {
         String sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name" +
                 " from films as f " +
                 " left join MPA on f.mpa_id = mpa.ID" +
                 " where film_id = ?";
-        Film film = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id);
+        Film film;
+        try {
+            film = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new FilmNotFoundException();
+        }
+        return film;
+    }
 
+    private void setGenresToFilm(Long id, Film film) {
         String sqlGenresQuery = "select fgc.genre_id, gn.genre_name" +
                 " from film_genre_coupling as fgc" +
                 " left join genre_names as gn on fgc.genre_id = gn.genre_id" +
@@ -55,7 +71,17 @@ public class FilmDbStorage implements FilmStorage {
         if (genres.size() > 0) {
             film.setGenres(genres);
         }
-        return film;
+    }
+
+    private void setUsersIdsLiked(Long id, Film film) {
+        String sqlGetLikes = "select like_from_user" +
+                " from likes where film_id = ?";
+        Set<Long> usersIdsLiked = new HashSet<>();
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlGetLikes, id);
+        while (rowSet.next()) {
+            usersIdsLiked.add(rowSet.getLong("like_from_user"));
+        }
+        film.setUsersIdsLiked(usersIdsLiked);
     }
 
     private Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
@@ -108,25 +134,28 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void update(Film film) {
+    public void update(Film film) throws FilmNotFoundException {
         String sqlQuery = "update films set name = ?, description = ?, release_date = ?, duration = ?, MPA_ID = ?" +
                 "where film_id = ?";
-        jdbcTemplate.update(sqlQuery
+        int filmsUpdated = jdbcTemplate.update(sqlQuery
                 , film.getName()
                 , film.getDescription()
                 , Date.valueOf(film.getReleaseDate())
                 , film.getDuration()
                 , film.getMpa().getId()
                 , film.getId());
+        if (filmsUpdated == 0) throw new FilmNotFoundException();
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id) throws FilmNotFoundException {
         String sqlQuery = "delete from films where film_id = ?";
-        jdbcTemplate.update(sqlQuery, id);
+        int rowsUpdated = jdbcTemplate.update(sqlQuery, id);
+        if (rowsUpdated == 0) throw new FilmNotFoundException();
     }
 
-    public void likeFromUser(Long filmId, Long userId) {
+    public void likeFromUser(Long filmId, Long userId) throws FilmNotFoundException {
+        getWithoutGenresByIdOrThrowEx(filmId);
         String sqlQuery = "insert into likes(film_id, like_from_user)" +
                 " values(?, ?)";
         jdbcTemplate.update(sqlQuery
@@ -134,7 +163,8 @@ public class FilmDbStorage implements FilmStorage {
                 , userId);
     }
 
-    public void unlikeFromUser(Long filmId, Long userId) {
+    public void unlikeFromUser(Long filmId, Long userId) throws FilmNotFoundException {
+        getWithoutGenresByIdOrThrowEx(filmId);
         String sqlQuery = "delete from likes" +
                 " where film_id = ? and like_from_user = ?";
         jdbcTemplate.update(sqlQuery

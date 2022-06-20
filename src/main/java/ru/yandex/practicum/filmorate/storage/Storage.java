@@ -15,7 +15,7 @@ public interface Storage<T> {
 
     T create(T t);
 
-    void update(T t);
+    void update(T t) throws UserNotFoundException, FilmNotFoundException;
 
-    void deleteById(Long id);
+    void deleteById(Long id) throws UserNotFoundException, FilmNotFoundException;
 }

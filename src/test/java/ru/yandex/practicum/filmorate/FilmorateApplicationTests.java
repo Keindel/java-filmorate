@@ -46,7 +46,6 @@ class FilmoRateApplicationTests {
 
     @Test
     public void testFindUsersByIds() throws UserNotFoundException {
-        populateUserDb();
         Optional<User> userOptional = Optional.ofNullable(userDbStorage.getById(1L));
         Optional<User> userOptional2 = Optional.ofNullable(userDbStorage.getById(2L));
 
@@ -100,7 +99,7 @@ class FilmoRateApplicationTests {
     }
 
     @Test
-    public void testDeleteUserById() {
+    public void testDeleteUserById() throws UserNotFoundException {
         userDbStorage.deleteById(2L);
 
         Optional<Collection<User>> collectionOptional = Optional.of(userDbStorage.findAll());

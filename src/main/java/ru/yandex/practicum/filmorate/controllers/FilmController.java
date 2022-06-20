@@ -41,7 +41,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody @NonNull Film film) throws FilmValidationException {
+    public Film update(@Valid @RequestBody @NonNull Film film) throws FilmValidationException, UserNotFoundException, FilmNotFoundException {
         filmService.update(film);
         log.info("film with id {} updated", film.getId());
         return film;

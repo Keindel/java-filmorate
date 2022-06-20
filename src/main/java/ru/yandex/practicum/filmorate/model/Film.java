@@ -27,16 +27,7 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
-    private final Set<Long> usersIdsLiked = new HashSet<>();
-    private Set<Genre> genres;// = new HashSet<>();
+    private Set<Long> usersIdsLiked;
+    private Set<Genre> genres;
     private Mpa mpa;
-
-    //TODO move to filmDb
-   /* public void addLike(Long userId) {
-        usersIdsLiked.add(userId);
-    }
-
-    public void removeLike(Long userId) {
-        usersIdsLiked.remove(userId);
-    }*/
 }

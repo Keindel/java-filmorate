@@ -38,21 +38,17 @@ public class UserService {
         return user;
     }
 
-    public User update(User user) {
+    public User update(User user) throws UserNotFoundException, FilmNotFoundException {
         userStorage.update(user);
         return user;
     }
 
     public void requestFriendship(Long userId, Long friendToAddId) throws UserNotFoundException, FilmNotFoundException {
-        User user = userStorage.getById(userId);
-        User friend = userStorage.getById(friendToAddId);
         UserDbStorage userDbStorage = (UserDbStorage) userStorage;
         userDbStorage.requestFriendship(userId, friendToAddId);
     }
 
     public void deleteFriend(Long userId, Long friendToDellId) throws UserNotFoundException, FilmNotFoundException {
-        User user = userStorage.getById(userId);
-        User friend = userStorage.getById(friendToDellId);
         UserDbStorage userDbStorage = (UserDbStorage) userStorage;
         userDbStorage.deleteFriendFromUser(userId, friendToDellId);
     }

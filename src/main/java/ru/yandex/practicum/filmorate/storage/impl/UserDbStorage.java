@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -35,26 +36,35 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getById(Long id) throws UserNotFoundException {
-        String sqlQuery = "select user_id, email, login, name, birthday" +
-                " from users where user_id = ?";
-        User user = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
-
-        String sqlFriends = "select friends.friend_id, fs.status_name" +
-                " from friends" +
-                " left join friendship_status as fs on friends.FRIENDSHIP_STATUS_ID = fs.STATUS_NAME " +
-                " where friends.user_id = ?";
-        Map<Long, FriendshipStatus> friendsMap
-                = jdbcTemplate.query(sqlFriends, this::mapRowToFriendIdAndStatus, id)
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        user.setFriends(friendsMap);
-
+        User user = getWithoutFriendsByIdOrThrowEx(id);
+        setFriendsToUser(id, user);
         return user;
     }
 
+    public User getWithoutFriendsByIdOrThrowEx(Long id) throws UserNotFoundException {
+        String sqlQuery = "select user_id, email, login, name, birthday" +
+                " from users where user_id = ?";
+        User user;
+        try {
+            user = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new UserNotFoundException();
+        }
+        return user;
+    }
+
+    private void setFriendsToUser(Long id, User user) {
+        String sqlFriends = "select friends.friend_id, fs.status_name" +
+                " from friends" +
+                " left join friendship_status as fs on friends.FRIENDSHIP_STATUS_ID = fs.STATUS_ID" +
+                " where friends.user_id = ?";
+        Map<Long, FriendshipStatus> friendsMap
+                = jdbcTemplate.queryForStream(sqlFriends, this::mapRowToFriendIdAndStatus, id)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        user.setFriends(friendsMap);
+    }
+
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
-//         if (! rs.next()) throw new UserNotFoundException();
-        // нужно ли вообще здесь выбрасывать исключение? сработает валидация при попытке создать пользователя
         return User.builder()
                 .id(rs.getLong("user_id"))
                 .email(rs.getString("email"))
@@ -66,7 +76,7 @@ public class UserDbStorage implements UserStorage {
 
     private Map.Entry<Long, FriendshipStatus> mapRowToFriendIdAndStatus(ResultSet rs, int rowNum) throws SQLException {
         return new AbstractMap.SimpleEntry<>(rs.getLong("friend_id")
-                , FriendshipStatus.valueOf(rs.getString("status_id")));
+                , FriendshipStatus.valueOf(rs.getString("status_name")));
     }
 
     @Override
@@ -98,25 +108,28 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void update(User user) {
-        //TODO if user does not exist then SQLException?
+    public void update(User user) throws UserNotFoundException {
         String sqlQuery = "update users set email = ?, login = ?, name = ?, birthday = ?" +
                 " where user_id = ?";
-        jdbcTemplate.update(sqlQuery
+        int usersUpdated = jdbcTemplate.update(sqlQuery
                 , user.getEmail()
                 , user.getLogin()
                 , user.getName()
                 , Date.valueOf(user.getBirthday())
                 , user.getId());
+        if (usersUpdated == 0) throw new UserNotFoundException();
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id) throws UserNotFoundException {
         String sqlQuery = "delete from users where user_id = ?";
-        jdbcTemplate.update(sqlQuery, id);
+        int rowsUpdated = jdbcTemplate.update(sqlQuery, id);
+        if (rowsUpdated == 0) throw new UserNotFoundException();
     }
 
-    public void requestFriendship(Long userId, Long friendToAddId) {
+    public void requestFriendship(Long userId, Long friendToAddId) throws UserNotFoundException {
+        getWithoutFriendsByIdOrThrowEx(userId);
+        getWithoutFriendsByIdOrThrowEx(friendToAddId);
         String sqlQuery = "insert into friends(user_id, friend_id, friendship_status_id)" +
                 " values(?, ?, ?)";
         jdbcTemplate.update(sqlQuery
@@ -125,7 +138,9 @@ public class UserDbStorage implements UserStorage {
                 , 1);
     }
 
-    public void deleteFriendFromUser(Long userId, Long friendToDellId) {
+    public void deleteFriendFromUser(Long userId, Long friendToDellId) throws UserNotFoundException {
+        getWithoutFriendsByIdOrThrowEx(userId);
+        getWithoutFriendsByIdOrThrowEx(friendToDellId);
         String sqlQuery = "delete from friends" +
                 " where user_id = ? and friend_id = ?";
         jdbcTemplate.update(sqlQuery
