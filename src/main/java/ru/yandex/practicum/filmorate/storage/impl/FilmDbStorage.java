@@ -8,6 +8,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -19,6 +21,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component("filmDbStorage")
 public class FilmDbStorage implements FilmStorage {
@@ -178,5 +181,15 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sqlQuery
                 , filmId
                 , userId);
+    }
+
+    public Collection<Long> getCountTopIds(int count) {
+        String sqlQuery = "select f.film_id\n" +
+                "from films as f\n" +
+                "         left join likes as l on l.FILM_ID = f.FILM_ID\n" +
+                "group by f.film_id\n" +
+                "order by count(l.LIKE_FROM_USER) desc\n" +
+                "limit ?";
+        return jdbcTemplate.queryForList(sqlQuery, Long.class, count);
     }
 }

@@ -63,7 +63,7 @@ public class FilmController {
                         return filmService.getById(id);
                     } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
                              GenreNotFoundException e) {
-                        throw new RuntimeException(e);
+                        return null;
                     }
                 })
                 .collect(Collectors.toList());

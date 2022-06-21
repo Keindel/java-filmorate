@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FilmService {
     @Qualifier("filmDbStorage")
-    private final Storage<Film> filmStorage;
+    private final FilmDbStorage filmStorage;
     @Qualifier("userDbStorage")
-    private final Storage<User> userStorage;
+    private final UserDbStorage userStorage;
     @Qualifier("genreDbStorage")
     private final Storage<Genre> genreStorage;
     @Qualifier("mpaDbStorage")
@@ -64,39 +64,17 @@ public class FilmService {
     }
 
     public void likeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
-        UserDbStorage userDbStorage = (UserDbStorage) userStorage;
-        userDbStorage.getWithoutFriendsByIdOrThrowEx(userId);
-
-        FilmDbStorage filmDbStorage = (FilmDbStorage) filmStorage;
-        filmDbStorage.likeFromUser(filmId, userId);
+        userStorage.getWithoutFriendsByIdOrThrowEx(userId);
+        filmStorage.likeFromUser(filmId, userId);
     }
 
     public void unlikeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
-        UserDbStorage userDbStorage = (UserDbStorage) userStorage;
-        userDbStorage.getWithoutFriendsByIdOrThrowEx(userId);
-
-        FilmDbStorage filmDbStorage = (FilmDbStorage) filmStorage;
-        filmDbStorage.unlikeFromUser(filmId, userId);
-    }
-
-    private int getNumberOfLikes(Long filmId) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
-        Film filmExistant = filmStorage.getById(filmId);
-        return filmExistant.getUsersIdsLiked().size();
+        userStorage.getWithoutFriendsByIdOrThrowEx(userId);
+        filmStorage.unlikeFromUser(filmId, userId);
     }
 
     public Collection<Long> getCountTopIds(int count) {
-        return filmStorage.findAll().stream()
-                .sorted((a, b) -> {
-                    try {
-                        return -getNumberOfLikes(a.getId()) + getNumberOfLikes(b.getId());
-                    } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
-                             GenreNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .limit(count)
-                .map(Film::getId)
-                .collect(Collectors.toList());
+        return filmStorage.getCountTopIds(count);
     }
 
     public Collection<Genre> getGenres() {
