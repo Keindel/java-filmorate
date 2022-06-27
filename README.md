@@ -1,5 +1,5 @@
 # java-filmorate
-Template repository for Filmorate project.
+Filmorate project - social network with rating of films based on likes from users. Users can add each other to friendlist.
 
 You can see [db ER-diagram](https://github.com/Keindel/java-filmorate/blob/0ac815afa76e4b551ffa5aa7c34d22c2992e7cb9/filmorate%20ER%20diagram.png)
 DB request examples:

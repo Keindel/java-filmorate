@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.FilmValidationException;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -27,7 +27,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilm(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException {
+    public Film getFilmById(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return filmService.getById(id);
     }
 
@@ -39,7 +39,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody @NonNull Film film) throws FilmValidationException {
+    public Film update(@Valid @RequestBody @NonNull Film film) throws FilmValidationException, UserNotFoundException, FilmNotFoundException {
         filmService.update(film);
         log.info("film with id {} updated", film.getId());
         return film;
@@ -61,8 +61,9 @@ public class FilmController {
                 .map(id -> {
                     try {
                         return filmService.getById(id);
-                    } catch (UserNotFoundException | FilmNotFoundException e) {
-                        throw new RuntimeException(e);
+                    } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
+                             GenreNotFoundException e) {
+                        return null;
                     }
                 })
                 .collect(Collectors.toList());
