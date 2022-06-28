@@ -16,7 +16,8 @@ public class Review {
     private Long id;
     @NotBlank
     private String content;
-    private boolean isPositive;
+    @NonNull
+    private Boolean isPositive;
     @NonNull
     private Long userId;
     @NonNull
@@ -25,4 +26,8 @@ public class Review {
     private Integer useful;
     private Set<Long> likes;
     private Set<Long> dislikes;
+
+    public boolean getIsPositive(){
+        return this.isPositive;
+    }
 }
