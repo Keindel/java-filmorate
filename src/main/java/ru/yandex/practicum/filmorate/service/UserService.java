@@ -3,10 +3,12 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
@@ -78,4 +80,32 @@ public class UserService {
         if (friendsMap == null) return 0;
         return friendsMap.size();
     }
+
+    //TODO
+    public Collection<Film> recommendFilmsForUser(Long id) {
+
+        return null;
+    }
+
+//    private Collection<Film> getFilmsLikedByUser(Long id) {
+//
+//        return null;
+//    }
+
+    private Collection<User> findUsersWithLikeMatches(Long id /* User user?*/){
+        return null;
+    }
+
+    private Collection<Film> getFilmsWithOneSideLikeFromUsers(User user, Collection<User> matchedUsers){
+        return null;
+    }
 }
+
+/* ---------- 0. Найти фильмы, которые лайкнул user
+* 1. Найти пользователей с пересечениями по лайкам.
+* (максимальным количеством)
+2. Определить фильмы, которые один пролайкал, а другой нет.
+3. Рекомендовать фильмы, которым поставил лайк пользователь с похожими вкусами,
+*  а тот, для кого составляется рекомендация, ещё не поставил.
+*
+* */
