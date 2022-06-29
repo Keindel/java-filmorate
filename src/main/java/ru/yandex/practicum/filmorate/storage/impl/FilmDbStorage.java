@@ -198,11 +198,10 @@ public class FilmDbStorage implements FilmStorage {
         String sqlFilmsOfUser = "(SELECT film_id FROM likes WHERE like_from_user = ?) ";
         String sqlGetTopMatchedUsers = "(SELECT " +
                 " like_from_user AS other_user_id," +
-                " COUNT (film_id) AS matches" +
                 " FROM likes" +
                 " WHERE film_id IN " + sqlFilmsOfUser +
                 " GROUP BY other_user_id" +
-                " ORDER BY matches DESC" +
+                " ORDER BY COUNT (film_id) DESC" +
                 " LIMIT ?)";
         String sqlGetRecommendedFilmsIds = "SELECT DISTINCT film_id" +
                 " FROM likes" +
@@ -210,6 +209,7 @@ public class FilmDbStorage implements FilmStorage {
                 " AND like_from_user IN " + sqlGetTopMatchedUsers;
         Collection<Long> filmsIds = jdbcTemplate.queryForList(sqlGetRecommendedFilmsIds
                 , Long.class
+                , userId
                 , userId
                 , USERS_MATCHING_LIMIT);
         Collection<Film> films = filmsIds.stream().map(x -> {
