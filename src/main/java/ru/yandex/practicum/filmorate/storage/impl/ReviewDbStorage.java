@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -13,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ReviewDbStorage implements ReviewStorage {
@@ -31,20 +33,18 @@ public class ReviewDbStorage implements ReviewStorage {
                 .addValue("useful", review.getUseful());
         Number num = jdbcInsert.executeAndReturnKey(parameters);
         review.setId(num.longValue());
+        log.info("Review {} saved successfully", review.getContent());
         return review;
     }
 
     @Override
     public void update(Review review) {
-        String sqlUpdateReview = "UPDATE REVIEWS SET" +
-                "                    CONTENT = ?," +
-                "                    IS_POSITIVE = ?" +
-                "                    WHERE REVIEW_ID = ?";
-        jdbcTemplate.update(sqlUpdateReview,
-                review.getContent(),
-                review.getIsPositive(),
-                review.getId());
-
+        String sqlUpdateReview = "UPDATE reviews SET" +
+                "                    content = ?," +
+                "                    is_positive = ?" +
+                "                    WHERE review_id = ?";
+        jdbcTemplate.update(sqlUpdateReview, review.getContent(), review.getIsPositive(), review.getId());
+        log.info("Review {} successfully updated", review.getContent());
     }
 
     @Override
@@ -54,49 +54,46 @@ public class ReviewDbStorage implements ReviewStorage {
         removeLikes(review);
         removeDislikes(review);
         jdbcTemplate.update(sqlRemoveReviewById, id);
+        log.info("Review {} successfully deleted", review.getContent());
     }
 
     @Override
     public Review getById(Long id) {
         String sqlGetReviewById = "SELECT * FROM reviews WHERE review_id = ?";
+        log.info("Review {} successfully received", id);
         return jdbcTemplate.queryForObject(sqlGetReviewById, this::mapRow, id);
     }
 
     @Override
     public Collection<Review> findAll() {
         String sqlGetAllReviews = "SELECT * FROM reviews";
+        log.info("All reviews successfully received");
         return jdbcTemplate.query(sqlGetAllReviews, this::mapRow);
     }
 
     @Override
     public long getSize() {
         String sqlGetSize = "SELECT COUNT(*) FROM reviews";
+        log.info("Received total number of reviews");
         return jdbcTemplate.queryForObject(sqlGetSize, Long.class);
     }
 
-    public List<Long> findAllIds(){
+    public List<Long> findAllIds() {
         String sqlFindAllIds = "SELECT R.review_id FROM reviews AS R";
+        log.info("Got id of all reviews");
         return jdbcTemplate.query(sqlFindAllIds, (rs, rowNum) -> rs.getLong("review_id"));
     }
 
     public List<Review> getReviewByFilmId(Long filmId, Long count) {
-        String sqlAllReviewsByFilmId = "SELECT * FROM reviews WHERE film_id = ?";
         String sqlCountReviewByFilm = "SELECT * FROM reviews WHERE film_id = ? LIMIT ?";
         String sqlCountAllReviewWithoutFilm = "SELECT * FROM reviews LIMIT ?";
-        List<Review> reviews = new ArrayList<>();
-        if (filmId == null && count == null) {
-            return (List<Review>) findAll();
+        if (Objects.nonNull(filmId)) {
+            log.info("Received {} reviews for the film {}", count, filmId);
+            return jdbcTemplate.query(sqlCountReviewByFilm, this::mapRow, filmId, count);
+        } else {
+            log.info("Received {} reviews", count);
+            return jdbcTemplate.query(sqlCountAllReviewWithoutFilm, this::mapRow, count);
         }
-        if (filmId != null && count == null) {
-            reviews.addAll(jdbcTemplate.query(sqlAllReviewsByFilmId, this::mapRow, filmId));
-        }
-        if (filmId != null && count != null) {
-            reviews.addAll(jdbcTemplate.query(sqlCountReviewByFilm, this::mapRow, filmId, count));
-        }
-        if (filmId == null && count != null) {
-            reviews.addAll(jdbcTemplate.query(sqlCountAllReviewWithoutFilm, this::mapRow, count));
-        }
-        return reviews;
     }
 
 
@@ -104,12 +101,14 @@ public class ReviewDbStorage implements ReviewStorage {
         String sqlSaveLikes = "INSERT INTO review_likes (user_id, review_id) VALUES (?, ?)";
         review.getLikes().forEach(id -> jdbcTemplate.update(sqlSaveLikes, id, review.getId()));
         updateUseful(review);
+        log.info("Like saved successfully");
     }
 
     public void saveDislikes(Review review) {
         String sqlSaveDislikes = "INSERT INTO review_dislikes (user_id, review_id) VALUES (?, ?)";
         review.getDislikes().forEach(id -> jdbcTemplate.update(sqlSaveDislikes, id, review.getId()));
         updateUseful(review);
+        log.info("Dislike saved successfully");
     }
 
     private Set<Long> getLikes(ResultSet rs) throws SQLException {
@@ -125,20 +124,23 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     public void removeLikes(Review review) {
-        String sqlRemoveLikes = "DELETE FROM review_likes WHERE REVIEW_ID = ? AND USER_ID = ?";
+        String sqlRemoveLikes = "DELETE FROM review_likes WHERE review_id = ? AND user_id = ?";
         jdbcTemplate.update(sqlRemoveLikes, review.getId(), review.getUserId());
         updateUseful(review);
+        log.info("Like successfully removed");
     }
 
     public void removeDislikes(Review review) {
-        String sqlRemoveDislikes = "DELETE FROM review_dislikes WHERE REVIEW_ID = ? AND USER_ID = ?";
+        String sqlRemoveDislikes = "DELETE FROM review_dislikes WHERE review_id = ? AND user_id = ?";
         jdbcTemplate.update(sqlRemoveDislikes, review.getId(), review.getUserId());
         updateUseful(review);
+        log.info("Dislike successfully removed");
     }
 
     private void updateUseful(Review review) {
         String sqlUpdateUseful = "UPDATE reviews SET useful = ? WHERE review_id = ?";
         jdbcTemplate.update(sqlUpdateUseful, review.getUseful(), review.getId());
+        log.info("Utility rating updated successfully");
     }
 
 

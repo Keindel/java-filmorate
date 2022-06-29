@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.Review;
@@ -11,7 +10,6 @@ import ru.yandex.practicum.filmorate.service.ReviewService;
 import javax.validation.Valid;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
@@ -48,7 +46,7 @@ public class ReviewController {
 
     @GetMapping()
     public List<Review> getAllReviews(@RequestParam(required = false) Long filmId,
-                                     @RequestParam(required = false) Long count) {
+                                     @RequestParam(defaultValue = "10") Long count) {
         return reviewService.getReviewByFilmId(filmId, count);
     }
 

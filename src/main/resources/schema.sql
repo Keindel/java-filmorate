@@ -67,7 +67,7 @@ create table if not exists reviews
     IS_POSITIVE boolean,
     user_id INT,
     film_id INT,
-    USEFUL INT,
+    USEFUL INT default(0),
     constraint REVIEW_PK
         primary key (review_id),
     constraint USER_REVIEW_ID

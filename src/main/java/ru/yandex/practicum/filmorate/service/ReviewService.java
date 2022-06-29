@@ -27,9 +27,7 @@ public class ReviewService {
     private final UserDbStorage userStorage;
 
     public Review createReview(Review review) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
-        int defaultUseful = 0;
         validateReview(review);
-        review.setUseful(defaultUseful);
         return reviewStorage.create(review);
     }
 
