@@ -86,10 +86,8 @@ public class UserController {
         userService.deleteFriend(id, friendId);
     }
 
-    //TODO
     @GetMapping("/{id}/recommendations")
     public Collection<Film> recommendFilmsForUser(@PathVariable Long id) {
-//        return userService.recommendFilmsForUser(user);
-        return null;
+        return userService.recommendFilmsForUser(id);
     }
 }

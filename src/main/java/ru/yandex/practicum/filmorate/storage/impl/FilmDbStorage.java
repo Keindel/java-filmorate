@@ -14,14 +14,15 @@ import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.sql.Date;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.filmorate.storage.impl.UserDbStorage.USERS_MATCHING_LIMIT;
 
 @Component("filmDbStorage")
 public class FilmDbStorage implements FilmStorage {
@@ -191,5 +192,33 @@ public class FilmDbStorage implements FilmStorage {
                 "order by count(l.LIKE_FROM_USER) desc\n" +
                 "limit ?";
         return jdbcTemplate.queryForList(sqlQuery, Long.class, count);
+    }
+
+    public Collection<Film> getFilmsWithOneSideLikeFromOthers(Long userId) {
+        String sqlFilmsOfUser = "(SELECT film_id FROM likes WHERE like_from_user = ?) ";
+        String sqlGetTopMatchedUsers = "(SELECT " +
+                " like_from_user AS other_user_id," +
+                " COUNT (film_id) AS matches" +
+                " FROM likes" +
+                " WHERE film_id IN " + sqlFilmsOfUser +
+                " GROUP BY other_user_id" +
+                " ORDER BY matches DESC" +
+                " LIMIT ?)";
+        String sqlGetRecommendedFilmsIds = "SELECT DISTINCT film_id" +
+                " FROM likes" +
+                " WHERE film_id NOT IN " + sqlFilmsOfUser +
+                " AND like_from_user IN " + sqlGetTopMatchedUsers;
+        Collection<Long> filmsIds = jdbcTemplate.queryForList(sqlGetRecommendedFilmsIds
+                , Long.class
+                , userId
+                , USERS_MATCHING_LIMIT);
+        Collection<Film> films = filmsIds.stream().map(x -> {
+            try {
+                return getById(x);
+            } catch (UserNotFoundException | FilmNotFoundException e) {
+                return null;
+            }
+        }).collect(Collectors.toList());
+        return films;
     }
 }

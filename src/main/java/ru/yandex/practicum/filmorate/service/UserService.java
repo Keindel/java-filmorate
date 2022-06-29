@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
 import java.util.Collection;
@@ -22,8 +23,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    @Qualifier("userDbStorage")
-    private final Storage<User> userStorage;
+
+    private final UserDbStorage userStorage;
+    private final FilmDbStorage filmStorage;
 
     public Collection<User> findAll() {
         return userStorage.findAll();
@@ -48,13 +50,11 @@ public class UserService {
     }
 
     public void requestFriendship(Long userId, Long friendToAddId) throws UserNotFoundException, FilmNotFoundException {
-        UserDbStorage userDbStorage = (UserDbStorage) userStorage;
-        userDbStorage.requestFriendship(userId, friendToAddId);
+        userStorage.requestFriendship(userId, friendToAddId);
     }
 
     public void deleteFriend(Long userId, Long friendToDellId) throws UserNotFoundException, FilmNotFoundException {
-        UserDbStorage userDbStorage = (UserDbStorage) userStorage;
-        userDbStorage.deleteFriendFromUser(userId, friendToDellId);
+        userStorage.deleteFriendFromUser(userId, friendToDellId);
     }
 
     public Collection<Long> getMutualFriendsIds(Long user1Id, Long user2Id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
@@ -67,8 +67,7 @@ public class UserService {
                 .filter(friendId -> {
                     try {
                         return userStorage.getById(otherUserId).getFriends().containsKey(friendId);
-                    } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
-                             GenreNotFoundException e) {
+                    } catch (UserNotFoundException e) {
                         throw new RuntimeException(e);
                     }
                 })
@@ -81,31 +80,7 @@ public class UserService {
         return friendsMap.size();
     }
 
-    //TODO
     public Collection<Film> recommendFilmsForUser(Long id) {
-
-        return null;
-    }
-
-//    private Collection<Film> getFilmsLikedByUser(Long id) {
-//
-//        return null;
-//    }
-
-    private Collection<User> findUsersWithLikeMatches(Long id /* User user?*/){
-        return null;
-    }
-
-    private Collection<Film> getFilmsWithOneSideLikeFromUsers(User user, Collection<User> matchedUsers){
-        return null;
+        return filmStorage.getFilmsWithOneSideLikeFromOthers(id);
     }
 }
-
-/* ---------- 0. Найти фильмы, которые лайкнул user
-* 1. Найти пользователей с пересечениями по лайкам.
-* (максимальным количеством)
-2. Определить фильмы, которые один пролайкал, а другой нет.
-3. Рекомендовать фильмы, которым поставил лайк пользователь с похожими вкусами,
-*  а тот, для кого составляется рекомендация, ещё не поставил.
-*
-* */
