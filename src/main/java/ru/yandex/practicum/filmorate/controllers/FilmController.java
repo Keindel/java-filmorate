@@ -68,4 +68,9 @@ public class FilmController {
                 })
                 .collect(Collectors.toList());
     }
+
+    @DeleteMapping("/{filmId}")
+    public void deleteFilmById(@PathVariable Long filmId) throws FilmNotFoundException {
+        filmService.deleteById(filmId);
+    }
 }

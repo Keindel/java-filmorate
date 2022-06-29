@@ -92,4 +92,8 @@ public class FilmService {
     public Mpa getMpaById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return mpaStorage.getById(id);
     }
+
+    public void deleteById(Long filmId) throws FilmNotFoundException {
+        filmStorage.deleteById(filmId);
+    }
 }

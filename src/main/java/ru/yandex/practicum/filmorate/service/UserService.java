@@ -78,4 +78,8 @@ public class UserService {
         if (friendsMap == null) return 0;
         return friendsMap.size();
     }
+
+    public void deleteById(Long userId) throws UserNotFoundException, FilmNotFoundException {
+        userStorage.deleteById(userId);
+    }
 }
