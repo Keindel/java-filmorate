@@ -49,12 +49,18 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public void deleteById(Long id) {
-        String sqlRemoveReviewById = "DELETE FROM reviews WHERE review_id = ?";
+        String sqlRemoveReviewById = "DELETE FROM reviews WHERE review_id = ? ";
         Review review = getById(id);
-        removeLikes(review);
-        removeDislikes(review);
+        clearAllLikesAndDislikesByPosts(review);
         jdbcTemplate.update(sqlRemoveReviewById, id);
         log.info("Review {} successfully deleted", review.getContent());
+    }
+
+    private void clearAllLikesAndDislikesByPosts(Review review) {
+        String sqlremoveAllLikesByReviews = "DELETE FROM review_likes WHERE review_id = ?";
+        String sqlremoveAllDisikesByReviews = "DELETE FROM review_dislikes WHERE review_id = ?";
+        jdbcTemplate.update(sqlremoveAllLikesByReviews, review.getId());
+        jdbcTemplate.update(sqlremoveAllDisikesByReviews, review.getId());
     }
 
     @Override

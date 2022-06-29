@@ -78,21 +78,21 @@ create table if not exists reviews
 
 create table if not exists review_likes
 (
-    user_id INT,
     review_id INT,
+    user_id INT,
     constraint REVIEW_LIKES_PK
-        primary key (user_id, review_id),
+        primary key (review_id, user_id),
     constraint REVIEW_LIKES_USERS_USER_ID_FK
-        foreign key (user_id) references users (user_id)
+        foreign key (review_id) references reviews (review_id)
 
 );
 
 create table if not exists review_dislikes
 (
-    user_id INT,
     review_id INT,
+    user_id INT,
     constraint REVIEW_DISLIKES_PK
-            primary key (user_id, review_id),
+            primary key (review_id, user_id),
     constraint REVIEW_DISLIKES_USERS_USER_ID_FK
-            foreign key (user_id) references users (user_id)
+            foreign key (review_id) references reviews (review_id)
 );
