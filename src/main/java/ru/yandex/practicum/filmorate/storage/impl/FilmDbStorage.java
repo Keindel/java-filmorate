@@ -17,10 +17,8 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.sql.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component("filmDbStorage")
@@ -191,5 +189,14 @@ public class FilmDbStorage implements FilmStorage {
                 "order by count(l.LIKE_FROM_USER) desc\n" +
                 "limit ?";
         return jdbcTemplate.queryForList(sqlQuery, Long.class, count);
+    }
+
+    public List<Film> getCommonFilms(Long userid){
+        String sqlGetFilmForLikes = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, mpa.name " +
+                "FROM films as f " +
+                "JOIN mpa ON f.mpa_id = mpa.id " +
+                "JOIN likes AS l ON f.film_id = l.film_id " +
+                "WHERE like_from_user = ? ";
+        return jdbcTemplate.query(sqlGetFilmForLikes, this::mapRowToFilm, userid);
     }
 }

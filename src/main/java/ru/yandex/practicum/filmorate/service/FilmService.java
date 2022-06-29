@@ -14,7 +14,10 @@ import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,5 +94,15 @@ public class FilmService {
 
     public Mpa getMpaById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return mpaStorage.getById(id);
+    }
+
+    public List<Film> getCommonFilms(Long userId, Long friendId) throws UserNotFoundException {
+        List<Film> userLikesFilms = filmStorage.getCommonFilms(userId);
+        List<Film> friendLikesFilms = filmStorage.getCommonFilms(friendId);
+        userLikesFilms.retainAll(friendLikesFilms);
+        return userLikesFilms
+                .stream()
+                .sorted((o1, o2) -> o2.getUsersIdsLiked().size() - o1.getUsersIdsLiked().size())
+                .collect(Collectors.toList());
     }
 }
