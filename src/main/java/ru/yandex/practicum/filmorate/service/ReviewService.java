@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.impl.ReviewDbStorage;
 import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -36,7 +35,6 @@ public class ReviewService {
 
     public void updateReview(Review review) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException {
         validateReview(review);
-        calculateUseful(review);
         reviewStorage.update(review);
     }
 
@@ -69,26 +67,30 @@ public class ReviewService {
     public void addLikeFromUser(Long id, Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
         Review review = reviewStorage.getById(id);
         review.getLikes().add(userId);
-        updateReview(review);
+        calculateUseful(review);
+        reviewStorage.saveLikes(review);
     }
 
 
     public void addDislikeFromUser(Long id, Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
         Review review = reviewStorage.getById(id);
         review.getDislikes().add(userId);
-        updateReview(review);
+        calculateUseful(review);
+        reviewStorage.saveDislikes(review);
     }
 
-    public void deleteLikeFromUser(Long id, Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+    public void deleteLikeFromUser(Long id, Long userId){
         Review review = reviewStorage.getById(id);
         review.getLikes().remove(userId);
-        updateReview(review);
+        calculateUseful(review);
+        reviewStorage.removeLikes(review);
     }
 
-    public void deleteDislikeFromUser(Long id, Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+    public void deleteDislikeFromUser(Long id, Long userId)  {
         Review review = reviewStorage.getById(id);
         review.getDislikes().remove(userId);
-        updateReview(review);
+        calculateUseful(review);
+        reviewStorage.removeDislikes(review);
     }
 
 
@@ -114,7 +116,7 @@ public class ReviewService {
     }
 
     private void calculateUseful(Review review) {
-        int defaultUseful = 0;
+        int defaultUseful = reviewStorage.getById(review.getId()).getUseful();
         if (Objects.nonNull(review.getLikes()) && !review.getLikes().isEmpty()) {
             review.setUseful(defaultUseful + review.getLikes().size());
         } else if (Objects.nonNull(review.getDislikes()) && !review.getDislikes().isEmpty()) {

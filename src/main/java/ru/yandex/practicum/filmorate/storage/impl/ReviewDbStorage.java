@@ -38,22 +38,13 @@ public class ReviewDbStorage implements ReviewStorage {
     public void update(Review review) {
         String sqlUpdateReview = "UPDATE REVIEWS SET" +
                 "                    CONTENT = ?," +
-                "                    IS_POSITIVE = ?," +
-                "                    USEFUL = ?" +
+                "                    IS_POSITIVE = ?" +
                 "                    WHERE REVIEW_ID = ?";
-        removeLikes(review);
-        removeDislikes(review);
         jdbcTemplate.update(sqlUpdateReview,
                 review.getContent(),
                 review.getIsPositive(),
-                review.getUseful(),
                 review.getId());
-        if (Objects.nonNull(review.getLikes()) && !review.getLikes().isEmpty()) {
-            saveLikes(review);
-        }
-        if (Objects.nonNull(review.getDislikes()) && !review.getDislikes().isEmpty()) {
-            saveDislikes(review);
-        }
+
     }
 
     @Override
@@ -109,14 +100,16 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
 
-    private void saveLikes(Review review) {
+    public void saveLikes(Review review) {
         String sqlSaveLikes = "INSERT INTO review_likes (user_id, review_id) VALUES (?, ?)";
         review.getLikes().forEach(id -> jdbcTemplate.update(sqlSaveLikes, id, review.getId()));
+        updateUseful(review);
     }
 
-    private void saveDislikes(Review review) {
+    public void saveDislikes(Review review) {
         String sqlSaveDislikes = "INSERT INTO review_dislikes (user_id, review_id) VALUES (?, ?)";
         review.getDislikes().forEach(id -> jdbcTemplate.update(sqlSaveDislikes, id, review.getId()));
+        updateUseful(review);
     }
 
     private Set<Long> getLikes(ResultSet rs) throws SQLException {
@@ -131,14 +124,21 @@ public class ReviewDbStorage implements ReviewStorage {
                 -> rs1.getLong("user_id"), rs.getLong("review_id")));
     }
 
-    private void removeLikes(Review review) {
+    public void removeLikes(Review review) {
         String sqlRemoveLikes = "DELETE FROM review_likes WHERE REVIEW_ID = ? AND USER_ID = ?";
         jdbcTemplate.update(sqlRemoveLikes, review.getId(), review.getUserId());
+        updateUseful(review);
     }
 
-    private void removeDislikes(Review review) {
+    public void removeDislikes(Review review) {
         String sqlRemoveDislikes = "DELETE FROM review_dislikes WHERE REVIEW_ID = ? AND USER_ID = ?";
         jdbcTemplate.update(sqlRemoveDislikes, review.getId(), review.getUserId());
+        updateUseful(review);
+    }
+
+    private void updateUseful(Review review) {
+        String sqlUpdateUseful = "UPDATE reviews SET useful = ? WHERE review_id = ?";
+        jdbcTemplate.update(sqlUpdateUseful, review.getUseful(), review.getId());
     }
 
 

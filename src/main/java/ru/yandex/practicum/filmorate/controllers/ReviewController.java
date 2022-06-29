@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
-
 
     @PostMapping
     public Review createReview(@Valid @RequestBody @NonNull Review review) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
@@ -71,14 +69,14 @@ public class ReviewController {
 
     @DeleteMapping("/{reviewId}/like/{userId}")
     public void removeLikeFromUser(@PathVariable Long reviewId,
-                                     @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+                                     @PathVariable Long userId) {
         reviewService.deleteLikeFromUser(reviewId, userId);
     }
 
 
     @DeleteMapping("/{reviewId}/dislike/{userId}")
     public void removeDislikeFromUser(@PathVariable Long reviewId,
-                                        @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+                                        @PathVariable Long userId)  {
         reviewService.deleteDislikeFromUser(reviewId, userId);
     }
 }
