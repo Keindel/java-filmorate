@@ -39,10 +39,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public void update(Review review) {
-        String sqlUpdateReview = "UPDATE reviews SET" +
-                "                    content = ?," +
-                "                    is_positive = ?" +
-                "                    WHERE review_id = ?";
+        String sqlUpdateReview = "UPDATE reviews SET content = ?, is_positive = ? WHERE review_id = ?";
         jdbcTemplate.update(sqlUpdateReview, review.getContent(), review.getIsPositive(), review.getId());
         log.info("Review {} successfully updated", review.getContent());
     }
@@ -51,12 +48,12 @@ public class ReviewDbStorage implements ReviewStorage {
     public void deleteById(Long id) {
         String sqlRemoveReviewById = "DELETE FROM reviews WHERE review_id = ? ";
         Review review = getById(id);
-        clearAllLikesAndDislikesByPosts(review);
+        clearAllLikesAndDislikesFromReview(review);
         jdbcTemplate.update(sqlRemoveReviewById, id);
         log.info("Review {} successfully deleted", review.getContent());
     }
 
-    private void clearAllLikesAndDislikesByPosts(Review review) {
+    private void clearAllLikesAndDislikesFromReview(Review review) {
         String sqlremoveAllLikesByReviews = "DELETE FROM review_scope WHERE review_id = ?";
         jdbcTemplate.update(sqlremoveAllLikesByReviews, review.getId());
     }

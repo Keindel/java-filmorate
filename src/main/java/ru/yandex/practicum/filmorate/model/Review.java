@@ -22,7 +22,6 @@ public class Review {
     private Long userId;
     @NonNull
     private Long filmId;
-    @EqualsAndHashCode.Include
     private Integer useful;
     private Set<Long> likes;
     private Set<Long> dislikes;
