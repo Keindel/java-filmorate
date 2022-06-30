@@ -57,10 +57,8 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     private void clearAllLikesAndDislikesByPosts(Review review) {
-        String sqlremoveAllLikesByReviews = "DELETE FROM review_likes WHERE review_id = ?";
-        String sqlremoveAllDisikesByReviews = "DELETE FROM review_dislikes WHERE review_id = ?";
+        String sqlremoveAllLikesByReviews = "DELETE FROM review_scope WHERE review_id = ?";
         jdbcTemplate.update(sqlremoveAllLikesByReviews, review.getId());
-        jdbcTemplate.update(sqlremoveAllDisikesByReviews, review.getId());
     }
 
     @Override
@@ -104,40 +102,28 @@ public class ReviewDbStorage implements ReviewStorage {
 
 
     public void saveLikes(Review review) {
-        String sqlSaveLikes = "INSERT INTO review_likes (user_id, review_id) VALUES (?, ?)";
+        String sqlSaveLikes = "INSERT INTO review_scope (user_id, review_id, scope) VALUES (?, ?, true)";
         review.getLikes().forEach(id -> jdbcTemplate.update(sqlSaveLikes, id, review.getId()));
         updateUseful(review);
         log.info("Like saved successfully");
     }
 
     public void saveDislikes(Review review) {
-        String sqlSaveDislikes = "INSERT INTO review_dislikes (user_id, review_id) VALUES (?, ?)";
+        String sqlSaveDislikes = "INSERT INTO review_scope (user_id, review_id, scope) VALUES (?, ?, false)";
         review.getDislikes().forEach(id -> jdbcTemplate.update(sqlSaveDislikes, id, review.getId()));
         updateUseful(review);
         log.info("Dislike saved successfully");
     }
 
-    private Set<Long> getLikes(ResultSet rs) throws SQLException {
-        String sqlGetLikes = "SELECT * FROM review_likes WHERE review_id = ?";
-        return new HashSet<>(jdbcTemplate.query(sqlGetLikes, (rs1, rowNum)
-                -> rs1.getLong("user_id"), rs.getLong("review_id")));
-    }
-
-    private Set<Long> getDislikes(ResultSet rs) throws SQLException {
-        String sqlGetDislikes = "SELECT * FROM review_dislikes WHERE review_id = ?";
-        return new HashSet<>(jdbcTemplate.query(sqlGetDislikes, (rs1, rowNum)
-                -> rs1.getLong("user_id"), rs.getLong("review_id")));
-    }
-
     public void removeLikes(Review review) {
-        String sqlRemoveLikes = "DELETE FROM review_likes WHERE review_id = ? AND user_id = ?";
+        String sqlRemoveLikes = "DELETE FROM review_scope WHERE review_id = ? AND user_id = ?";
         jdbcTemplate.update(sqlRemoveLikes, review.getId(), review.getUserId());
         updateUseful(review);
         log.info("Like successfully removed");
     }
 
     public void removeDislikes(Review review) {
-        String sqlRemoveDislikes = "DELETE FROM review_dislikes WHERE review_id = ? AND user_id = ?";
+        String sqlRemoveDislikes = "DELETE FROM review_scope WHERE review_id = ? AND user_id = ?";
         jdbcTemplate.update(sqlRemoveDislikes, review.getId(), review.getUserId());
         updateUseful(review);
         log.info("Dislike successfully removed");
@@ -147,6 +133,18 @@ public class ReviewDbStorage implements ReviewStorage {
         String sqlUpdateUseful = "UPDATE reviews SET useful = ? WHERE review_id = ?";
         jdbcTemplate.update(sqlUpdateUseful, review.getUseful(), review.getId());
         log.info("Utility rating updated successfully");
+    }
+
+    private Set<Long> getLikes(ResultSet rs) throws SQLException {
+        String sqlGetLikes = "SELECT * FROM review_scope WHERE review_id = ? AND scope = true";
+        return new HashSet<>(jdbcTemplate.query(sqlGetLikes, (rs1, rowNum)
+                -> rs1.getLong("user_id"), rs.getLong("review_id")));
+    }
+
+    private Set<Long> getDislikes(ResultSet rs) throws SQLException {
+        String sqlGetDislikes = "SELECT * FROM review_scope WHERE review_id = ? AND scope = true";
+        return new HashSet<>(jdbcTemplate.query(sqlGetDislikes, (rs1, rowNum)
+                -> rs1.getLong("user_id"), rs.getLong("review_id")));
     }
 
 

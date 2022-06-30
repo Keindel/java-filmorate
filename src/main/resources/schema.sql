@@ -1,5 +1,5 @@
 drop table if exists mpa, film_genre_coupling, genre_names, likes
-    , friends, friendship_status, films, users, reviews, review_likes, review_dislikes;
+    , friends, friendship_status, films, users, reviews, review_scope;
 
 create table if not exists Mpa
 (
@@ -76,23 +76,15 @@ create table if not exists reviews
         foreign key (film_id) references films(film_id)
 );
 
-create table if not exists review_likes
+create table if not exists review_scope
 (
     review_id INT,
     user_id INT,
+    scope BOOLEAN,
     constraint REVIEW_LIKES_PK
         primary key (review_id, user_id),
     constraint REVIEW_LIKES_USERS_USER_ID_FK
-        foreign key (review_id) references reviews (review_id)
-
-);
-
-create table if not exists review_dislikes
-(
-    review_id INT,
-    user_id INT,
-    constraint REVIEW_DISLIKES_PK
-            primary key (review_id, user_id),
-    constraint REVIEW_DISLIKES_USERS_USER_ID_FK
-            foreign key (review_id) references reviews (review_id)
+        foreign key (review_id) references reviews (review_id),
+    constraint USER_LIKES_DISLIKES_ID_FK
+        foreign key (user_id) references users (user_id)
 );
