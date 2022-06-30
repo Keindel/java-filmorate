@@ -97,8 +97,8 @@ public class FilmService {
     }
 
     public List<Film> getCommonFilms(Long userId, Long friendId) throws UserNotFoundException {
-        List<Film> userLikesFilms = filmStorage.getCommonFilms(userId);
-        List<Film> friendLikesFilms = filmStorage.getCommonFilms(friendId);
+        List<Film> userLikesFilms = filmStorage.getAllFilmsWithLikesFromUser(userId);
+        List<Film> friendLikesFilms = filmStorage.getAllFilmsWithLikesFromUser(friendId);
         userLikesFilms.retainAll(friendLikesFilms);
         return userLikesFilms
                 .stream()
