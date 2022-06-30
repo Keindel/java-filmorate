@@ -6,11 +6,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.xml.bind.ValidationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Film getFilmById(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
         return filmService.getById(id);
     }
 
@@ -62,10 +61,16 @@ public class FilmController {
                     try {
                         return filmService.getById(id);
                     } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
-                             GenreNotFoundException e) {
+                             GenreNotFoundException | DirectorNotFoundException e) {
                         return null;
                     }
                 })
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/director/{directorId}")
+    public Collection<Film> getSortedFilms(@PathVariable long directorId, @RequestParam String sortBy) throws ValidationException, DirectorNotFoundException {
+        return filmService.getSortedFilms(directorId, sortBy);
+    }
+
 }

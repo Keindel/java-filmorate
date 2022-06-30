@@ -14,7 +14,7 @@ import java.util.Map;
         "ru.yandex.practicum.filmorate.service"})
 public class ErrorHandler {
 
-    @ExceptionHandler({FilmValidationException.class, UserValidationException.class})
+    @ExceptionHandler({FilmValidationException.class, UserValidationException.class, DirectorValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationException(final Exception e) {
         return Map.of("error: ", "validation failed");
@@ -23,7 +23,8 @@ public class ErrorHandler {
     @ExceptionHandler({FilmNotFoundException.class
             , UserNotFoundException.class
             , MpaNotFoundException.class
-            , GenreNotFoundException.class})
+            , GenreNotFoundException.class
+            , DirectorNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(final Exception e) {
         return Map.of("error: ", "object not found");
