@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final FeedService feedService;
 
     @GetMapping()
     public Collection<User> findAll() {
@@ -75,13 +77,26 @@ public class UserController {
         return user;
     }
 
+    /**
+     * добавление в друзья
+     */
     @PutMapping("/{id}/friends/{friendId}")
     public void requestFriendship(@PathVariable Long id, @PathVariable Long friendId) throws UserNotFoundException, FilmNotFoundException {
+        boolean result = feedService.updateFriend(id, friendId);
         userService.requestFriendship(id, friendId);
+        if (! result) {
+            feedService.addFriend(id, friendId);
+        }
     }
 
+    /**
+     * удаление из друзей
+     * @param id
+     * @param friendId
+     */
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriendship(@PathVariable Long id, @PathVariable Long friendId) throws UserNotFoundException, FilmNotFoundException {
+        feedService.deleteFriend(id, friendId);
         userService.deleteFriend(id, friendId);
     }
 }
