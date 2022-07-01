@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Director {
+    @EqualsAndHashCode.Include
     private long id;
     private String name;
 }

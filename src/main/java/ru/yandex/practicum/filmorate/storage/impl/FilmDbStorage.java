@@ -45,7 +45,7 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    private void setDirectors(Film film) /*throws DirectorNotFoundException*/ {
+    private void setDirectors(Film film) {
         String sqlQuery1 = "SELECT count(*) FROM film_director_coupling where film_id = ?";
         long result = jdbcTemplate.queryForObject(sqlQuery1, Long.class, film.getId());
         if (result < 1) {
@@ -230,15 +230,13 @@ public class FilmDbStorage implements FilmStorage {
         long result = jdbcTemplate.queryForObject(sqlQuery1, Long.class, directorId);
         if (result != 1) throw new DirectorNotFoundException();
 
-        String sqlQuery;
+        String sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name\n" +
+                "from films as f\n" +
+                "left join MPA on f.mpa_id = mpa.ID\n" +
+                "left join film_director_coupling as fdc ON f.film_id = fdc.film_id\n" +
+                "left join likes as l ON f.film_id = l.film_id where fdc.director_id = ?\n";
         Collection<Film> films;
         if (sortBy.equals("likes")){
-             sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name\n" +
-                     "from films as f\n" +
-                     "left join MPA on f.mpa_id = mpa.ID\n" +
-                     "left join film_director_coupling as fdc ON f.film_id = fdc.film_id\n" +
-                     "left join likes as l ON f.film_id = l.film_id where fdc.director_id = ?\n";
-
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
 
             films.forEach(film -> {
@@ -250,12 +248,7 @@ public class FilmDbStorage implements FilmStorage {
                     o -> o.getUsersIdsLiked().size()));
 
         } else if (sortBy.equals("year")) {
-            sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name\n" +
-                    "from films as f\n" +
-                    "left join MPA on f.mpa_id = mpa.ID\n" +
-                    "left join film_director_coupling as fdc ON f.film_id = fdc.film_id\n" +
-                    "left join likes as l ON f.film_id = l.film_id where fdc.director_id = ?\n" +
-                    "order by release_date ASC;";
+            sqlQuery = sqlQuery + "order by release_date ASC;";
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
             films.forEach(film -> {
                 setDirectors(film);
@@ -265,9 +258,6 @@ public class FilmDbStorage implements FilmStorage {
         } else {
             throw new ValidationException("Такой вариант сортировки не предусмотрен");
         }
-
         return films;
-
-
     }
 }

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.DirectorValidationException;
@@ -13,7 +14,6 @@ import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-
 
 @Component("directorDbStorage")
 public class DirectorDbStorage implements DirectorStorage {
@@ -73,14 +73,14 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public void update(Director director) throws DirectorNotFoundException {
-        String sqlQuery1 = "select count(*) from director_names where director_id = ? ";
-        long result = jdbcTemplate.queryForObject(sqlQuery1, Long.class, director.getId());
-        if (result != 1) throw new DirectorNotFoundException();
-
-        String sqlQuery2 = "update director_names set director_name = ?  where director_id = ?";
+        String sqlGetDirector = "select * from director_names where director_id = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlGetDirector, director.getId());
+        if (!rowSet.isBeforeFirst()) throw new DirectorNotFoundException();
+        while (rowSet.next()) {
+        String sqlQuery2 = "update director_names set director_name = ? where director_id = ?";
         jdbcTemplate.update(sqlQuery2,
-                director.getName(),
-                director.getId());
+                director.getName(), director.getId());
+        }
     }
 
     private boolean doesDirectorExist() {
@@ -91,13 +91,13 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public void deleteById(Long id) throws DirectorNotFoundException {
-        String sqlQuery1 = "select count(*) from director_names where director_id = ?";
-        long result = jdbcTemplate.queryForObject(sqlQuery1, Long.class, id);
-        if (result != 1) throw new DirectorNotFoundException();
-
-        String sqlQuery2 = "delete from director_names where director_id = ?";
-        jdbcTemplate.update(sqlQuery2, id);
+        String sqlGetDirectors = "select * from director_names where director_id = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlGetDirectors, id);
+        if (!rowSet.isBeforeFirst()) throw new DirectorNotFoundException();
+        while (rowSet.next()) {
+            String sqlQuery2 = "delete from director_names where director_id = ?";
+            jdbcTemplate.update(sqlQuery2, id);
+        }
     }
-
 }
 
