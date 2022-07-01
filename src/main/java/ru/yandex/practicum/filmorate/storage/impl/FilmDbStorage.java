@@ -191,7 +191,7 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.queryForList(sqlQuery, Long.class, count);
     }
 
-    public List<Film> getAllFilmsWithLikesFromUser(Long userid){
+    public Collection<Film> getAllFilmsWithLikesFromUser(Long userid){
         String sqlGetAllFilmsWithLikesFromUser = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, mpa.name " +
                 "FROM films as f " +
                 "JOIN mpa ON f.mpa_id = mpa.id " +

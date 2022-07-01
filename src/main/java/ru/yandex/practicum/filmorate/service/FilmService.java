@@ -96,9 +96,9 @@ public class FilmService {
         return mpaStorage.getById(id);
     }
 
-    public List<Film> getCommonFilms(Long userId, Long friendId) throws UserNotFoundException {
-        List<Film> userLikesFilms = filmStorage.getAllFilmsWithLikesFromUser(userId);
-        List<Film> friendLikesFilms = filmStorage.getAllFilmsWithLikesFromUser(friendId);
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) throws UserNotFoundException {
+        List<Film> userLikesFilms = (List<Film>) filmStorage.getAllFilmsWithLikesFromUser(userId);
+        List<Film> friendLikesFilms = (List<Film>) filmStorage.getAllFilmsWithLikesFromUser(friendId);
         userLikesFilms.retainAll(friendLikesFilms);
         return userLikesFilms
                 .stream()
