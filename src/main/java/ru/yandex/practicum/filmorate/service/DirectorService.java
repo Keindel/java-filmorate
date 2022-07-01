@@ -17,13 +17,13 @@ import java.util.List;
 public class DirectorService {
 
 
-    private final DirectorDbStorage directorStorage;
+    private final DirectorStorage directorStorage;
 
     public Director create(Director director) throws DirectorValidationException {
        return directorStorage.create(director);
     }
 
-    public Director getDirectorById(long id) throws UserNotFoundException, FilmNotFoundException, DirectorNotFoundException {
+    public Director getDirectorById(long id) throws UserNotFoundException, FilmNotFoundException, DirectorNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return directorStorage.getById(id);
     }
 
@@ -35,12 +35,12 @@ public class DirectorService {
         return directorStorage.getSize();
     }
 
-    public void update(Director director) throws DirectorNotFoundException {
+    public void update(Director director) throws DirectorNotFoundException, UserNotFoundException, FilmNotFoundException {
         directorStorage.update(director);
 
     }
 
-    public void deleteDirectorById(long id) throws DirectorNotFoundException {
+    public void deleteDirectorById(long id) throws DirectorNotFoundException, UserNotFoundException, FilmNotFoundException {
        directorStorage.deleteById(id);
     }
 }

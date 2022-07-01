@@ -53,11 +53,7 @@ public class FilmDbStorage implements FilmStorage {
         } else {
             String sqlQuery = "select DN.director_id, DN.director_name from director_names DN left outer join film_director_coupling F on DN.director_id = F.director_id where F.film_id = ?";
             List<Director> directors;
-//        try {
             directors = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> mapRowToDirector(rs, rowNum), film.getId());
-//        } catch (IncorrectResultSizeDataAccessException e) {
-//            throw new DirectorNotFoundException();
-//        }
             film.setDirectors(directors);
         }
     }

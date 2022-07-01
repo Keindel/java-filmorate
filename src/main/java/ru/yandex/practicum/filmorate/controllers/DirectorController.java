@@ -25,14 +25,14 @@ public class DirectorController {
     }
 
     @GetMapping("/{id}")
-    public Director getDirectorById(@PathVariable long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, DirectorNotFoundException, GenreNotFoundException {
+    public Director getDirectorById(@PathVariable long id) throws UserNotFoundException, FilmNotFoundException, DirectorNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return directorService.getDirectorById(id);
     }
 
     @PostMapping()
     public Director create(@Valid @RequestBody @NonNull Director director) throws DirectorValidationException {
         director = directorService.create(director);
-        log.info("director created with id = {}, number of users = {}", director.getId(), directorService.getSize());
+        log.info("director created with id = {}, number of directors = {}", director.getId(), directorService.getSize());
         return director;
     }
 
