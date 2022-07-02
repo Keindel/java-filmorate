@@ -13,14 +13,13 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.xml.bind.ValidationException;
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.storage.impl.UserDbStorage.USERS_MATCHING_LIMIT;
 
@@ -239,7 +238,7 @@ public class FilmDbStorage implements FilmStorage {
         Collection<Film> films = filmsIds.stream().map(x -> {
             try {
                 return getById(x);
-            } catch (UserNotFoundException | FilmNotFoundException e) {
+            } catch (UserNotFoundException | FilmNotFoundException | DirectorNotFoundException e) {
                 return null;
             }
         }).collect(Collectors.toList());
@@ -273,6 +272,7 @@ public class FilmDbStorage implements FilmStorage {
             films = new ArrayList<>(getAllFilmsForGenre(count, genreId));
         } else {
             films = new ArrayList<>(jdbcTemplate.query(sqlGetPopularFilms, this::mapRowToFilm, count));
+            films.forEach(this::setGenresToFilm);
         }
         return films;
     }
@@ -321,8 +321,8 @@ public class FilmDbStorage implements FilmStorage {
 
             films.forEach(film -> {
                 setDirectors(film);
-                setGenresToFilm(film.getId(),film);
-                setUsersIdsLiked(film.getId(),film);
+                setGenresToFilm(film);
+                setUsersIdsLiked(film);
             } );
             films.stream().sorted(Comparator.comparingInt(
                     o -> o.getUsersIdsLiked().size()));
@@ -332,8 +332,8 @@ public class FilmDbStorage implements FilmStorage {
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
             films.forEach(film -> {
                 setDirectors(film);
-                setGenresToFilm(film.getId(),film);
-                setUsersIdsLiked(film.getId(),film);
+                setGenresToFilm(film);
+                setUsersIdsLiked(film);
             } );
         } else {
             throw new ValidationException("Такой вариант сортировки не предусмотрен");

@@ -26,12 +26,12 @@ public class ReviewService {
     @Qualifier("userDbStorage")
     private final UserDbStorage userStorage;
 
-    public Review createReview(Review review) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+    public Review createReview(Review review) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException, DirectorNotFoundException {
         validateReview(review);
         return reviewStorage.create(review);
     }
 
-    public void updateReview(Review review) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException {
+    public void updateReview(Review review) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException, DirectorNotFoundException {
         validateReview(review);
         reviewStorage.update(review);
     }
@@ -92,7 +92,7 @@ public class ReviewService {
     }
 
 
-    private void validateReview(Review review) throws ReviewNotFoundException, FilmNotFoundException, UserNotFoundException {
+    private void validateReview(Review review) throws ReviewNotFoundException, FilmNotFoundException, UserNotFoundException, DirectorNotFoundException {
         if (review.getId() != null) {
             validateReviewId(review.getId());
         }

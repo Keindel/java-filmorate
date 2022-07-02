@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 import javax.xml.bind.ValidationException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
