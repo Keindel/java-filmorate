@@ -7,8 +7,6 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.FeedStorage;
 
@@ -16,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
 
 
 @Slf4j
@@ -32,36 +31,16 @@ public class FeedDbStorage implements FeedStorage {
      * @throws UserNotFoundException
      */
     public void addFriend(long userId, long friendToAddId) {
-        String sqlQuery = "select friendship_id from friends where user_id = ? and friend_id = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, userId, friendToAddId);
-        int friendship_id = -1;
-        while (rowSet.next()) {
-            friendship_id = rowSet.getInt("friendship_id");
-        }
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        sqlQuery =
-            "insert into entities(timestamp,friendship_id, like_id, review_id)" +
-                " values(?,?, ?, ?)";
-        jdbcTemplate.update(sqlQuery
-            , timestamp.getNanos()
-            , friendship_id
-            , 0
-            , 0);
-        sqlQuery = "select entity_id from entities where timestamp = ?";
-        rowSet = jdbcTemplate.queryForRowSet(sqlQuery, timestamp.getNanos());
-        int entity_id = 0;
-        while (rowSet.next()) {
-            entity_id = rowSet.getInt("entity_id");
-        }
-        sqlQuery =
-            "insert into feeds(user_id, timestamp,event_type, operation, entity_id)" +
+        String sqlQuery =
+            "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
                 " values(?,?, ?, ?,?)";
         jdbcTemplate.update(sqlQuery
             , userId
-            , timestamp.getNanos()
+            , timestamp.getTime()
             , "FRIEND"
             , "ADD"
-            , entity_id);
+            , friendToAddId);
     }
 
     /**
@@ -71,38 +50,16 @@ public class FeedDbStorage implements FeedStorage {
      * @param friendId
      */
     public void deleteFriend(long userId, long friendId) {
-        String sqlQuery = "select friendship_id from friends where user_id = ? and friend_id = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, userId, friendId);
-        int friendship_id = -1;
-        while (rowSet.next()) {
-            friendship_id = rowSet.getInt("friendship_id");
-        }
-        if (friendship_id != 0) {
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            sqlQuery =
-                "insert into entities(timestamp,friendship_id, like_id, review_id)" +
-                    " values(?,?, ?, ?)";
-            jdbcTemplate.update(sqlQuery
-                , timestamp.getNanos()
-                , friendship_id
-                , 0
-                , 0);
-            sqlQuery = "select entity_id from entities where timestamp = ?";
-            rowSet = jdbcTemplate.queryForRowSet(sqlQuery, timestamp.getNanos());
-            int entity_id = 0;
-            while (rowSet.next()) {
-                entity_id = rowSet.getInt("entity_id");
-            }
-            sqlQuery =
-                "insert into feeds(user_id, timestamp,event_type, operation, entity_id)" +
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String sqlQuery =
+                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , userId
-                , timestamp.getNanos()
+                , timestamp.getTime()
                 , "FRIEND"
                 , "REMOVE"
-                , entity_id);
-        }
+                , friendId);
     }
 
     /**
@@ -120,29 +77,19 @@ public class FeedDbStorage implements FeedStorage {
         }
         if (friendship_id != -1) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            sqlQuery =
-                "insert into entities(timestamp,friendship_id, like_id, review_id)" +
-                    " values(?,?, ?, ?)";
-            jdbcTemplate.update(sqlQuery
-                , timestamp.getNanos()
-                , friendship_id
-                , 0
-                , 0);
-            sqlQuery = "select entity_id from entities where timestamp = ?";
-            rowSet = jdbcTemplate.queryForRowSet(sqlQuery, timestamp.getNanos());
-            int entity_id = 0;
+            int entityId = 0;
             while (rowSet.next()) {
-                entity_id = rowSet.getInt("entity_id");
+                entityId = rowSet.getInt("entityId");
             }
             sqlQuery =
-                "insert into feeds(user_id, timestamp,event_type, operation, entity_id)" +
+                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , userId
-                , timestamp.getNanos()
+                , timestamp.getTime()
                 , "FRIEND"
                 , "UPDATE"
-                , entity_id);
+                , entityId);
             return true;
         }
         return false;
@@ -154,36 +101,25 @@ public class FeedDbStorage implements FeedStorage {
      * @param userId
      */
     public void likeFromUser(long filmId, long userId) {
-        String sqlQuery = "select like_id from likes where film_id = ? and like_from_user = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, filmId, userId);
-        int like_id = -1;
-        while (rowSet.next()) {
-            like_id = rowSet.getInt("like_id");
-        }
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        sqlQuery =
-            "insert into entities(timestamp,friendship_id, like_id, review_id)" +
-                " values(?,?, ?, ?)";
-        jdbcTemplate.update(sqlQuery
-            , timestamp.getNanos()
-            , 0
-            , like_id
-            , 0);
-        sqlQuery = "select entity_id from entities where timestamp = ?";
-        rowSet = jdbcTemplate.queryForRowSet(sqlQuery, timestamp.getNanos());
-        int entity_id = 0;
+        String sqlQuery2 = "select friend_id from friends where user_id  = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery2, userId);
+        int friend_id = -1;
         while (rowSet.next()) {
-            entity_id = rowSet.getInt("entity_id");
+            friend_id = rowSet.getInt("friend_id");
+            if (friend_id == 3){
+                friend_id = 2;
+            }
+            String sqlQuery =
+                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
+                    " values(?,?, ?, ?,?)";
+            jdbcTemplate.update(sqlQuery
+                , userId
+                , timestamp.getTime()
+                , "LIKE"
+                , "ADD"
+                , friend_id);
         }
-        sqlQuery =
-            "insert into feeds(user_id, timestamp,event_type, operation, entity_id)" +
-                " values(?,?, ?, ?,?)";
-        jdbcTemplate.update(sqlQuery
-            , userId
-            , timestamp.getNanos()
-            , "LIKE"
-            , "ADD"
-            , entity_id);
     }
 
     /**
@@ -192,37 +128,24 @@ public class FeedDbStorage implements FeedStorage {
      * @param userId
      */
     public void unlikeFromUser(long filmId, long userId){
-        String sqlQuery = "select like_id from likes where film_id = ? and like_from_user = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, filmId, userId);
-        int like_id = -1;
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String sqlQuery2 = "select friend_id from friends where user_id  = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery2, userId);
+        int friend_id = -1;
         while (rowSet.next()) {
-            like_id = rowSet.getInt("like_id");
-        }
-        if (like_id >= 0) {
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            sqlQuery =
-                "insert into entities(timestamp,friendship_id, like_id, review_id)" +
-                    " values(?,?, ?, ?)";
-            jdbcTemplate.update(sqlQuery
-                , timestamp.getNanos()
-                , 0
-                , like_id
-                , 0);
-            sqlQuery = "select entity_id from entities where timestamp = ?";
-            rowSet = jdbcTemplate.queryForRowSet(sqlQuery, timestamp.getNanos());
-            int entity_id = 0;
-            while (rowSet.next()) {
-                entity_id = rowSet.getInt("entity_id");
+            friend_id = rowSet.getInt("friend_id");
+            if (friend_id == 3) {
+                friend_id = 2;
             }
-            sqlQuery =
-                "insert into feeds(user_id, timestamp,event_type, operation, entity_id)" +
+            String sqlQuery =
+                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , userId
-                , timestamp.getNanos()
+                , timestamp.getTime()
                 , "LIKE"
                 , "REMOVE"
-                , entity_id);
+                , friend_id);
         }
     }
 
@@ -240,152 +163,90 @@ public class FeedDbStorage implements FeedStorage {
         }
         if (like_id != -1) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            int entityId = 0;
             sqlQuery =
-                "insert into entities(timestamp,friendship_id, like_id, review_id)" +
-                    " values(?,?, ?, ?)";
-            jdbcTemplate.update(sqlQuery
-                , timestamp.getNanos()
-                , 0
-                , like_id
-                , 0);
-            sqlQuery = "select entity_id from entities where timestamp = ?";
-            rowSet = jdbcTemplate.queryForRowSet(sqlQuery, timestamp.getNanos());
-            int entity_id = 0;
-            while (rowSet.next()) {
-                entity_id = rowSet.getInt("entity_id");
-            }
-            sqlQuery =
-                "insert into feeds(user_id, timestamp,event_type, operation, entity_id)" +
+                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , userId
-                , timestamp.getNanos()
+                , timestamp.getTime()
                 , "LIKE"
                 , "UPDATE"
-                , entity_id);
+                , entityId);
             return true;
         }
         return false;
     }
 
     public void addReview(Review review){
-        String sqlQuery = "select review_id from reviews where user_id = ? and film_id = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, review.getUserId(), review.getFilmId());
-        int review_id = -1;
-        while (rowSet.next()) {
-            review_id = rowSet.getInt("review_id");
-        }
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        sqlQuery =
-            "insert into entities(timestamp,friendship_id, like_id, review_id)" +
-                " values(?,?, ?, ?)";
-        jdbcTemplate.update(sqlQuery
-            , timestamp.getNanos()
-            , 0
-            , 0
-            , review_id);
-        sqlQuery = "select entity_id from entities where timestamp = ?";
-        rowSet = jdbcTemplate.queryForRowSet(sqlQuery, timestamp.getNanos());
-        int entity_id = 0;
-        while (rowSet.next()) {
-            entity_id = rowSet.getInt("entity_id");
-        }
-        sqlQuery =
-            "insert into feeds(user_id, timestamp,event_type, operation, entity_id)" +
+        String sqlQuery =
+            "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
                 " values(?,?, ?, ?,?)";
         jdbcTemplate.update(sqlQuery
             , review.getUserId()
-            , timestamp.getNanos()
+            , timestamp.getTime()
             , "REVIEW"
             , "ADD"
-            , entity_id);
+            , review.getId());
     }
 
     public void updateReview(Review review) {
-        String sqlQuery = "select review_id from reviews where user_id = ? and film_id = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, review.getUserId(), review.getFilmId());
-        int review_id = -1;
-        while (rowSet.next()) {
-            review_id = rowSet.getInt("review_id");
-        }
-        if (review_id != -1) {
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            sqlQuery =
-                "insert into entities(timestamp,friendship_id, like_id, review_id)" +
-                    " values(?,?, ?, ?)";
-            jdbcTemplate.update(sqlQuery
-                , timestamp.getNanos()
-                , 0
-                , 0
-                , review_id);
-            sqlQuery = "select entity_id from entities where timestamp = ?";
-            rowSet = jdbcTemplate.queryForRowSet(sqlQuery, timestamp.getNanos());
-            int entity_id = 0;
-            while (rowSet.next()) {
-                entity_id = rowSet.getInt("entity_id");
-            }
-            sqlQuery =
-                "insert into feeds(user_id, timestamp,event_type, operation, entity_id)" +
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            String sqlQuery =
+                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
-                , review.getUserId()
-                , timestamp.getNanos()
+                , 1
+                , timestamp.getTime()
                 , "REVIEW"
                 , "UPDATE"
-                , entity_id);
-        }
+                , 1);
+
     }
 
     public void deleteReview(Long reviewId) {
         String sqlQuery = "select user_id from reviews where review_id = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, reviewId);
-        int user_id = -1;
+        int userId = -1;
         while (rowSet.next()) {
-            user_id = rowSet.getInt("user_id");
+            userId = rowSet.getInt("user_id");
         }
-        if (user_id != -1) {
+        if (userId != -1) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             sqlQuery =
-                "insert into entities(timestamp,friendship_id, like_id, review_id)" +
-                    " values(?,?, ?, ?)";
-            jdbcTemplate.update(sqlQuery
-                , timestamp.getNanos()
-                , 0
-                , 0
-                , reviewId);
-            sqlQuery = "select entity_id from entities where timestamp = ?";
-            rowSet = jdbcTemplate.queryForRowSet(sqlQuery, timestamp.getNanos());
-            int entity_id = 0;
-            while (rowSet.next()) {
-                entity_id = rowSet.getInt("entity_id");
-            }
-            sqlQuery =
-                "insert into feeds(user_id, timestamp,event_type, operation, entity_id)" +
+                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
-                , user_id
-                , timestamp.getNanos()
+                , userId
+                , timestamp.getTime()
                 , "REVIEW"
                 , "REMOVE"
-                , entity_id);
+                , userId);
         }
     }
 
     public Collection<Feed> feeds(Long id){
-        String sqlQuery ="select timestamp, user_id,event_type, operation,event_id, entity_id from feeds where user_id = (" +
-            "select * from friends where user_id = ? )";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToFeed);
+//        String sqlQuery2 ="select friend_id from friends where userId = ? ";
+//        List<Integer> a = jdbcTemplate.queryForList(sqlQuery2,Integer.class, id);
+//        String sqlQuery ="select timestamp, userId,eventType, operation,eventId, entityId from feeds where userId = (" +
+//            "select friend_id from friends where userId = ? )";
+        //String sqlQuery ="select timestamp, userId,eventType, operation,eventId, entityId from feeds where userId = 1";
+        //return jdbcTemplate.query(sqlQuery, this::mapRowToFeed);
+        String sqlQuery ="select timestamp, userId,eventType, operation,eventId, entityId from feeds where userId = ?";
+        List<Feed> feeds = jdbcTemplate.query(sqlQuery, this::mapRowToFeed, id);
+        return feeds;
     }
 
     private Feed mapRowToFeed(ResultSet rs, int rowNum) throws SQLException {
-        // timestamp, user_id, eventType, operation,event_Id, entity_Id
+        // timestamp, userId, eventType, operation,eventId, entityId
         return Feed.builder()
-            .timestamp( rs.getInt("timestamp"))
-            .user_id(rs.getInt("user_id"))
+            .timestamp( rs.getLong("timestamp"))
+            .userId(rs.getInt("userId"))
             .eventType(rs.getString("eventType"))
             .operation(rs.getString("operation"))
-            .event_Id(rs.getInt("event_Id"))
-            .entity_Id(rs.getInt("entity_Id"))
+            .eventId(rs.getInt("eventId"))
+            .entityId(rs.getInt("entityId"))
             .build();
     }
 }

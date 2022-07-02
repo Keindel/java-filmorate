@@ -10,8 +10,8 @@ import ru.yandex.practicum.filmorate.exceptions.*;
 import java.util.Map;
 
 @RestControllerAdvice(basePackages = {"ru.yandex.practicum.filmorate.controllers",
-        "ru.yandex.practicum.filmorate.storage",
-        "ru.yandex.practicum.filmorate.service"})
+    "ru.yandex.practicum.filmorate.storage",
+    "ru.yandex.practicum.filmorate.service"})
 public class ErrorHandler {
 
     @ExceptionHandler({FilmValidationException.class, UserValidationException.class})
@@ -21,9 +21,10 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({FilmNotFoundException.class
-            , UserNotFoundException.class
-            , MpaNotFoundException.class
-            , GenreNotFoundException.class})
+        , UserNotFoundException.class
+        , MpaNotFoundException.class
+        , GenreNotFoundException.class
+        , ReviewNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(final Exception e) {
         return Map.of("error: ", "object not found");

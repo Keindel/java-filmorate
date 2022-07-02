@@ -40,8 +40,7 @@ public class ReviewController {
     @DeleteMapping("/{reviewId}")
     public Review deleteReviewById(@PathVariable Long reviewId) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         feedService.deleteReview(reviewId);
-        Review review = reviewService.removeReviewById(reviewId);
-        return review;
+        return reviewService.removeReviewById(reviewId);
     }
 
 
