@@ -2,16 +2,15 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.Storage;
 import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class FeedService {
-    private final FeedStorage feedDbStorage;
+    private final FeedStorage feedStorage;
     @Qualifier("userDbStorage")
     private final Storage<User> userStorage;
 
@@ -27,10 +26,8 @@ public class FeedService {
      * Возвращает ленту событий пользователя
      * @return
      */
-    public Collection<Feed> feeds(){
-        List<Feed> feeds = new ArrayList<>();
-
-        return feeds;
+    public Collection<Feed> feeds(Long id){
+        return feedStorage.feeds(id);
     }
 
     /**
@@ -43,7 +40,7 @@ public class FeedService {
         UserDbStorage userDbStorage = (UserDbStorage) userStorage;
         userDbStorage.getWithoutFriendsByIdOrThrowEx(userId);
         userDbStorage.getWithoutFriendsByIdOrThrowEx(friendToAddId);
-        feedDbStorage.addFriend(userId, friendToAddId);
+        feedStorage.addFriend(userId, friendToAddId);
     }
 
     /**
@@ -52,7 +49,7 @@ public class FeedService {
      * @param friendId
      */
     public void deleteFriend(long userId, long friendId) {
-        feedDbStorage.deleteFriend(userId, friendId);
+        feedStorage.deleteFriend(userId, friendId);
     }
 
     /**
@@ -61,7 +58,7 @@ public class FeedService {
      * @param friendId
      */
     public boolean updateFriend(long userId, long friendId) {
-        return feedDbStorage.updateFriend(userId, friendId);
+        return feedStorage.updateFriend(userId, friendId);
     }
 
     /**
@@ -70,7 +67,7 @@ public class FeedService {
      * @param userId
      */
     public void likeFromUser( long filmId, long userId) {
-        feedDbStorage.likeFromUser( filmId, userId);
+        feedStorage.likeFromUser( filmId, userId);
     }
 
     /**
@@ -79,7 +76,7 @@ public class FeedService {
      * @param userId
      */
     public void unlikeFromUser( long filmId, long userId) {
-        feedDbStorage.unlikeFromUser( filmId, userId);
+        feedStorage.unlikeFromUser( filmId, userId);
     }
 
     /**
@@ -88,6 +85,18 @@ public class FeedService {
      * @param userId
      */
     public boolean updateLikeFromUser( long filmId, long userId) {
-        return feedDbStorage.updateLikeFromUser( filmId, userId);
+        return feedStorage.updateLikeFromUser( filmId, userId);
+    }
+
+    public void addReview(Review review) {
+        feedStorage.addReview(review);
+    }
+
+    public void updateReview(Review review) {
+        feedStorage.updateReview(review);
+    }
+
+    public void deleteReview(Long reviewId){
+        feedStorage.deleteReview(reviewId);
     }
 }

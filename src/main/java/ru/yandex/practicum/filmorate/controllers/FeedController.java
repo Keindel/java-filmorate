@@ -18,7 +18,6 @@ public class FeedController {
 
     @GetMapping("/users/{id}/feed")
     public Collection<Feed> feeds(@PathVariable Long id){
-
-        return feedService.feeds();
+        return feedService.feeds(id);
     }
 }

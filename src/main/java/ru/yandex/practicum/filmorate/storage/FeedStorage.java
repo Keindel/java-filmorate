@@ -1,6 +1,10 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Review;
+
+import java.util.Collection;
 
 public interface FeedStorage {
     /**
@@ -31,4 +35,8 @@ public interface FeedStorage {
      */
     void unlikeFromUser(long filmId, long userId);
     boolean updateLikeFromUser(long filmId, long userId);
+    void addReview(Review review);
+    void updateReview(Review review);
+    void deleteReview(Long reviewId);
+    Collection<Feed> feeds(Long id);
 }
