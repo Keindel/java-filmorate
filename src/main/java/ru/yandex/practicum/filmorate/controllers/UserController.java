@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getMutualFriends (@PathVariable Long id, @PathVariable Long otherId) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Collection<User> getMutualFriends(@PathVariable Long id, @PathVariable Long otherId) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         return userService.getMutualFriendsIds(id, otherId).stream()
                 .map(id1 -> {
                     try {
@@ -85,8 +86,15 @@ public class UserController {
         userService.deleteFriend(id, friendId);
     }
 
+    @GetMapping("/{id}/recommendations")
+    public Collection<Film> recommendFilmsForUser(@PathVariable Long id) {
+        return userService.recommendFilmsForUser(id);
+    }
+
+
     @DeleteMapping("/{userId}")
     public void deleteUserById(@PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
         userService.deleteById(userId);
     }
 }
+
