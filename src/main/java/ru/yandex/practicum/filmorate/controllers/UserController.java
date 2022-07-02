@@ -99,4 +99,9 @@ public class UserController {
         feedService.deleteFriend(id, friendId);
         userService.deleteFriend(id, friendId);
     }
+
+    @DeleteMapping("/{userId}")
+    public void deleteUserById(@PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
+        userService.deleteById(userId);
+    }
 }
