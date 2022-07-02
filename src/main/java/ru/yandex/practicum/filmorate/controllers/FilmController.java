@@ -73,4 +73,9 @@ public class FilmController {
     public void deleteFilmById(@PathVariable Long filmId) throws FilmNotFoundException {
         filmService.deleteById(filmId);
     }
+
+    @GetMapping("/common")
+    public Collection<Film> getCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) throws UserNotFoundException {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 }
