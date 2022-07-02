@@ -56,17 +56,10 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getCountTop(@RequestParam(defaultValue = "10") int count) {
-        return filmService.getCountTopIds(count).stream()
-                .map(id -> {
-                    try {
-                        return filmService.getById(id);
-                    } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
-                             GenreNotFoundException e) {
-                        return null;
-                    }
-                })
-                .collect(Collectors.toList());
+    public Collection<Film> mostPopularFilms(@RequestParam(defaultValue = "10") Integer count,
+                                       @RequestParam(required = false) Integer year,
+                                       @RequestParam(required = false) Integer genreId) {
+        return filmService.mostPopularFilms(count, year, genreId);
     }
 
     @DeleteMapping("/{filmId}")
