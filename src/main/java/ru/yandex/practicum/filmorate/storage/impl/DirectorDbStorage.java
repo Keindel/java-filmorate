@@ -23,12 +23,6 @@ public class DirectorDbStorage implements DirectorStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private static long id = 1;
-
-    private long directorIdCounter() {
-        return id++;
-    }
-
     @Override
     public long getSize() {
         String sqlQuery = "select COUNT(*) from director_names";
@@ -65,9 +59,10 @@ public class DirectorDbStorage implements DirectorStorage {
     public Director create(Director director) throws DirectorValidationException {
         if (director.getName().isBlank()) throw new DirectorValidationException();
 
-        String sqlQuery = "insert into director_names (director_id, director_name) values (?, ?)";
-        director.setId(directorIdCounter());
-        jdbcTemplate.update(sqlQuery, director.getId(), director.getName());
+        String sqlQuery = "insert into director_names (director_name) values (?)";
+        jdbcTemplate.update(sqlQuery, director.getName());
+        String sqlQuery2 = "select director_id from director_names where director_name = ?";
+        director.setId(jdbcTemplate.queryForObject(sqlQuery2, long.class, director.getName()));
         return director;
     }
 
