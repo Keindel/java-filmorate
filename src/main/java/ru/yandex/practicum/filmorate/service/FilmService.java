@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import com.fasterxml.jackson.databind.type.CollectionLikeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,7 +15,7 @@ import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
 import javax.xml.bind.ValidationException;
 import java.time.LocalDate;
-import java.util.Collection;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -72,10 +73,6 @@ public class FilmService {
         filmStorage.unlikeFromUser(filmId, userId);
     }
 
-    public Collection<Long> getCountTopIds(int count) {
-        return filmStorage.getCountTopIds(count);
-    }
-
     public Collection<Genre> getGenres() {
         return genreStorage.findAll();
     }
@@ -90,6 +87,24 @@ public class FilmService {
 
     public Mpa getMpaById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
         return mpaStorage.getById(id);
+    }
+
+    public void deleteById(Long filmId) throws FilmNotFoundException {
+        filmStorage.deleteById(filmId);
+    }
+
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) throws UserNotFoundException {
+        List<Film> userLikesFilms = (List<Film>) filmStorage.getAllFilmsWithLikesFromUser(userId);
+        List<Film> friendLikesFilms = (List<Film>) filmStorage.getAllFilmsWithLikesFromUser(friendId);
+        userLikesFilms.retainAll(friendLikesFilms);
+        return userLikesFilms
+                .stream()
+                .sorted((o1, o2) -> o2.getUsersIdsLiked().size() - o1.getUsersIdsLiked().size())
+                .collect(Collectors.toList());
+    }
+
+    public Collection<Film> mostPopularFilms(Integer count, Integer year, Integer genreId) {
+        return filmStorage.getPopularFilms(count, year, genreId);
     }
 
     public Collection<Film> getSortedFilms(long directorId, String sortBy) throws ValidationException, DirectorNotFoundException {

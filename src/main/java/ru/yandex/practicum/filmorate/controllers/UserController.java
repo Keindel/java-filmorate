@@ -4,6 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -80,5 +85,16 @@ public class UserController {
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriendship(@PathVariable Long id, @PathVariable Long friendId) throws UserNotFoundException, FilmNotFoundException {
         userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public Collection<Film> recommendFilmsForUser(@PathVariable Long id) {
+        return userService.recommendFilmsForUser(id);
+    }
+
+
+    @DeleteMapping("/{userId}")
+    public void deleteUserById(@PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
+        userService.deleteById(userId);
     }
 }

@@ -14,12 +14,15 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.xml.bind.ValidationException;
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
+
+import static ru.yandex.practicum.filmorate.storage.impl.UserDbStorage.USERS_MATCHING_LIMIT;
 
 @Component("filmDbStorage")
 public class FilmDbStorage implements FilmStorage {
@@ -39,9 +42,9 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException, DirectorNotFoundException {
         Film film = getWithoutGenresByIdOrThrowEx(id);
-        setGenresToFilm(id, film);
-        setUsersIdsLiked(id, film);
         setDirectors(film);
+        setGenresToFilm(film);
+        setUsersIdsLiked(film);
         return film;
     }
 
@@ -76,13 +79,13 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    private void setGenresToFilm(Long id, Film film) {
+    private void setGenresToFilm(Film film) {
         String sqlGenresQuery = "select fgc.genre_id, gn.genre_name" +
                 " from film_genre_coupling as fgc" +
                 " left join genre_names as gn on fgc.genre_id = gn.genre_id" +
                 " where fgc.film_id = ?";
         Set<Genre> genres = new HashSet<>();
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlGenresQuery, id);
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlGenresQuery, film.getId());
         while (rowSet.next()) {
             genres.add(new Genre(rowSet.getInt("genre_id"), rowSet.getString("genre_name")));
         }
@@ -91,11 +94,11 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private void setUsersIdsLiked(Long id, Film film) {
+    private void setUsersIdsLiked(Film film) {
         String sqlGetLikes = "select like_from_user" +
                 " from likes where film_id = ?";
         Set<Long> usersIdsLiked = new HashSet<>();
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlGetLikes, id);
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlGetLikes, film.getId());
         while (rowSet.next()) {
             usersIdsLiked.add(rowSet.getLong("like_from_user"));
         }
@@ -215,14 +218,91 @@ public class FilmDbStorage implements FilmStorage {
                 , userId);
     }
 
-    public Collection<Long> getCountTopIds(int count) {
-        String sqlQuery = "select f.film_id\n" +
-                "from films as f\n" +
-                "         left join likes as l on l.FILM_ID = f.FILM_ID\n" +
-                "group by f.film_id\n" +
-                "order by count(l.LIKE_FROM_USER) desc\n" +
-                "limit ?";
-        return jdbcTemplate.queryForList(sqlQuery, Long.class, count);
+    public Collection<Film> getFilmsWithOneSideLikeFromOthers(Long userId) {
+        String sqlFilmsOfUser = "(SELECT film_id FROM likes WHERE like_from_user = ?) ";
+        String sqlGetTopMatchedUsers = "(SELECT " +
+                " like_from_user AS other_user_id," +
+                " FROM likes" +
+                " WHERE film_id IN " + sqlFilmsOfUser +
+                " GROUP BY other_user_id" +
+                " ORDER BY COUNT (film_id) DESC" +
+                " LIMIT ?)";
+        String sqlGetRecommendedFilmsIds = "SELECT DISTINCT film_id" +
+                " FROM likes" +
+                " WHERE film_id NOT IN " + sqlFilmsOfUser +
+                " AND like_from_user IN " + sqlGetTopMatchedUsers;
+        Collection<Long> filmsIds = jdbcTemplate.queryForList(sqlGetRecommendedFilmsIds
+                , Long.class
+                , userId
+                , userId
+                , USERS_MATCHING_LIMIT);
+        Collection<Film> films = filmsIds.stream().map(x -> {
+            try {
+                return getById(x);
+            } catch (UserNotFoundException | FilmNotFoundException e) {
+                return null;
+            }
+        }).collect(Collectors.toList());
+        return films;
+    }
+
+    public Collection<Film> getAllFilmsWithLikesFromUser(Long userid){
+        String sqlGetAllFilmsWithLikesFromUser = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, mpa.name " +
+                "FROM films as f " +
+                "JOIN mpa ON f.mpa_id = mpa.id " +
+                "JOIN likes AS l ON f.film_id = l.film_id " +
+                "WHERE like_from_user = ? ";
+        return jdbcTemplate.query(sqlGetAllFilmsWithLikesFromUser, this::mapRowToFilm, userid);
+    }
+    public List<Film> getPopularFilms(Integer count, Integer year, Integer genreId) {
+        String sqlGetPopularFilms = "SELECT  f.*, m.NAME" +
+                " FROM films AS f" +
+                " JOIN mpa AS m on m.ID = f.MPA_ID" +
+                " LEFT JOIN likes AS l ON l.FILM_ID = f.FILM_ID" +
+                " GROUP BY f.FILM_ID" +
+                " ORDER BY COUNT(l.FILM_ID) DESC LIMIT ? ";
+        List<Film> films;
+        if (Objects.nonNull(year) && Objects.nonNull(genreId)) {
+            List<Film> years = getAllFilmsForYear(count, year);
+            List<Film> genres = getAllFilmsForGenre(count, genreId);
+            years.retainAll(genres);
+            return years;
+        } else if (Objects.nonNull(year)) {
+            films = new ArrayList<>(getAllFilmsForYear(count, year));
+        } else if (Objects.nonNull(genreId)) {
+            films = new ArrayList<>(getAllFilmsForGenre(count, genreId));
+        } else {
+            films = new ArrayList<>(jdbcTemplate.query(sqlGetPopularFilms, this::mapRowToFilm, count));
+        }
+        return films;
+    }
+
+    private List<Film> getAllFilmsForYear(Integer count, Integer year) {
+        String sqlGetPopularFilmsWithYear = "SELECT f.*, m.NAME" +
+                " FROM films AS f" +
+                " JOIN mpa AS m on m.ID = f.MPA_ID" +
+                " LEFT JOIN likes AS l ON l.FILM_ID = f.FILM_ID" +
+                " WHERE EXTRACT(YEAR FROM f.RELEASE_DATE) = ?" +
+                " GROUP BY f.FILM_ID" +
+                " ORDER BY COUNT(l.FILM_ID) DESC LIMIT ? ";
+        List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithYear, this::mapRowToFilm, year, count);
+        films.forEach(this::setGenresToFilm);
+        return films;
+    }
+
+    private List<Film> getAllFilmsForGenre(Integer count, Integer genreId) {
+        String sqlGetPopularFilmsWithGenre = "SELECT  f.*, m.name, gn.*" +
+                " FROM films AS f" +
+                " JOIN mpa AS m on m.ID = f.MPA_ID" +
+                " LEFT JOIN likes AS l ON l.FILM_ID = f.FILM_ID" +
+                " LEFT JOIN film_genre_coupling AS fg ON f.FILM_ID = fg.FILM_ID" +
+                " LEFT JOIN genre_names AS gn on gn.GENRE_ID = fg.GENRE_ID" +
+                " WHERE gn.GENRE_ID = ?" +
+                " GROUP BY f.FILM_ID" +
+                " ORDER BY COUNT(l.FILM_ID) DESC LIMIT ?";
+         List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithGenre, this::mapRowToFilm, genreId, count);
+         films.forEach(this::setGenresToFilm);
+         return films;
     }
 
     public Collection<Film> getDirectorFilms(long directorId, String sortBy) throws ValidationException, DirectorNotFoundException {

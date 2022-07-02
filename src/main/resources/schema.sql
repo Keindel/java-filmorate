@@ -1,5 +1,5 @@
-drop table if exists mpa, film_genre_coupling, genre_names, likes,
-    friends, friendship_status, films, users, director_names, film_director_coupling;
+drop table if exists mpa, film_genre_coupling, genre_names, likes
+    , friends, friendship_status, films, users, reviews, review_scope, director_names, film_director_coupling;
 
 create table if not exists Mpa
 (
@@ -59,6 +59,36 @@ create table if not exists film_genre_coupling
     film_id     int REFERENCES films (film_id) on delete cascade,
     genre_id    int REFERENCES genre_names (genre_id)
 );
+
+create table if not exists reviews
+(
+    review_id INT auto_increment,
+    CONTENT VARCHAR,
+    IS_POSITIVE boolean,
+    user_id INT,
+    film_id INT,
+    USEFUL INT default(0),
+    constraint REVIEW_PK
+        primary key (review_id),
+    constraint USER_REVIEW_ID
+        foreign key (user_id) references users(user_id),
+    constraint FILM_REVIEW_ID
+        foreign key (film_id) references films(film_id)
+);
+
+create table if not exists review_scope
+(
+    review_id INT,
+    user_id INT,
+    scope BOOLEAN,
+    constraint REVIEW_LIKES_PK
+        primary key (review_id, user_id),
+    constraint REVIEW_LIKES_USERS_USER_ID_FK
+        foreign key (review_id) references reviews (review_id),
+    constraint USER_LIKES_DISLIKES_ID_FK
+        foreign key (user_id) references users (user_id)
+);
+
 
 create table if not exists director_names
 (

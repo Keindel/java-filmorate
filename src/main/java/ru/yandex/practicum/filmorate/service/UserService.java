@@ -1,12 +1,16 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
 import java.util.Collection;
@@ -17,8 +21,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    @Qualifier("userDbStorage")
-    private final Storage<User> userStorage;
+
+    private final UserDbStorage userStorage;
+    private final FilmDbStorage filmStorage;
 
     public Collection<User> findAll() {
         return userStorage.findAll();
@@ -43,13 +48,11 @@ public class UserService {
     }
 
     public void requestFriendship(Long userId, Long friendToAddId) throws UserNotFoundException, FilmNotFoundException {
-        UserDbStorage userDbStorage = (UserDbStorage) userStorage;
-        userDbStorage.requestFriendship(userId, friendToAddId);
+        userStorage.requestFriendship(userId, friendToAddId);
     }
 
     public void deleteFriend(Long userId, Long friendToDellId) throws UserNotFoundException, FilmNotFoundException {
-        UserDbStorage userDbStorage = (UserDbStorage) userStorage;
-        userDbStorage.deleteFriendFromUser(userId, friendToDellId);
+        userStorage.deleteFriendFromUser(userId, friendToDellId);
     }
 
     public Collection<Long> getMutualFriendsIds(Long user1Id, Long user2Id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
@@ -62,9 +65,8 @@ public class UserService {
                 .filter(friendId -> {
                     try {
                         return userStorage.getById(otherUserId).getFriends().containsKey(friendId);
-                    } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
-                             GenreNotFoundException | DirectorNotFoundException e) {
-                        throw new RuntimeException(e);
+                    } catch (UserNotFoundException e) {
+                        return false;
                     }
                 })
                 .collect(Collectors.toList());
@@ -74,5 +76,13 @@ public class UserService {
         Map<Long, FriendshipStatus> friendsMap = userStorage.getById(userId).getFriends();
         if (friendsMap == null) return 0;
         return friendsMap.size();
+    }
+
+    public Collection<Film> recommendFilmsForUser(Long id) {
+        return filmStorage.getFilmsWithOneSideLikeFromOthers(id);
+    }
+
+    public void deleteById(Long userId) throws UserNotFoundException, FilmNotFoundException {
+        userStorage.deleteById(userId);
     }
 }
