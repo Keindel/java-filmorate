@@ -90,4 +90,11 @@ public class UserController {
     public Collection<Film> recommendFilmsForUser(@PathVariable Long id) {
         return userService.recommendFilmsForUser(id);
     }
+
+
+    @DeleteMapping("/{userId}")
+    public void deleteUserById(@PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
+        userService.deleteById(userId);
+    }
 }
+

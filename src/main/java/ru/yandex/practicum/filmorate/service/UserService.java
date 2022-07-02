@@ -83,4 +83,8 @@ public class UserService {
     public Collection<Film> recommendFilmsForUser(Long id) {
         return filmStorage.getFilmsWithOneSideLikeFromOthers(id);
     }
+
+    public void deleteById(Long userId) throws UserNotFoundException, FilmNotFoundException {
+        userStorage.deleteById(userId);
+    }
 }
