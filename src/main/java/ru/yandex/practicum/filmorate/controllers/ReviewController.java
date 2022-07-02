@@ -18,7 +18,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public Review createReview(@Valid @RequestBody @NonNull Review review) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+    public Review createReview(@Valid @RequestBody @NonNull Review review) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException, DirectorNotFoundException {
         return reviewService.createReview(review);
     }
 
@@ -26,7 +26,7 @@ public class ReviewController {
     @PutMapping()
     public Review updateReview(@Valid @RequestBody @NonNull Review review) throws ReviewNotFoundException,
             UserNotFoundException,
-            FilmNotFoundException {
+            FilmNotFoundException, DirectorNotFoundException {
         reviewService.updateReview(review);
         return review;
     }

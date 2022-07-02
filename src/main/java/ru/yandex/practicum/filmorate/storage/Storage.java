@@ -8,13 +8,13 @@ public interface Storage<T> {
 
     long getSize();
 
-    T getById(Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException;
+    T getById(Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException;
 
     Collection<T> findAll();
 
-    T create(T t);
+    T create(T t) throws DirectorValidationException;
 
-    void update(T t) throws UserNotFoundException, FilmNotFoundException;
+    void update(T t) throws UserNotFoundException, FilmNotFoundException, DirectorNotFoundException;
 
-    void deleteById(Long id) throws UserNotFoundException, FilmNotFoundException;
+    void deleteById(Long id) throws UserNotFoundException, FilmNotFoundException, DirectorNotFoundException;
 }

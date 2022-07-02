@@ -24,6 +24,7 @@ public class ErrorHandler {
             , UserNotFoundException.class
             , MpaNotFoundException.class
             , GenreNotFoundException.class
+            , DirectorNotFoundException.class
             , ReviewNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(final Exception e) {

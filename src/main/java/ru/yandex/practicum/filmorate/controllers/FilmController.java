@@ -6,13 +6,11 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.xml.bind.ValidationException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -27,7 +25,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Film getFilmById(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
         return filmService.getById(id);
     }
 
@@ -71,4 +69,10 @@ public class FilmController {
     public Collection<Film> getCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) throws UserNotFoundException {
         return filmService.getCommonFilms(userId, friendId);
     }
+
+    @GetMapping("/director/{directorId}")
+    public Collection<Film> getSortedFilms(@PathVariable long directorId, @RequestParam String sortBy) throws ValidationException, DirectorNotFoundException {
+        return filmService.getSortedFilms(directorId, sortBy);
+    }
+
 }

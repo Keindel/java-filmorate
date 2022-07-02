@@ -1,22 +1,21 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exceptions.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import javax.xml.bind.ValidationException;
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
@@ -29,7 +28,6 @@ public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -41,11 +39,29 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException {
+    public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException, DirectorNotFoundException {
         Film film = getWithoutGenresByIdOrThrowEx(id);
+        setDirectors(film);
         setGenresToFilm(film);
         setUsersIdsLiked(film);
         return film;
+    }
+
+    private void setDirectors(Film film) {
+        String sqlQuery1 = "SELECT count(*) FROM film_director_coupling where film_id = ?";
+        long result = jdbcTemplate.queryForObject(sqlQuery1, Long.class, film.getId());
+        if (result < 1) {
+            film.setDirectors(new ArrayList<>());
+        } else {
+            String sqlQuery = "select DN.director_id, DN.director_name from director_names DN left outer join film_director_coupling F on DN.director_id = F.director_id where F.film_id = ?";
+            List<Director> directors;
+            directors = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> mapRowToDirector(rs, rowNum), film.getId());
+            film.setDirectors(directors);
+        }
+    }
+
+    private Director mapRowToDirector(ResultSet rs, int rowNum) throws SQLException {
+        return new Director(rs.getLong("director_id"), rs.getString("director_name"));
     }
 
     private Film getWithoutGenresByIdOrThrowEx(Long id) throws FilmNotFoundException {
@@ -104,7 +120,10 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name" +
                 " from films as f " +
                 " left join MPA on f.mpa_id = mpa.ID";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
+
+        Collection<Film> films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
+        films.forEach(film -> setDirectors(film));
+        return films;
     }
 
     @Override
@@ -126,8 +145,8 @@ public class FilmDbStorage implements FilmStorage {
 
         long idFromDb = Objects.requireNonNull(keyHolder.getKey()).longValue();
         film.setId(idFromDb);
-
         addFilmGenresToDb(film);
+        addFilmDirectorstoDB(film);
         return film;
     }
 
@@ -157,6 +176,20 @@ public class FilmDbStorage implements FilmStorage {
                 , film.getId());
         if (filmsUpdated == 0) throw new FilmNotFoundException();
         addFilmGenresToDb(film);
+        addFilmDirectorstoDB(film);
+    }
+
+    private void addFilmDirectorstoDB(Film film) {
+        String sqlDirectorsDelete = "delete from film_director_coupling" +
+                " where film_id = ?";
+        jdbcTemplate.update(sqlDirectorsDelete, film.getId());
+        String sqlDirectorInsert = "insert into film_director_coupling (film_id, director_id)" +
+                " values (?, ?)";
+        if (film.getDirectors() != null) {
+            film.getDirectors().forEach(director -> jdbcTemplate.update(sqlDirectorInsert,
+                    film.getId(),
+                    director.getId()));
+        }
     }
 
     @Override
@@ -205,7 +238,7 @@ public class FilmDbStorage implements FilmStorage {
         Collection<Film> films = filmsIds.stream().map(x -> {
             try {
                 return getById(x);
-            } catch (UserNotFoundException | FilmNotFoundException e) {
+            } catch (UserNotFoundException | FilmNotFoundException | DirectorNotFoundException e) {
                 return null;
             }
         }).collect(Collectors.toList());
@@ -239,6 +272,7 @@ public class FilmDbStorage implements FilmStorage {
             films = new ArrayList<>(getAllFilmsForGenre(count, genreId));
         } else {
             films = new ArrayList<>(jdbcTemplate.query(sqlGetPopularFilms, this::mapRowToFilm, count));
+            films.forEach(this::setGenresToFilm);
         }
         return films;
     }
@@ -269,5 +303,41 @@ public class FilmDbStorage implements FilmStorage {
          List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithGenre, this::mapRowToFilm, genreId, count);
          films.forEach(this::setGenresToFilm);
          return films;
+    }
+
+    public Collection<Film> getDirectorFilms(long directorId, String sortBy) throws ValidationException, DirectorNotFoundException {
+        String sqlQuery1 = "select count(*) from director_names where director_id = ?";
+        long result = jdbcTemplate.queryForObject(sqlQuery1, Long.class, directorId);
+        if (result != 1) throw new DirectorNotFoundException();
+
+        String sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name\n" +
+                "from films as f\n" +
+                "left join MPA on f.mpa_id = mpa.ID\n" +
+                "left join film_director_coupling as fdc ON f.film_id = fdc.film_id\n" +
+                "left join likes as l ON f.film_id = l.film_id where fdc.director_id = ?\n";
+        Collection<Film> films;
+        if (sortBy.equals("likes")){
+            films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
+
+            films.forEach(film -> {
+                setDirectors(film);
+                setGenresToFilm(film);
+                setUsersIdsLiked(film);
+            } );
+            films.stream().sorted(Comparator.comparingInt(
+                    o -> o.getUsersIdsLiked().size()));
+
+        } else if (sortBy.equals("year")) {
+            sqlQuery = sqlQuery + "order by release_date ASC;";
+            films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
+            films.forEach(film -> {
+                setDirectors(film);
+                setGenresToFilm(film);
+                setUsersIdsLiked(film);
+            } );
+        } else {
+            throw new ValidationException("Такой вариант сортировки не предусмотрен");
+        }
+        return films;
     }
 }

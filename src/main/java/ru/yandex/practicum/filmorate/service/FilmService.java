@@ -9,11 +9,11 @@ import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
+import javax.xml.bind.ValidationException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,7 +36,7 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
-    public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
         return filmStorage.getById(id);
     }
 
@@ -78,7 +78,7 @@ public class FilmService {
         return genreStorage.findAll();
     }
 
-    public Genre getGenreById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Genre getGenreById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
         return genreStorage.getById(id);
     }
 
@@ -86,7 +86,7 @@ public class FilmService {
         return mpaStorage.findAll();
     }
 
-    public Mpa getMpaById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Mpa getMpaById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
         return mpaStorage.getById(id);
     }
 
@@ -107,4 +107,9 @@ public class FilmService {
     public Collection<Film> mostPopularFilms(Integer count, Integer year, Integer genreId) {
         return filmStorage.getPopularFilms(count, year, genreId);
     }
+
+    public Collection<Film> getSortedFilms(long directorId, String sortBy) throws ValidationException, DirectorNotFoundException {
+        return filmStorage.getDirectorFilms(directorId, sortBy);
+    }
+
 }
