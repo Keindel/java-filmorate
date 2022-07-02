@@ -84,4 +84,9 @@ public class UserController {
     public void deleteFriendship(@PathVariable Long id, @PathVariable Long friendId) throws UserNotFoundException, FilmNotFoundException {
         userService.deleteFriend(id, friendId);
     }
+
+    @DeleteMapping("/{userId}")
+    public void deleteUserById(@PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
+        userService.deleteById(userId);
+    }
 }
