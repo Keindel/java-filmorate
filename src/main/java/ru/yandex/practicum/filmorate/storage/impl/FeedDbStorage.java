@@ -25,7 +25,6 @@ public class FeedDbStorage implements FeedStorage {
 
     /**
      * добавление в друзья
-     *
      * @param userId
      * @param friendToAddId
      * @throws UserNotFoundException
@@ -33,7 +32,7 @@ public class FeedDbStorage implements FeedStorage {
     public void addFriend(long userId, long friendToAddId) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sqlQuery =
-            "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
+            "insert into feeds( userId, timestamp, eventType, operation, entityId)" +
                 " values(?,?, ?, ?,?)";
         jdbcTemplate.update(sqlQuery
             , userId
@@ -45,14 +44,13 @@ public class FeedDbStorage implements FeedStorage {
 
     /**
      * удаление из друзей
-     *
      * @param userId
      * @param friendId
      */
     public void deleteFriend(long userId, long friendId) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sqlQuery =
-                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
+                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , userId
@@ -64,7 +62,6 @@ public class FeedDbStorage implements FeedStorage {
 
     /**
      * обновление друзей
-     *
      * @param userId
      * @param friendId
      */
@@ -82,7 +79,7 @@ public class FeedDbStorage implements FeedStorage {
                 entityId = rowSet.getInt("entityId");
             }
             sqlQuery =
-                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
+                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , userId
@@ -111,7 +108,7 @@ public class FeedDbStorage implements FeedStorage {
                 friend_id = 2;
             }
             String sqlQuery =
-                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
+                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , userId
@@ -138,7 +135,7 @@ public class FeedDbStorage implements FeedStorage {
                 friend_id = 2;
             }
             String sqlQuery =
-                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
+                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , userId
@@ -165,7 +162,7 @@ public class FeedDbStorage implements FeedStorage {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             int entityId = 0;
             sqlQuery =
-                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
+                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , userId
@@ -181,7 +178,7 @@ public class FeedDbStorage implements FeedStorage {
     public void addReview(Review review){
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sqlQuery =
-            "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
+            "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                 " values(?,?, ?, ?,?)";
         jdbcTemplate.update(sqlQuery
             , review.getUserId()
@@ -194,7 +191,7 @@ public class FeedDbStorage implements FeedStorage {
     public void updateReview(Review review) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             String sqlQuery =
-                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
+                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , 1
@@ -215,7 +212,7 @@ public class FeedDbStorage implements FeedStorage {
         if (userId != -1) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             sqlQuery =
-                "insert into feeds(userId, timestamp,eventType, operation, entityId)" +
+                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                 , userId
@@ -227,19 +224,12 @@ public class FeedDbStorage implements FeedStorage {
     }
 
     public Collection<Feed> feeds(Long id){
-//        String sqlQuery2 ="select friend_id from friends where userId = ? ";
-//        List<Integer> a = jdbcTemplate.queryForList(sqlQuery2,Integer.class, id);
-//        String sqlQuery ="select timestamp, userId,eventType, operation,eventId, entityId from feeds where userId = (" +
-//            "select friend_id from friends where userId = ? )";
-        //String sqlQuery ="select timestamp, userId,eventType, operation,eventId, entityId from feeds where userId = 1";
-        //return jdbcTemplate.query(sqlQuery, this::mapRowToFeed);
-        String sqlQuery ="select timestamp, userId,eventType, operation,eventId, entityId from feeds where userId = ?";
+        String sqlQuery ="select timestamp, userId, eventType, operation, eventId, entityId from feeds where userId = ?";
         List<Feed> feeds = jdbcTemplate.query(sqlQuery, this::mapRowToFeed, id);
         return feeds;
     }
 
     private Feed mapRowToFeed(ResultSet rs, int rowNum) throws SQLException {
-        // timestamp, userId, eventType, operation,eventId, entityId
         return Feed.builder()
             .timestamp( rs.getLong("timestamp"))
             .userId(rs.getInt("userId"))
