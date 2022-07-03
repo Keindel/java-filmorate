@@ -245,14 +245,6 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-    public Collection<Film> getAllFilmsWithLikesFromUser(Long userid){
-        String sqlGetAllFilmsWithLikesFromUser = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, mpa.name " +
-                "FROM films as f " +
-                "JOIN mpa ON f.mpa_id = mpa.id " +
-                "JOIN likes AS l ON f.film_id = l.film_id " +
-                "WHERE like_from_user = ? ";
-        return jdbcTemplate.query(sqlGetAllFilmsWithLikesFromUser, this::mapRowToFilm, userid);
-    }
     public List<Film> getPopularFilms(Integer count, Integer year, Integer genreId) {
         String sqlGetPopularFilms = "SELECT  f.*, m.NAME" +
                 " FROM films AS f" +
