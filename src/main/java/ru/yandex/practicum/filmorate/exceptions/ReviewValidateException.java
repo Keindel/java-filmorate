@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.exceptions;
 
+
 public class ReviewValidateException extends Exception{
     public ReviewValidateException() {
     }

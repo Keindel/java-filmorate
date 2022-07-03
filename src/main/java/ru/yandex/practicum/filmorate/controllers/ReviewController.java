@@ -24,6 +24,10 @@ public class ReviewController {
         Review review1 = reviewService.createReview(review);
         feedService.addReview(review);
         return review1;
+
+    @PostMapping
+    public Review createReview(@Valid @RequestBody @NonNull Review review) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException, DirectorNotFoundException {
+        return reviewService.createReview(review);
     }
 
 
@@ -33,6 +37,9 @@ public class ReviewController {
         FilmNotFoundException {
         reviewService.updateReview(review);
         feedService.updateReview(review);
+            UserNotFoundException,
+            FilmNotFoundException, DirectorNotFoundException {
+        reviewService.updateReview(review);
         return review;
     }
 

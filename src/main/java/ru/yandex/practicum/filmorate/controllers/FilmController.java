@@ -12,8 +12,8 @@ import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.xml.bind.ValidationException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -29,7 +29,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Film getFilmById(@PathVariable Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
         return filmService.getById(id);
     }
 
@@ -73,18 +73,17 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getCountTop(@RequestParam(defaultValue = "10") int count) {
-        return filmService.getCountTopIds(count).stream()
-                .map(id -> {
-                    try {
-                        return filmService.getById(id);
-                    } catch (UserNotFoundException | FilmNotFoundException | MpaNotFoundException |
-                             GenreNotFoundException e) {
-                        return null;
-                    }
-                })
-                .collect(Collectors.toList());
+    public Collection<Film> mostPopularFilms(@RequestParam(defaultValue = "10") Integer count,
+                                       @RequestParam(required = false) Integer year,
+                                       @RequestParam(required = false) Integer genreId) {
+        return filmService.mostPopularFilms(count, year, genreId);
     }
+
+    @GetMapping("/director/{directorId}")
+    public Collection<Film> getSortedFilms(@PathVariable long directorId, @RequestParam String sortBy) throws ValidationException, DirectorNotFoundException {
+        return filmService.getSortedFilms(directorId, sortBy);
+    }
+
 
     @DeleteMapping("/{filmId}")
     public void deleteFilmById(@PathVariable Long filmId) throws FilmNotFoundException {
