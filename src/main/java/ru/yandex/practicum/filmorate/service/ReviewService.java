@@ -52,9 +52,9 @@ public class ReviewService {
 
     public List<Review> getReviewByFilmId(Long filmId, Long count) {
         return reviewStorage.getReviewByFilmId(filmId, count)
-                .stream()
-                .sorted((o1, o2) -> o2.getUseful()- o1.getUseful())
-                .collect(Collectors.toList());
+            .stream()
+            .sorted((o1, o2) -> o2.getUseful()- o1.getUseful())
+            .collect(Collectors.toList());
     }
 
     public Collection<Review> findAll() {
@@ -124,3 +124,4 @@ public class ReviewService {
         }
     }
 }
+

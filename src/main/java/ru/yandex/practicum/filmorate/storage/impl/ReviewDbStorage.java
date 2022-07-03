@@ -26,11 +26,11 @@ public class ReviewDbStorage implements ReviewStorage {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("reviews").usingGeneratedKeyColumns("review_id");
         SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("content", review.getContent())
-                .addValue("is_positive", review.getIsPositive())
-                .addValue("user_id", review.getUserId())
-                .addValue("film_id", review.getFilmId())
-                .addValue("useful", review.getUseful());
+            .addValue("content", review.getContent())
+            .addValue("is_positive", review.getIsPositive())
+            .addValue("user_id", review.getUserId())
+            .addValue("film_id", review.getFilmId())
+            .addValue("useful", review.getUseful());
         Number num = jdbcInsert.executeAndReturnKey(parameters);
         review.setId(num.longValue());
         log.info("Review {} saved successfully", review.getContent());
@@ -135,25 +135,25 @@ public class ReviewDbStorage implements ReviewStorage {
     private Set<Long> getLikes(ResultSet rs) throws SQLException {
         String sqlGetLikes = "SELECT * FROM review_scope WHERE review_id = ? AND scope = true";
         return new HashSet<>(jdbcTemplate.query(sqlGetLikes, (rs1, rowNum)
-                -> rs1.getLong("user_id"), rs.getLong("review_id")));
+            -> rs1.getLong("user_id"), rs.getLong("review_id")));
     }
 
     private Set<Long> getDislikes(ResultSet rs) throws SQLException {
         String sqlGetDislikes = "SELECT * FROM review_scope WHERE review_id = ? AND scope = true";
         return new HashSet<>(jdbcTemplate.query(sqlGetDislikes, (rs1, rowNum)
-                -> rs1.getLong("user_id"), rs.getLong("review_id")));
+            -> rs1.getLong("user_id"), rs.getLong("review_id")));
     }
 
 
     private Review mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new Review(rs.getLong("review_id"),
-                rs.getString("content"),
-                rs.getBoolean("is_positive"),
-                rs.getLong("user_id"),
-                rs.getLong("film_id"),
-                rs.getInt("useful"),
-                getLikes(rs),
-                getDislikes(rs));
+            rs.getString("content"),
+            rs.getBoolean("is_positive"),
+            rs.getLong("user_id"),
+            rs.getLong("film_id"),
+            rs.getInt("useful"),
+            getLikes(rs),
+            getDislikes(rs));
     }
 }
 
