@@ -51,11 +51,11 @@ public class UserService {
         userStorage.requestFriendship(userId, friendToAddId);
     }
 
-    public void deleteFriend(Long userId, Long friendToDellId) throws UserNotFoundException, FilmNotFoundException {
+    public void deleteFriend(Long userId, Long friendToDellId) throws UserNotFoundException {
         userStorage.deleteFriendFromUser(userId, friendToDellId);
     }
 
-    public Collection<Long> getMutualFriendsIds(Long user1Id, Long user2Id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
+    public Collection<Long> getMutualFriendsIds(Long user1Id, Long user2Id) throws UserNotFoundException {
         long userIdWithLessFriends = Long.min(getFriendsNum(user1Id), getFriendsNum(user2Id));
         if (userIdWithLessFriends == 0) return Collections.emptyList();
         long otherUserId = user1Id - userIdWithLessFriends + user2Id ;
@@ -72,14 +72,14 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    private int getFriendsNum(Long userId) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
+    private int getFriendsNum(Long userId) throws UserNotFoundException {
         Map<Long, FriendshipStatus> friendsMap = userStorage.getById(userId).getFriends();
         if (friendsMap == null) return 0;
         return friendsMap.size();
     }
 
     public Collection<Film> recommendFilmsForUser(Long id) {
-        return filmStorage.getFilmsWithOneSideLikeFromOthers(id);
+        return filmStorage.getFilmsWithOneSideMarkFromOthers(id);
     }
 
     public void deleteById(Long userId) throws UserNotFoundException, FilmNotFoundException {
