@@ -6,14 +6,12 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import javax.xml.bind.ValidationException;
-import java.util.*;
+import java.util.Collection;
 
 @Slf4j
 @RestController
@@ -54,11 +52,7 @@ public class FilmController {
      */
     @PutMapping("/{id}/like/{userId}")
     public void addLikeFromUser(@PathVariable("id") Long filmId, @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
-        boolean result = feedService.updateLikeFromUser(filmId, userId);
         filmService.likeFromUser(filmId, userId);
-        if (!result) {
-            feedService.likeFromUser(filmId, userId);
-        }
     }
 
     /**

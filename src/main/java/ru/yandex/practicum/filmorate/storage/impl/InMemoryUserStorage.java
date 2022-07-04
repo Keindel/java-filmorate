@@ -16,7 +16,7 @@ public class InMemoryUserStorage implements UserStorage {
     private static int nextId = 1;
 
     @Override
-    public long getSize() {
+    public long getCount() {
         return users.size();
     }
 

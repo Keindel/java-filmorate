@@ -73,21 +73,21 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
-    public long getSize() {
+    public long getCount() {
         String sqlGetSize = "SELECT COUNT(*) FROM reviews";
         log.info("Received total number of reviews");
         return jdbcTemplate.queryForObject(sqlGetSize, Long.class);
     }
 
-    public List<Long> findAllIds() {
-        String sqlFindAllIds = "SELECT R.review_id FROM reviews AS R";
+    public Boolean findReviewId(Long id) {
+        String sqlFindAllIds = "SELECT EXISTS(SELECT R.review_id FROM reviews AS R WHERE REVIEW_ID = ?)";
         log.info("Got id of all reviews");
-        return jdbcTemplate.query(sqlFindAllIds, (rs, rowNum) -> rs.getLong("review_id"));
+        return jdbcTemplate.queryForObject(sqlFindAllIds, Boolean.class, id);
     }
 
     public List<Review> getReviewByFilmId(Long filmId, Long count) {
-        String sqlCountReviewByFilm = "SELECT * FROM reviews WHERE film_id = ? LIMIT ?";
-        String sqlCountAllReviewWithoutFilm = "SELECT * FROM reviews LIMIT ?";
+        String sqlCountReviewByFilm = "SELECT r.* FROM reviews AS r WHERE film_id = ? ORDER BY r.useful DESC LIMIT ?";
+        String sqlCountAllReviewWithoutFilm = "SELECT r.* FROM reviews AS r ORDER BY r.useful DESC LIMIT ?";
         if (Objects.nonNull(filmId)) {
             log.info("Received {} reviews for the film {}", count, filmId);
             return jdbcTemplate.query(sqlCountReviewByFilm, this::mapRow, filmId, count);
@@ -139,7 +139,7 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     private Set<Long> getDislikes(ResultSet rs) throws SQLException {
-        String sqlGetDislikes = "SELECT * FROM review_scope WHERE review_id = ? AND scope = true";
+        String sqlGetDislikes = "SELECT * FROM review_scope WHERE review_id = ? AND scope = false";
         return new HashSet<>(jdbcTemplate.query(sqlGetDislikes, (rs1, rowNum)
             -> rs1.getLong("user_id"), rs.getLong("review_id")));
     }
