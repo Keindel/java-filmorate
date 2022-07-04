@@ -331,11 +331,13 @@ public class FilmDbStorage implements FilmStorage {
         long result = jdbcTemplate.queryForObject(sqlQuery1, Long.class, directorId);
         if (result != 1) throw new DirectorNotFoundException();
 
-        String sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name\n" +
-                "from films as f\n" +
-                "left join MPA on f.mpa_id = mpa.ID\n" +
-                "left join film_director_coupling as fdc ON f.film_id = fdc.film_id\n" +
-                "left join marks ON f.film_id = marks.film_id where fdc.director_id = ?\n";
+        String sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name " +
+                "from films as f " +
+                "left join MPA on f.mpa_id = mpa.ID " +
+                "left join film_director_coupling as fdc ON f.film_id = fdc.film_id " +
+                "left join marks ON f.film_id = marks.film_id " +
+                "where fdc.director_id = ? " +
+                "order by avg(marks.mark)";
         List<Film> films;
         if (sortBy.equals("marks")){
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
@@ -346,9 +348,6 @@ public class FilmDbStorage implements FilmStorage {
                 setUsersIdsMarks(film);
                 setFilmRating(film);
             } );
-            films.sort(Comparator.comparingInt(
-                    o -> o.getUsersIdsMarks().size()));
-
         } else if (sortBy.equals("year")) {
             sqlQuery = sqlQuery + "order by release_date ASC;";
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
