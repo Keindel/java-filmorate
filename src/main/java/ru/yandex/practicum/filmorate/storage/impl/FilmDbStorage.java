@@ -33,7 +33,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public long getSize() {
+    public long getCount() {
         String sqlQuery = "select COUNT(*) from films";
         return jdbcTemplate.queryForObject(sqlQuery, Long.class);
     }

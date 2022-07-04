@@ -32,7 +32,7 @@ public class DirectorService {
     }
 
     public long getSize() {
-        return directorStorage.getSize();
+        return directorStorage.getCount();
     }
 
     public void update(Director director) throws DirectorNotFoundException, UserNotFoundException, FilmNotFoundException {

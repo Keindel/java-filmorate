@@ -34,7 +34,7 @@ public class UserService {
     }
 
     public long getSize() {
-        return userStorage.getSize();
+        return userStorage.getCount();
     }
 
     public User create(User user) throws DirectorValidationException {

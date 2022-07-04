@@ -24,7 +24,7 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public long getSize() {
+    public long getCount() {
         String sqlQuery = "select COUNT(*) from director_names";
         return jdbcTemplate.queryForObject(sqlQuery, Long.class);
     }
