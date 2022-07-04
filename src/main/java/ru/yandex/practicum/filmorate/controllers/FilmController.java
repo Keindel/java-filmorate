@@ -75,4 +75,8 @@ public class FilmController {
         return filmService.getSortedFilms(directorId, sortBy);
     }
 
+    @GetMapping("/search")
+    public Collection<Film> getSearch(@RequestParam String query, @RequestParam String by) throws ValidationException {
+        return filmService.getSearch(query, by);
+    }
 }

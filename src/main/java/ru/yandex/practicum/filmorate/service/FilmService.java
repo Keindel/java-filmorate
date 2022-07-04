@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.*;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -112,4 +113,7 @@ public class FilmService {
         return filmStorage.getDirectorFilms(directorId, sortBy);
     }
 
+    public Collection<Film> getSearch(String query, String by) throws ValidationException {
+        return filmStorage.getSearch(query, by);
+    }
 }
