@@ -6,11 +6,12 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import javax.xml.bind.ValidationException;
-import java.util.*;
+import java.util.Collection;
 
 @Slf4j
 @RestController
@@ -18,6 +19,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FilmController {
     private final FilmService filmService;
+    private final FeedService feedService;
 
     @GetMapping()
     public Collection<Film> findAll() {
@@ -43,14 +45,25 @@ public class FilmController {
         return film;
     }
 
+    /**
+     * пользователь ставит лайк фильму
+     * @param filmId
+     * @param userId
+     */
     @PutMapping("/{id}/like/{userId}")
     public void addLikeFromUser(@PathVariable("id") Long filmId, @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
         filmService.likeFromUser(filmId, userId);
     }
 
+    /**
+     * пользователь удаляет лайк
+     * @param filmId
+     * @param userId
+     */
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLikeFromUser(@PathVariable("id") Long filmId, @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
         filmService.unlikeFromUser(filmId, userId);
+        feedService.unlikeFromUser(filmId, userId);
     }
 
     @GetMapping("/popular")
@@ -60,6 +73,12 @@ public class FilmController {
         return filmService.mostPopularFilms(count, year, genreId);
     }
 
+    @GetMapping("/director/{directorId}")
+    public Collection<Film> getSortedFilms(@PathVariable long directorId, @RequestParam String sortBy) throws ValidationException, DirectorNotFoundException {
+        return filmService.getSortedFilms(directorId, sortBy);
+    }
+
+
     @DeleteMapping("/{filmId}")
     public void deleteFilmById(@PathVariable Long filmId) throws FilmNotFoundException {
         filmService.deleteById(filmId);
@@ -68,15 +87,5 @@ public class FilmController {
     @GetMapping("/common")
     public Collection<Film> getCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) throws UserNotFoundException {
         return filmService.getCommonFilms(userId, friendId);
-    }
-
-    @GetMapping("/director/{directorId}")
-    public Collection<Film> getSortedFilms(@PathVariable long directorId, @RequestParam String sortBy) throws ValidationException, DirectorNotFoundException {
-        return filmService.getSortedFilms(directorId, sortBy);
-    }
-
-    @GetMapping("/search")
-    public Collection<Film> getSearch(@RequestParam String query, @RequestParam String by) throws ValidationException {
-        return filmService.getSearch(query, by);
     }
 }

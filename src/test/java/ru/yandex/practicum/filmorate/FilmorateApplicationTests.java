@@ -70,7 +70,7 @@ class FilmoRateApplicationTests {
 
     @Test
     public void testGetSizeOfUsers() {
-        Optional<Long> sizeOptional = Optional.of(userDbStorage.getSize());
+        Optional<Long> sizeOptional = Optional.of(userDbStorage.getCount());
 
         assertThat(sizeOptional)
                 .isPresent()

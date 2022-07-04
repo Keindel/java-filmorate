@@ -31,7 +31,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public long getSize() {
+    public long getCount() {
         String sqlQuery = "select COUNT(*) from users";
         return jdbcTemplate.queryForObject(sqlQuery, Long.class);
     }

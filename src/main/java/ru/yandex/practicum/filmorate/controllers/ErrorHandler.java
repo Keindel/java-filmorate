@@ -10,8 +10,8 @@ import ru.yandex.practicum.filmorate.exceptions.*;
 import java.util.Map;
 
 @RestControllerAdvice(basePackages = {"ru.yandex.practicum.filmorate.controllers",
-        "ru.yandex.practicum.filmorate.storage",
-        "ru.yandex.practicum.filmorate.service"})
+    "ru.yandex.practicum.filmorate.storage",
+    "ru.yandex.practicum.filmorate.service"})
 public class ErrorHandler {
 
     @ExceptionHandler({FilmValidationException.class, UserValidationException.class})

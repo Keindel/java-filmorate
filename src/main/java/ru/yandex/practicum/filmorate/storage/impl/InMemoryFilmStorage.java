@@ -16,7 +16,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     private static int nextId = 1;
 
     @Override
-    public long getSize() {
+    public long getCount() {
         return films.size();
     }
 

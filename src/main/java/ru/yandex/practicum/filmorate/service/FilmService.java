@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import com.fasterxml.jackson.databind.type.CollectionLikeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,13 +15,15 @@ import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
 import javax.xml.bind.ValidationException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class FilmService {
+    private final FeedService feedService;
     @Qualifier("filmDbStorage")
     private final FilmDbStorage filmStorage;
     @Qualifier("userDbStorage")
@@ -55,7 +56,7 @@ public class FilmService {
     }
 
     public long getSize() {
-        return filmStorage.getSize();
+        return filmStorage.getCount();
     }
 
     public Film update(Film film) throws FilmValidationException, UserNotFoundException, FilmNotFoundException {
@@ -66,8 +67,12 @@ public class FilmService {
     }
 
     public void likeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
+        boolean result = feedService.updateLikeFromUser(filmId, userId);
         userStorage.getWithoutFriendsByIdOrThrowEx(userId);
         filmStorage.likeFromUser(filmId, userId);
+        if (!result) {
+            feedService.likeFromUser(filmId, userId);
+        }
     }
 
     public void unlikeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {

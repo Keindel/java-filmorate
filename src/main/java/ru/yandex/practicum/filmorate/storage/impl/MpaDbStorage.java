@@ -24,7 +24,7 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
-    public long getSize() {
+    public long getCount() {
         String sqlQuery = "select COUNT(*) from mpa";
         return jdbcTemplate.queryForObject(sqlQuery, Long.class);
     }
