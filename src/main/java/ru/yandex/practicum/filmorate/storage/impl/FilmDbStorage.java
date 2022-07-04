@@ -44,6 +44,7 @@ public class FilmDbStorage implements FilmStorage {
         setDirectors(film);
         setGenresToFilm(film);
         setUsersIdsMarks(film);
+        setFilmRating(film);
         return film;
     }
 
@@ -103,6 +104,12 @@ public class FilmDbStorage implements FilmStorage {
                     , rowSet.getInt("mark"));
         }
         film.setUsersIdsMarks(usersIdsMarks);
+    }
+
+    private void setFilmRating(Film film){
+        String sqlGetRating = "SELECT AVG(m.mark) FROM marks AS m WHERE m.film_id = ?";
+        double rating = jdbcTemplate.queryForObject(sqlGetRating, Double.class, film.getId());
+        film.setRating(rating);
     }
 
     private Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
@@ -272,6 +279,7 @@ public class FilmDbStorage implements FilmStorage {
                 setDirectors(film);
                 setGenresToFilm(film);
                 setUsersIdsMarks(film);
+                setFilmRating(film);
             } );
         }
         return films;
@@ -291,6 +299,7 @@ public class FilmDbStorage implements FilmStorage {
             setDirectors(film);
             setGenresToFilm(film);
             setUsersIdsMarks(film);
+            setFilmRating(film);
         } );
         return films;
     }
@@ -311,6 +320,7 @@ public class FilmDbStorage implements FilmStorage {
             setDirectors(film);
             setGenresToFilm(film);
             setUsersIdsMarks(film);
+            setFilmRating(film);
         } );
          return films;
     }
@@ -334,6 +344,7 @@ public class FilmDbStorage implements FilmStorage {
                 setDirectors(film);
                 setGenresToFilm(film);
                 setUsersIdsMarks(film);
+                setFilmRating(film);
             } );
             films.sort(Comparator.comparingInt(
                     o -> o.getUsersIdsMarks().size()));
@@ -345,6 +356,7 @@ public class FilmDbStorage implements FilmStorage {
                 setDirectors(film);
                 setGenresToFilm(film);
                 setUsersIdsMarks(film);
+                setFilmRating(film);
             } );
         } else {
             throw new ValidationException("Такой вариант сортировки не предусмотрен");
