@@ -255,7 +255,7 @@ public class FilmDbStorage implements FilmStorage {
                 " JOIN mpa AS m on m.ID = f.MPA_ID" +
                 " LEFT JOIN marks ON marks.FILM_ID = f.FILM_ID" +
                 " GROUP BY f.FILM_ID" +
-                " ORDER BY COUNT(marks.FILM_ID) DESC LIMIT ? ";
+                " ORDER BY AVG(marks.MARK) DESC LIMIT ? ";
         List<Film> films;
         if (Objects.nonNull(year) && Objects.nonNull(genreId)) {
             List<Film> years = getAllFilmsForYear(count, year);
@@ -268,7 +268,11 @@ public class FilmDbStorage implements FilmStorage {
             films = new ArrayList<>(getAllFilmsForGenre(count, genreId));
         } else {
             films = new ArrayList<>(jdbcTemplate.query(sqlGetPopularFilms, this::mapRowToFilm, count));
-            films.forEach(this::setGenresToFilm);
+            films.forEach(film -> {
+                setDirectors(film);
+                setGenresToFilm(film);
+                setUsersIdsMarks(film);
+            } );
         }
         return films;
     }
@@ -281,9 +285,13 @@ public class FilmDbStorage implements FilmStorage {
                 " LEFT JOIN marks ON marks.FILM_ID = f.FILM_ID" +
                 " WHERE EXTRACT(YEAR FROM f.RELEASE_DATE) = ?" +
                 " GROUP BY f.FILM_ID" +
-                " ORDER BY COUNT(marks.FILM_ID) DESC LIMIT ? ";
+                " ORDER BY AVG(marks.MARK) DESC LIMIT ? ";
         List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithYear, this::mapRowToFilm, year, count);
-        films.forEach(this::setGenresToFilm);
+        films.forEach(film -> {
+            setDirectors(film);
+            setGenresToFilm(film);
+            setUsersIdsMarks(film);
+        } );
         return films;
     }
 
@@ -297,9 +305,13 @@ public class FilmDbStorage implements FilmStorage {
                 " LEFT JOIN genre_names AS gn on gn.GENRE_ID = fg.GENRE_ID" +
                 " WHERE gn.GENRE_ID = ?" +
                 " GROUP BY f.FILM_ID" +
-                " ORDER BY COUNT(marks.FILM_ID) DESC LIMIT ?";
+                " ORDER BY AVG(marks.MARK) DESC LIMIT ?";
          List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithGenre, this::mapRowToFilm, genreId, count);
-         films.forEach(this::setGenresToFilm);
+        films.forEach(film -> {
+            setDirectors(film);
+            setGenresToFilm(film);
+            setUsersIdsMarks(film);
+        } );
          return films;
     }
 
