@@ -341,4 +341,54 @@ public class FilmDbStorage implements FilmStorage {
                 "WHERE like_from_user = ? ";
         return jdbcTemplate.query(sqlGetAllFilmsWithLikesFromUser, this::mapRowToFilm, userid);
     }
+
+    public Collection<Film> getSearch(String query, String by) {
+        query = query.toLowerCase();
+        Collection<Film> films;
+        List<Long> filmIds;
+        switch (by) {
+            case "director":
+                String sqlQueryDirector = "SELECT f.film_id" +
+                        " FROM films AS f" +
+                        " RIGHT JOIN film_director_coupling AS fdc ON f.film_id = fdc.film_id" +
+                        " RIGHT JOIN director_names AS dn ON fdc.director_id = dn.director_id" +
+                        " LEFT JOIN likes AS l ON l.FILM_ID = f.FILM_ID" +
+                        " WHERE lower(dn.director_name) LIKE CONCAT('%', ?, '%')" +
+                        " GROUP BY f.Film_id, dn.DIRECTOR_NAME" +
+                        " ORDER BY COUNT(l.FILM_ID) DESC";
+                filmIds = jdbcTemplate.queryForList(sqlQueryDirector, Long.class, query);
+                break;
+            case "title":
+                String sqlQueryTitle = "SELECT f.Film_id" +
+                        " FROM films AS f" +
+                        " LEFT JOIN likes AS l ON l.FILM_ID = f.FILM_ID" +
+                        " WHERE lower(f.name) LIKE CONCAT('%', ?, '%')" +
+                        " GROUP BY f.Film_id" +
+                        " ORDER BY COUNT(l.FILM_ID) DESC";
+                filmIds = jdbcTemplate.queryForList(sqlQueryTitle, Long.class, query);
+                break;
+            default:
+                String sqlQueryAnyway = "SELECT f.film_id" +
+                        " FROM films AS f" +
+                        " LEFT JOIN film_director_coupling as fdc ON f.film_id = fdc.film_id" +
+                        " LEFT JOIN director_names AS dn ON dn.director_id = fdc.director_id" +
+                        " LEFT JOIN likes AS l ON l.FILM_ID = f.FILM_ID" +
+                        " WHERE LOWER(f.name) LIKE CONCAT('%', ?, '%')" +
+                        " OR LOWER(dn.director_name) LIKE CONCAT('%', ?, '%')" +
+                        " GROUP BY f.Film_id, dn.DIRECTOR_NAME" +
+                        " ORDER BY COUNT(l.FILM_ID) DESC";
+                filmIds = jdbcTemplate.queryForList(sqlQueryAnyway, Long.class, query, query);
+                break;
+        }
+        films = filmIds.stream()
+                .map(filmId -> {
+                    try {
+                        return getById(filmId);
+                    } catch (UserNotFoundException | FilmNotFoundException | DirectorNotFoundException e) {
+                        return null;
+                    }
+                })
+                .collect(Collectors.toList());
+        return films;
+    }
 }
