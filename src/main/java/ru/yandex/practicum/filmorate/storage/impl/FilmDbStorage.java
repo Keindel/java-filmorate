@@ -55,7 +55,7 @@ public class FilmDbStorage implements FilmStorage {
         } else {
             String sqlQuery = "select DN.director_id, DN.director_name from director_names DN left outer join film_director_coupling F on DN.director_id = F.director_id where F.film_id = ?";
             List<Director> directors;
-            directors = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> mapRowToDirector(rs, rowNum), film.getId());
+            directors = jdbcTemplate.query(sqlQuery, this::mapRowToDirector, film.getId());
             film.setDirectors(directors);
         }
     }
@@ -122,7 +122,7 @@ public class FilmDbStorage implements FilmStorage {
                 " left join MPA on f.mpa_id = mpa.ID";
 
         Collection<Film> films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
-        films.forEach(film -> setDirectors(film));
+        films.forEach(this::setDirectors);
         return films;
     }
 
@@ -307,7 +307,7 @@ public class FilmDbStorage implements FilmStorage {
                 "left join MPA on f.mpa_id = mpa.ID\n" +
                 "left join film_director_coupling as fdc ON f.film_id = fdc.film_id\n" +
                 "left join likes as l ON f.film_id = l.film_id where fdc.director_id = ?\n";
-        Collection<Film> films;
+        List<Film> films;
         if (sortBy.equals("likes")){
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
 
@@ -316,7 +316,7 @@ public class FilmDbStorage implements FilmStorage {
                 setGenresToFilm(film);
                 setUsersIdsLiked(film);
             } );
-            films.stream().sorted(Comparator.comparingInt(
+            films.sort(Comparator.comparingInt(
                     o -> o.getUsersIdsLiked().size()));
 
         } else if (sortBy.equals("year")) {
