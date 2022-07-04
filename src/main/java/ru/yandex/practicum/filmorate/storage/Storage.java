@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public interface Storage<T> {
 
-    long getSize();
+    long getCount();
 
     T getById(Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException;
 

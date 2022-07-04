@@ -21,18 +21,12 @@ public class ReviewController {
 
     @PostMapping
     public Review createReview(@Valid @RequestBody @NonNull Review review) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException, DirectorNotFoundException {
-        Review review1 = reviewService.createReview(review);
-        feedService.addReview(review);
-        return review1;
+        return reviewService.createReview(review);
     }
 
 
     @PutMapping()
-    public Review updateReview(@Valid @RequestBody @NonNull Review review) throws ReviewNotFoundException,
-        UserNotFoundException,
-        FilmNotFoundException, DirectorNotFoundException {
-        reviewService.updateReview(review);
-        feedService.updateReview(review);
+    public Review updateReview(@Valid @RequestBody @NonNull Review review) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException, DirectorNotFoundException {
         reviewService.updateReview(review);
         return review;
     }
@@ -40,7 +34,6 @@ public class ReviewController {
 
     @DeleteMapping("/{reviewId}")
     public Review deleteReviewById(@PathVariable Long reviewId) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
-        feedService.deleteReview(reviewId);
         return reviewService.removeReviewById(reviewId);
     }
 

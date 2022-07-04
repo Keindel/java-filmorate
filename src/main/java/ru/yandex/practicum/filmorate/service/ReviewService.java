@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -21,25 +20,32 @@ import java.util.stream.Collectors;
 public class ReviewService {
 
     private final ReviewDbStorage reviewStorage;
+    private final FeedService feedService;
     @Qualifier("filmDbStorage")
     private final FilmDbStorage filmStorage;
     @Qualifier("userDbStorage")
     private final UserDbStorage userStorage;
 
     public Review createReview(Review review) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException, DirectorNotFoundException {
+        int defaultUseful = 0;
         validateReview(review);
-        return reviewStorage.create(review);
+        review.setUseful(defaultUseful);
+        Review updateReview = reviewStorage.create(review);
+        feedService.addReview(review);
+        return updateReview;
     }
 
     public void updateReview(Review review) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException, DirectorNotFoundException {
         validateReview(review);
         reviewStorage.update(review);
+        feedService.updateReview(review);
     }
 
 
     public Review removeReviewById(Long id) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
         validateReviewId(id);
         Review review = reviewStorage.getById(id);
+        feedService.deleteReview(id);
         reviewStorage.deleteById(id);
         return review;
     }
@@ -51,10 +57,7 @@ public class ReviewService {
     }
 
     public List<Review> getReviewByFilmId(Long filmId, Long count) {
-        return reviewStorage.getReviewByFilmId(filmId, count)
-            .stream()
-            .sorted((o1, o2) -> o2.getUseful()- o1.getUseful())
-            .collect(Collectors.toList());
+        return reviewStorage.getReviewByFilmId(filmId, count);
     }
 
     public Collection<Review> findAll() {
@@ -107,7 +110,7 @@ public class ReviewService {
     }
 
     private void validateReviewId(Long id) throws ReviewNotFoundException {
-        if (id <= 0 || !reviewStorage.findAllIds().contains(id)) {
+        if (!reviewStorage.findReviewId(id)) {
             log.warn("review with ID not found");
             throw new ReviewNotFoundException();
         }
