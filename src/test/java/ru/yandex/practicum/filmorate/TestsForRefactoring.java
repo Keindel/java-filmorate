@@ -265,20 +265,29 @@ class TestsForRefactoring {
     }
 
     @Test
-    void rec() throws UserNotFoundException, FilmNotFoundException, MarkValidationException {
-       User user3 = userDbStorage.create(User.builder()
-                .email("abc22@mail.ru")
+    void recommendFilmsForUserTest() throws UserNotFoundException, FilmNotFoundException, MarkValidationException {
+        Film film = filmDbStorage.create(Film.builder()
+                .name("Again and again")
+                .description("Amazing film!").releaseDate(LocalDate.of(2000, 1, 1))
+                .releaseDate(LocalDate.of(2000, 2, 1))
+                .duration(120).genres(filmGenres)
+                .mpa(new Mpa(1, "G"))
+                .genres(filmGenres)
+                .usersIdsMarks(new HashMap<>())
+                .directors(directors)
+                .build());
+
+        userDbStorage.create(User.builder()
+                .email("abc212@mail.ru")
                 .login("login3")
                 .name("name3")
                 .birthday(LocalDate.of(2022, 2, 2))
                 .build());
 
-        filmService.markFromUser(1L,3L,2);
-
-        Collection<Film> s = userService.recommendFilmsForUser(1L);
-        System.out.println(s);
-        System.out.println(s);
-
+        filmService.markFromUser(2L, 3L, 9);
+        filmService.markFromUser(3L, 1L, 6);
+        List<Film> resultList = (List<Film>) userService.recommendFilmsForUser(3L);
+        Assertions.assertEquals(film, resultList.get(0));
     }
 
 

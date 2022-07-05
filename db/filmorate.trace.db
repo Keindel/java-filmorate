@@ -31387,3 +31387,2652 @@ java.sql.SQLClientInfoException: Client info name 'ApplicationName' not supporte
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
 	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:10:54 jdbc[3]: exception
+java.sql.SQLClientInfoException: Client info name 'ApplicationName' not supported.
+	at org.h2.jdbc.JdbcConnection.setClientInfo(JdbcConnection.java:1573)
+	at com.intellij.database.remote.jdbc.impl.RemoteConnectionImpl.setClientInfo(RemoteConnectionImpl.java:470)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:10:54 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT film_id
+FROM marks
+WHERE film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND mark_from_user IN (SELECT marks.mark_from_user AS other_user_id
+                       FROM marks JOIN (SELECT film_id, mark FROM marks
+                                        WHERE mark_from_user = 1 AND mark > 5) AS good_films_user ON marks.film_id = good_films_user.film_id
+                       WHERE marks.mark > 5 AND ABS(marks.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC LIMIT 1)
+GROUP BY film_id [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:10:57 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT film_id
+FROM marks
+WHERE film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND mark_from_user IN (SELECT marks.mark_from_user AS other_user_id
+                       FROM marks JOIN (SELECT film_id, mark FROM marks
+                                        WHERE mark_from_user = 1 AND mark > 5) AS good_films_user ON marks.film_id = good_films_user.film_id
+                       WHERE marks.mark > 5 AND ABS(marks.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC LIMIT 1)
+GROUP BY film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:13:03 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT film_id
+FROM marks
+WHERE film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND mark_from_user IN (SELECT marks.mark_from_user AS other_user_id
+                       FROM marks JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                        AND mark > 5) AS good_films_user ON marks.film_id = good_films_user.film_id
+                       WHERE marks.mark > 5
+                       AND ABS(marks.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC LIMIT 1)
+GROUP BY film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:13:27 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT film_id
+FROM marks
+WHERE film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND mark_from_user IN (SELECT marks.mark_from_user AS other_user_id
+                       FROM marks JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                        AND mark > 5) AS good_films_user ON marks.film_id = good_films_user.film_id
+                       WHERE marks.mark > 5
+                       AND ABS(marks.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC LIMIT 1)
+GROUP BY film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:15:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT film_id
+FROM marks
+WHERE film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND mark_from_user IN (SELECT marks.mark_from_user AS other_user_id
+                       FROM marks JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                        AND mark > 5) AS good_films_user ON marks.film_id = good_films_user.film_id
+                       WHERE marks.mark > 5
+                       AND ABS(marks.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC LIMIT 10)
+GROUP BY film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:16:05 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND mark_from_user IN (SELECT marks.mark_from_user AS other_user_id
+                       FROM marks JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                        AND mark > 5) AS good_films_user ON marks.film_id = good_films_user.film_id
+                       WHERE marks.mark > 5
+                       AND ABS(marks.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:16:27 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT film_id
+FROM marks
+WHERE film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND mark_from_user IN (SELECT marks.mark_from_user AS other_user_id
+                       FROM marks JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                        AND mark > 5) AS good_films_user ON marks.film_id = good_films_user.film_id
+                       WHERE marks.mark > 5
+                       AND ABS(marks.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC LIMIT 10)
+GROUP BY film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:17:54 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT marks.film_id
+FROM marks
+WHERE marks.film_id NOT IN (
+    SELECT marks.film_id, marks.mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND marks.mark_from_user IN (SELECT marks.mark_from_user AS other_user_id
+                       FROM marks JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                        AND mark > 5) AS good_films_user ON marks.film_id = good_films_user.film_id
+                       WHERE marks.mark > 5
+                       AND ABS(marks.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC
+                       LIMIT 10)
+GROUP BY marks.film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:18:14 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT film_id
+FROM marks
+WHERE film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND mark_from_user IN (SELECT marks.mark_from_user AS other_user_id
+                       FROM marks JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                        AND mark > 5) AS good_films_user ON marks.film_id = good_films_user.film_id
+                       WHERE marks.mark > 5
+                       AND ABS(marks.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC
+                       LIMIT 10)
+GROUP BY film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:19:08 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND mark_from_user IN (SELECT marks.mark_from_user AS other_user_id
+                       FROM marks JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                        AND mark > 5) AS good_films_user ON marks.film_id = good_films_user.film_id
+                       WHERE marks.mark > 5
+                       AND ABS(marks.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:21:05 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                        AND mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:21:46 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC
+                       LIMIT 10 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:22:29 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:22:34 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC
+                       LIMIT 10 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:22:48 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:22:51 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(mark) >= 6 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.readInPredicate(Parser.java:3295)
+	at org.h2.command.Parser.readConditionRightHandSide(Parser.java:3195)
+	at org.h2.command.Parser.readCondition(Parser.java:3172)
+	at org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:3068)
+	at org.h2.command.Parser.parseSelect(Parser.java:2903)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:23:08 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (film_id) DESC
+                       LIMIT 10 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.aggregate.AbstractAggregate.mapColumnsAnalysis(AbstractAggregate.java:81)
+	at org.h2.expression.aggregate.Aggregate.mapColumnsAnalysis(Aggregate.java:913)
+	at org.h2.expression.analysis.DataAnalysisOperation.mapColumns(DataAnalysisOperation.java:132)
+	at org.h2.command.query.Select.mapColumns(Select.java:1546)
+	at org.h2.command.query.Select.init(Select.java:1100)
+	at org.h2.command.Parser.parseQuery(Parser.java:2583)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:24:33 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:24:43 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:24:50 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:26:11 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:26:45 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:31:27 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Столбец "M4.FILM_ID" должен быть в предложении GROUP BY
+Column "M4.FILM_ID" must be in the GROUP BY list; SQL statement:
+SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5
+                                        GROUP BY m4.mark [90016-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.updateAggregate(ExpressionColumn.java:270)
+	at org.h2.command.query.Select.updateAgg(Select.java:539)
+	at org.h2.command.query.Select.gatherGroup(Select.java:522)
+	at org.h2.command.query.Select.queryGroup(Select.java:488)
+	at org.h2.command.query.Select.queryWithoutCache(Select.java:828)
+	at org.h2.command.query.Query.queryWithoutCacheLazyCheck(Query.java:197)
+	at org.h2.command.query.Query.query(Query.java:494)
+	at org.h2.command.query.Query.query(Query.java:457)
+	at org.h2.command.CommandContainer.query(CommandContainer.java:256)
+	at org.h2.command.Command.executeQuery(Command.java:190)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:99)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:32:09 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:32:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:32:51 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10) [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:36:53 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:36:59 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:37:04 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:37:26 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                       FROM marks AS m3
+                           JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                        AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                       WHERE m3.mark > 5
+                       AND ABS(m3.mark - good_films_user.mark) <= 1
+                       GROUP BY other_user_id
+                       ORDER BY COUNT (m3.film_id) DESC
+                       LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:38:38 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:38:40 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:38:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:39:23 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:40:17 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE m.mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                         FROM marks AS m3
+                                  JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                          AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                         WHERE m3.mark > 5
+                           AND ABS(m3.mark - good_films_user.mark) <= 1
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (m3.film_id) DESC
+                         LIMIT 10)
+AND m.film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:137)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:40:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE m.mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                         FROM marks AS m3
+                                  JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                          AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                         WHERE m3.mark > 5
+                           AND ABS(m3.mark - good_films_user.mark) <= 1
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (m3.film_id) DESC
+                         LIMIT 10)
+AND m.film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1
+    GROUP BY m2.film_id)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:137)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:41:36 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Столбец "M2.FILM_ID" должен быть в предложении GROUP BY
+Column "M2.FILM_ID" must be in the GROUP BY list; SQL statement:
+SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1
+    GROUP BY m2.mark_from_user [90016-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.updateAggregate(ExpressionColumn.java:270)
+	at org.h2.command.query.Select.updateAgg(Select.java:539)
+	at org.h2.command.query.Select$LazyResultGroupSorted.fetchNextRow(Select.java:1912)
+	at org.h2.result.LazyResult.hasNext(LazyResult.java:78)
+	at org.h2.result.FetchedResult.next(FetchedResult.java:34)
+	at org.h2.command.query.Select.queryGroupSorted(Select.java:320)
+	at org.h2.command.query.Select.queryWithoutCache(Select.java:826)
+	at org.h2.command.query.Query.queryWithoutCacheLazyCheck(Query.java:197)
+	at org.h2.command.query.Query.query(Query.java:494)
+	at org.h2.command.query.Query.query(Query.java:457)
+	at org.h2.command.CommandContainer.query(CommandContainer.java:256)
+	at org.h2.command.Command.executeQuery(Command.java:190)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:99)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:42:12 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE m.film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND m.mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                         FROM marks AS m3
+                                  JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                          AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                         WHERE m3.mark > 5
+                           AND ABS(m3.mark - good_films_user.mark) <= 1
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (m3.film_id) DESC
+                         LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:54:03 jdbc[4]: exception
+java.sql.SQLClientInfoException: Client info name 'ApplicationName' not supported.
+	at org.h2.jdbc.JdbcConnection.setClientInfo(JdbcConnection.java:1573)
+	at com.intellij.database.remote.jdbc.impl.RemoteConnectionImpl.setClientInfo(RemoteConnectionImpl.java:470)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:54:53 jdbc[5]: exception
+java.sql.SQLClientInfoException: Client info name 'ApplicationName' not supported.
+	at org.h2.jdbc.JdbcConnection.setClientInfo(JdbcConnection.java:1573)
+	at com.intellij.database.remote.jdbc.impl.RemoteConnectionImpl.setClientInfo(RemoteConnectionImpl.java:470)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:55:46 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE m.film_id NOT IN (
+    SELECT m2.film_id, m2.mark
+    FROM marks AS m2
+    WHERE m2.mark_from_user = 1)
+AND m.mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                         FROM marks AS m3
+                                  JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                          AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                         WHERE m3.mark > 5
+                           AND ABS(m3.mark - good_films_user.mark) <= 1
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (m3.film_id) DESC
+                         LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 18:56:54 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE m.film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND m.mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                         FROM marks AS m3
+                                  JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                          AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                         WHERE m3.mark > 5
+                           AND ABS(m3.mark - good_films_user.mark) <= 1
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (m3.film_id) DESC
+                         LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 19:01:57 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Столбец "FILM_ID" должен быть в предложении GROUP BY
+Column "FILM_ID" must be in the GROUP BY list; SQL statement:
+SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1
+    ORDER BY COUNT (film_id) DESC [90016-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.updateAggregate(ExpressionColumn.java:270)
+	at org.h2.command.query.Select.updateAgg(Select.java:539)
+	at org.h2.command.query.Select.gatherGroup(Select.java:522)
+	at org.h2.command.query.Select.queryGroup(Select.java:488)
+	at org.h2.command.query.Select.queryWithoutCache(Select.java:828)
+	at org.h2.command.query.Query.queryWithoutCacheLazyCheck(Query.java:197)
+	at org.h2.command.query.Query.query(Query.java:494)
+	at org.h2.command.query.Query.query(Query.java:457)
+	at org.h2.command.CommandContainer.query(CommandContainer.java:256)
+	at org.h2.command.Command.executeQuery(Command.java:190)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:99)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 19:02:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE m.film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1
+    group by film_id
+    ORDER BY COUNT (film_id) DESC)
+AND m.mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                         FROM marks AS m3
+                                  JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                          AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                         WHERE m3.mark > 5
+                           AND ABS(m3.mark - good_films_user.mark) <= 1
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (m3.film_id) DESC
+                         LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 19:03:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE m.film_id NOT IN (
+    SELECT film_id, mark
+    FROM marks
+    WHERE mark_from_user = 1)
+AND m.mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                         FROM marks AS m3
+                                  JOIN (SELECT m4.film_id, m4.mark
+                                        FROM marks AS m4
+                                        WHERE m4.mark_from_user = 1
+                                          AND m4.mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                         WHERE m3.mark > 5
+                           AND ABS(m3.mark - good_films_user.mark) <= 1
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (m3.film_id) DESC
+                         LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 19:08:12 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT mark_from_user AS other_user_id
+                         FROM marks
+                                  JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                          AND mark > 5) AS good_films_user ON film_id = good_films_user.film_id
+                         WHERE mark > 5
+                           AND ABS(mark - good_films_user.mark) <= 1
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (film_id) DESC
+                         LIMIT 10 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.condition.Comparison.mapColumns(Comparison.java:474)
+	at org.h2.table.TableFilter$MapColumnsVisitor.accept(TableFilter.java:1246)
+	at org.h2.table.TableFilter.visit(TableFilter.java:1189)
+	at org.h2.table.TableFilter.addJoin(TableFilter.java:589)
+	at org.h2.command.Parser.addJoin(Parser.java:2469)
+	at org.h2.command.Parser.readTableReference(Parser.java:2379)
+	at org.h2.command.Parser.parseSelectFromPart(Parser.java:2793)
+	at org.h2.command.Parser.parseSelect(Parser.java:2900)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 19:08:21 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Синтаксическая ошибка в выражении SQL " [*]AS m3"
+Syntax error in SQL statement " [*]AS m3"; SQL statement:
+ AS m3 [42000-210]
+2022-07-05 19:08:23 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Неоднозначное имя столбца "FILM_ID"
+Ambiguous column name "FILM_ID"; SQL statement:
+SELECT m3.mark_from_user AS other_user_id
+                         FROM marks AS m3
+                                  JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                          AND mark > 5) AS good_films_user ON film_id = good_films_user.film_id
+                         WHERE m3.mark > 5
+                           AND ABS(m3.mark - good_films_user.mark) <= 1
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (m3.film_id) DESC
+                         LIMIT 10 [90059-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.message.DbException.get(DbException.java:203)
+	at org.h2.expression.ExpressionColumn.mapColumn(ExpressionColumn.java:197)
+	at org.h2.expression.ExpressionColumn.mapColumns(ExpressionColumn.java:175)
+	at org.h2.expression.condition.Comparison.mapColumns(Comparison.java:474)
+	at org.h2.table.TableFilter$MapColumnsVisitor.accept(TableFilter.java:1246)
+	at org.h2.table.TableFilter.visit(TableFilter.java:1189)
+	at org.h2.table.TableFilter.addJoin(TableFilter.java:589)
+	at org.h2.command.Parser.addJoin(Parser.java:2469)
+	at org.h2.command.Parser.readTableReference(Parser.java:2379)
+	at org.h2.command.Parser.parseSelectFromPart(Parser.java:2793)
+	at org.h2.command.Parser.parseSelect(Parser.java:2900)
+	at org.h2.command.Parser.parseQueryPrimary(Parser.java:2783)
+	at org.h2.command.Parser.parseQueryTerm(Parser.java:2650)
+	at org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2629)
+	at org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2622)
+	at org.h2.command.Parser.parseQueryExpression(Parser.java:2615)
+	at org.h2.command.Parser.parseQuery(Parser.java:2576)
+	at org.h2.command.Parser.parsePrepared(Parser.java:707)
+	at org.h2.command.Parser.parse(Parser.java:674)
+	at org.h2.command.Parser.parse(Parser.java:644)
+	at org.h2.command.Parser.prepareCommand(Parser.java:551)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 19:08:29 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Синтаксическая ошибка в выражении SQL "[*]m3."; ожидалось "MERGE"
+Syntax error in SQL statement "[*]m3."; expected "MERGE"; SQL statement:
+m3. [42001-210]
+2022-07-05 19:08:36 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Сравнение массива (ARRAY) со скалярным значением
+Values of types "INTEGER" and "ROW(C1 INTEGER, C2 INTEGER, C3 INTEGER)" are not comparable; SQL statement:
+SELECT DISTINCT m.film_id
+FROM marks AS m
+WHERE m.film_id NOT IN (
+    SELECT film_id, mark, mark_from_user
+    FROM marks
+    WHERE mark_from_user = 1)
+AND m.mark_from_user IN (SELECT m3.mark_from_user AS other_user_id
+                         FROM marks AS m3
+                                  JOIN (SELECT film_id, mark
+                                        FROM marks
+                                        WHERE mark_from_user = 1
+                                          AND mark > 5) AS good_films_user ON m3.film_id = good_films_user.film_id
+                         WHERE m3.mark > 5
+                           AND ABS(m3.mark - good_films_user.mark) <= 1
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (m3.film_id) DESC
+                         LIMIT 10)
+GROUP BY m.film_id
+HAVING AVG(m.mark) >= 6 [90110-210]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:651)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:496)
+	at org.h2.message.DbException.get(DbException.java:227)
+	at org.h2.value.TypeInfo.checkComparable(TypeInfo.java:724)
+	at org.h2.expression.condition.ConditionInQuery.optimize(ConditionInQuery.java:162)
+	at org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at org.h2.command.query.Select.prepare(Select.java:1184)
+	at org.h2.command.Parser.prepareCommand(Parser.java:557)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:615)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:553)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1116)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:92)
+	at com.intellij.database.remote.jdbc.impl.RemoteStatementImpl.executeQuery(RemoteStatementImpl.java:179)
+	at jdk.internal.reflect.GeneratedMethodAccessor30.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:359)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:200)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Transport.java:197)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Transport.java:196)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:562)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(TCPTransport.java:796)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(TCPTransport.java:677)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:676)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+2022-07-05 19:11:57 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "LIKES" не найдена
+Table "LIKES" not found; SQL statement:
+SELECT DISTINCT film_id
+FROM likes
+WHERE film_id NOT IN
+      (SELECT film_id FROM likes WHERE like_from_user = 1)
+  AND like_from_user IN (SELECT
+                             like_from_user AS other_user_id
+                         FROM likes
+                         WHERE film_id IN
+                               (SELECT film_id FROM likes WHERE like_from_user = 1)
+                         GROUP BY other_user_id
+                         ORDER BY COUNT (film_id) DESC
+                         LIMIT 10) [42102-210]
