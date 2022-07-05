@@ -9,12 +9,10 @@ import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.FeedStorage;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.List;
 
 
 @Slf4j
@@ -112,7 +110,7 @@ public class FeedDbStorage implements FeedStorage {
                 , timestamp.getTime()
                 , "LIKE"
                 , "ADD"
-                , user_id);
+                , filmId);
         }
     }
 
@@ -136,7 +134,7 @@ public class FeedDbStorage implements FeedStorage {
                 , timestamp.getTime()
                 , "LIKE"
                 , "REMOVE"
-                , user_id);
+                , filmId);
         }
     }
 
@@ -213,14 +211,13 @@ public class FeedDbStorage implements FeedStorage {
                 , timestamp.getTime()
                 , "REVIEW"
                 , "REMOVE"
-                , userId);
+                , reviewId);
         }
     }
 
     public Collection<Feed> feeds(Long id){
         String sqlQuery ="select timestamp, userId, eventType, operation, eventId, entityId from feeds where userId = ?";
-        List<Feed> feeds = jdbcTemplate.query(sqlQuery, this::mapRowToFeed, id);
-        return feeds;
+        return jdbcTemplate.query(sqlQuery, this::mapRowToFeed, id);
     }
 
     private Feed mapRowToFeed(ResultSet rs, int rowNum) throws SQLException {
