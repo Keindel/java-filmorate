@@ -226,36 +226,33 @@ public class FilmDbStorage implements FilmStorage {
                 , userId);
     }
 
-    //TODO
     public Collection<Film> getFilmsWithOneSideMarkFromOthers(Long userId) {
-        String sqlFilmsOfUser = "(SELECT film_id FROM marks WHERE mark_from_user = ?) ";
-        String sqlGetTopMatchedUsers = "(SELECT " +
-                " mark_from_user AS other_user_id," +
-                " FROM marks" +
-                " WHERE film_id IN " + sqlFilmsOfUser +
+        String sqlAllMarkedFilmsOfUser = "(SELECT film_id, mark FROM marks WHERE mark_from_user = ?)";
+        String sqlGoodFilmsOfUserWithMarks = "(SELECT film_id, mark FROM marks" +
+                " WHERE mark_from_user = ? AND mark > 5) AS good_films_user ";
+        String sqlGetTopMatchedUsers = "(SELECT marks.mark_from_user AS other_user_id," +
+                " FROM marks JOIN " + sqlGoodFilmsOfUserWithMarks + " ON marks.film_id = good_films_user.film_id" +
+                " WHERE marks.mark > 5 AND ABS(marks.mark - good_films_user.mark) <= 1" +
                 " GROUP BY other_user_id" +
                 " ORDER BY COUNT (film_id) DESC" +
                 " LIMIT ?)";
         String sqlGetRecommendedFilmsIds = "SELECT DISTINCT film_id" +
                 " FROM marks" +
-                " WHERE film_id NOT IN " + sqlFilmsOfUser +
-                " AND mark_from_user IN " + sqlGetTopMatchedUsers;
+                " WHERE film_id NOT IN " + sqlAllMarkedFilmsOfUser +
+                " AND mark_from_user IN " + sqlGetTopMatchedUsers +
+                " GROUP BY film_id" +
+                " HAVING AVG(mark) >= 6";
         Collection<Long> filmsIds = jdbcTemplate.queryForList(sqlGetRecommendedFilmsIds
-                , Long.class
-                , userId
-                , userId
-                , USERS_MATCHING_LIMIT);
-        Collection<Film> films = filmsIds.stream().map(x -> {
+                , Long.class, userId, userId, USERS_MATCHING_LIMIT);
+        return filmsIds.stream().map(x -> {
             try {
                 return getById(x);
             } catch (UserNotFoundException | FilmNotFoundException | DirectorNotFoundException e) {
                 return null;
             }
         }).collect(Collectors.toList());
-        return films;
     }
 
-    //TODO
     public List<Film> getPopularFilms(Integer count, Integer year, Integer genreId) {
         String sqlGetPopularFilms = "SELECT  f.*, m.NAME" +
                 " FROM films AS f" +
@@ -285,7 +282,6 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-    //TODO
     private List<Film> getAllFilmsForYear(Integer count, Integer year) {
         String sqlGetPopularFilmsWithYear = "SELECT f.*, m.NAME" +
                 " FROM films AS f" +
@@ -304,7 +300,6 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-    //TODO
     private List<Film> getAllFilmsForGenre(Integer count, Integer genreId) {
         String sqlGetPopularFilmsWithGenre = "SELECT  f.*, m.name, gn.*" +
                 " FROM films AS f" +
@@ -325,7 +320,6 @@ public class FilmDbStorage implements FilmStorage {
          return films;
     }
 
-    //TODO
     public Collection<Film> getDirectorFilms(long directorId, String sortBy) throws ValidationException, DirectorNotFoundException {
         String sqlQuery1 = "select count(*) from director_names where director_id = ?";
         long result = jdbcTemplate.queryForObject(sqlQuery1, Long.class, directorId);
@@ -339,7 +333,7 @@ public class FilmDbStorage implements FilmStorage {
                 "where fdc.director_id = ? " +
                 "order by avg(marks.mark)";
         List<Film> films;
-        if (sortBy.equals("marks")){
+        if (sortBy.equals("marks")) {
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
 
             films.forEach(film -> {
@@ -363,8 +357,7 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-    //TODO
-    public List<Film> getAllFilmsWithMarksFromUser(Long userid){
+    public List<Film> getAllFilmsWithMarksFromUser(Long userid) {
         String sqlGetAllFilmsWithMarksFromUser = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, mpa.name " +
                 "FROM films as f " +
                 "JOIN mpa ON f.mpa_id = mpa.id " +
