@@ -101,18 +101,13 @@ public class FeedDbStorage implements FeedStorage {
      * @param filmId
      * @param userId
      */
-    //TODO SEE TODO INSIDE
     public void markFromUser(long filmId, long userId) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlQuery2 = "select friend_id from friends where user_id  = ?";
+        String sqlQuery2 = "select user_id from users where user_id  = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery2, userId);
-        int friend_id = -1;
+        int user_id = -1;
         while (rowSet.next()) {
-            friend_id = rowSet.getInt("friend_id");
-            //TODO WTF is going on here?!
-            if (friend_id == 3) {
-                friend_id = 2;
-            }
+            user_id = rowSet.getInt("user_id");
             String sqlQuery =
                     "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                             " values(?, ?, ?, ?, ?)";
@@ -121,7 +116,7 @@ public class FeedDbStorage implements FeedStorage {
                     , timestamp.getTime()
                     , "MARK"
                     , "ADD"
-                    , friend_id);
+                    , user_id);
         }
     }
 
@@ -131,18 +126,13 @@ public class FeedDbStorage implements FeedStorage {
      * @param filmId
      * @param userId
      */
-    //TODO
     public void unmarkFromUser(long filmId, long userId) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlQuery2 = "select friend_id from friends where user_id  = ?";
+        String sqlQuery2 = "select user_id from users where user_id  = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery2, userId);
-        int friend_id = -1;
+        int user_id = -1;
         while (rowSet.next()) {
-            //TODO
-            friend_id = rowSet.getInt("friend_id");
-            if (friend_id == 3) {
-                friend_id = 2;
-            }
+            user_id = rowSet.getInt("user_id");
             String sqlQuery =
                     "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                             " values(?, ?, ?, ?, ?)";
@@ -151,7 +141,7 @@ public class FeedDbStorage implements FeedStorage {
                     , timestamp.getTime()
                     , "MARK"
                     , "REMOVE"
-                    , friend_id);
+                    , user_id);
         }
     }
 
