@@ -227,23 +227,24 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     public Collection<Film> getFilmsWithOneSideMarkFromOthers(Long userId) {
-        String sqlAllMarkedFilmsOfUser = "(SELECT film_id, mark FROM marks WHERE mark_from_user = ?)";
-        String sqlGoodFilmsOfUserWithMarks = "(SELECT film_id, mark FROM marks" +
-                " WHERE mark_from_user = ? AND mark > 5) AS good_films_user ";
-        String sqlGetTopMatchedUsers = "(SELECT marks.mark_from_user AS other_user_id," +
-                " FROM marks JOIN " + sqlGoodFilmsOfUserWithMarks + " ON marks.film_id = good_films_user.film_id" +
-                " WHERE marks.mark > 5 AND ABS(marks.mark - good_films_user.mark) <= 1" +
+        String sqlAllMarkedFilmsOfUser = "(SELECT m1.film_id FROM marks AS m1 WHERE mark_from_user = ?)";
+        String sqlGoodFilmsOfUserWithMarks = "(SELECT m2.film_id, m2.mark FROM marks AS m2" +
+                " WHERE m2.mark_from_user = ? AND m2.mark > 5) AS good_films_user ";
+        String sqlGetTopMatchedUsers = "(SELECT m3.mark_from_user AS other_user_id" +
+                " FROM marks AS m3 JOIN " + sqlGoodFilmsOfUserWithMarks + " ON m3.film_id = good_films_user.film_id" +
+                " WHERE m3.mark > 5 AND ABS(m3.mark - good_films_user.mark) <= 1" +
+                " AND m3.mark_from_user <> ?" +
                 " GROUP BY other_user_id" +
-                " ORDER BY COUNT (film_id) DESC" +
+                " ORDER BY COUNT (m3.film_id) DESC" +
                 " LIMIT ?)";
-        String sqlGetRecommendedFilmsIds = "SELECT DISTINCT film_id" +
-                " FROM marks" +
-                " WHERE film_id NOT IN " + sqlAllMarkedFilmsOfUser +
-                " AND mark_from_user IN " + sqlGetTopMatchedUsers +
-                " GROUP BY film_id" +
-                " HAVING AVG(mark) >= 6";
+        String sqlGetRecommendedFilmsIds = "SELECT DISTINCT m4.film_id" +
+                " FROM marks AS m4" +
+                " WHERE m4.film_id NOT IN " + sqlAllMarkedFilmsOfUser +
+                " AND m4.mark_from_user IN " + sqlGetTopMatchedUsers +
+                " GROUP BY m4.film_id" +
+                " HAVING AVG(m4.mark) >= 6";
         Collection<Long> filmsIds = jdbcTemplate.queryForList(sqlGetRecommendedFilmsIds
-                , Long.class, userId, userId, USERS_MATCHING_LIMIT);
+                , Long.class, userId, userId, userId, USERS_MATCHING_LIMIT);
         return filmsIds.stream().map(x -> {
             try {
                 return getById(x);
