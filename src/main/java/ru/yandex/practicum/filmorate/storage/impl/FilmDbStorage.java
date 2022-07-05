@@ -219,33 +219,31 @@ public class FilmDbStorage implements FilmStorage {
                 , userId);
     }
 
-    //TODO
     public Collection<Film> getFilmsWithOneSideMarkFromOthers(Long userId) {
-        String sqlFilmsOfUser = "(SELECT film_id FROM marks WHERE mark_from_user = ?) ";
-        String sqlGetTopMatchedUsers = "(SELECT " +
-                " mark_from_user AS other_user_id," +
-                " FROM marks" +
-                " WHERE film_id IN " + sqlFilmsOfUser +
+        String sqlAllMarkedFilmsOfUser = "(SELECT film_id, mark FROM marks WHERE mark_from_user = ?)";
+        String sqlGoodFilmsOfUserWithMarks = "(SELECT film_id, mark FROM marks" +
+                " WHERE mark_from_user = ? AND mark > 5) AS good_films_user ";
+        String sqlGetTopMatchedUsers = "(SELECT marks.mark_from_user AS other_user_id," +
+                " FROM marks JOIN " + sqlGoodFilmsOfUserWithMarks + " ON marks.film_id = good_films_user.film_id" +
+                " WHERE marks.mark > 5 AND ABS(marks.mark - good_films_user.mark) <= 1" +
                 " GROUP BY other_user_id" +
                 " ORDER BY COUNT (film_id) DESC" +
                 " LIMIT ?)";
         String sqlGetRecommendedFilmsIds = "SELECT DISTINCT film_id" +
                 " FROM marks" +
-                " WHERE film_id NOT IN " + sqlFilmsOfUser +
-                " AND mark_from_user IN " + sqlGetTopMatchedUsers;
+                " WHERE film_id NOT IN " + sqlAllMarkedFilmsOfUser +
+                " AND mark_from_user IN " + sqlGetTopMatchedUsers +
+                " GROUP BY film_id" +
+                " HAVING AVG(mark) >= 6";
         Collection<Long> filmsIds = jdbcTemplate.queryForList(sqlGetRecommendedFilmsIds
-                , Long.class
-                , userId
-                , userId
-                , USERS_MATCHING_LIMIT);
-        Collection<Film> films = filmsIds.stream().map(x -> {
+                , Long.class, userId, userId, USERS_MATCHING_LIMIT);
+        return filmsIds.stream().map(x -> {
             try {
                 return getById(x);
             } catch (UserNotFoundException | FilmNotFoundException | DirectorNotFoundException e) {
                 return null;
             }
         }).collect(Collectors.toList());
-        return films;
     }
 
     //TODO
@@ -298,9 +296,9 @@ public class FilmDbStorage implements FilmStorage {
                 " WHERE gn.GENRE_ID = ?" +
                 " GROUP BY f.FILM_ID" +
                 " ORDER BY COUNT(marks.FILM_ID) DESC LIMIT ?";
-         List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithGenre, this::mapRowToFilm, genreId, count);
-         films.forEach(this::setGenresToFilm);
-         return films;
+        List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithGenre, this::mapRowToFilm, genreId, count);
+        films.forEach(this::setGenresToFilm);
+        return films;
     }
 
     //TODO
@@ -315,14 +313,14 @@ public class FilmDbStorage implements FilmStorage {
                 "left join film_director_coupling as fdc ON f.film_id = fdc.film_id\n" +
                 "left join marks ON f.film_id = marks.film_id where fdc.director_id = ?\n";
         List<Film> films;
-        if (sortBy.equals("marks")){
+        if (sortBy.equals("marks")) {
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
 
             films.forEach(film -> {
                 setDirectors(film);
                 setGenresToFilm(film);
                 setUsersIdsMarks(film);
-            } );
+            });
             films.sort(Comparator.comparingInt(
                     o -> o.getUsersIdsMarks().size()));
 
@@ -333,7 +331,7 @@ public class FilmDbStorage implements FilmStorage {
                 setDirectors(film);
                 setGenresToFilm(film);
                 setUsersIdsMarks(film);
-            } );
+            });
         } else {
             throw new ValidationException("Такой вариант сортировки не предусмотрен");
         }
@@ -341,7 +339,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     //TODO
-    public List<Film> getAllFilmsWithMarksFromUser(Long userid){
+    public List<Film> getAllFilmsWithMarksFromUser(Long userid) {
         String sqlGetAllFilmsWithMarksFromUser = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, mpa.name " +
                 "FROM films as f " +
                 "JOIN mpa ON f.mpa_id = mpa.id " +
