@@ -12,7 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Review {
-    private Long reviewId;
+    private Long id;
     @NotBlank
     private String content;
     @NonNull
