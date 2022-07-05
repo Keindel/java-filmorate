@@ -8,19 +8,21 @@ import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
+import javax.xml.bind.ValidationException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class FilmService {
+    private final FeedService feedService;
     @Qualifier("filmDbStorage")
     private final FilmDbStorage filmStorage;
     @Qualifier("userDbStorage")
@@ -35,7 +37,7 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
-    public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Film getById(Long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
         return filmStorage.getById(id);
     }
 
@@ -53,7 +55,7 @@ public class FilmService {
     }
 
     public long getSize() {
-        return filmStorage.getSize();
+        return filmStorage.getCount();
     }
 
     public Film update(Film film) throws FilmValidationException, UserNotFoundException, FilmNotFoundException {
@@ -64,8 +66,12 @@ public class FilmService {
     }
 
     public void likeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
+        boolean result = feedService.updateLikeFromUser(filmId, userId);
         userStorage.getWithoutFriendsByIdOrThrowEx(userId);
         filmStorage.likeFromUser(filmId, userId);
+        if (!result) {
+            feedService.likeFromUser(filmId, userId);
+        }
     }
 
     public void unlikeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
@@ -73,15 +79,11 @@ public class FilmService {
         filmStorage.unlikeFromUser(filmId, userId);
     }
 
-    public Collection<Long> getCountTopIds(int count) {
-        return filmStorage.getCountTopIds(count);
-    }
-
     public Collection<Genre> getGenres() {
         return genreStorage.findAll();
     }
 
-    public Genre getGenreById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Genre getGenreById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
         return genreStorage.getById(id);
     }
 
@@ -89,7 +91,30 @@ public class FilmService {
         return mpaStorage.findAll();
     }
 
-    public Mpa getMpaById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Mpa getMpaById(long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
         return mpaStorage.getById(id);
     }
+
+    public void deleteById(Long filmId) throws FilmNotFoundException {
+        filmStorage.deleteById(filmId);
+    }
+
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) throws UserNotFoundException {
+        List<Film> userLikesFilms = (List<Film>) filmStorage.getAllFilmsWithLikesFromUser(userId);
+        List<Film> friendLikesFilms = (List<Film>) filmStorage.getAllFilmsWithLikesFromUser(friendId);
+        userLikesFilms.retainAll(friendLikesFilms);
+        return userLikesFilms
+                .stream()
+                .sorted((o1, o2) -> o2.getUsersIdsLiked().size() - o1.getUsersIdsLiked().size())
+                .collect(Collectors.toList());
+    }
+
+    public Collection<Film> mostPopularFilms(Integer count, Integer year, Integer genreId) {
+        return filmStorage.getPopularFilms(count, year, genreId);
+    }
+
+    public Collection<Film> getSortedFilms(long directorId, String sortBy) throws ValidationException, DirectorNotFoundException {
+        return filmStorage.getDirectorFilms(directorId, sortBy);
+    }
+
 }
