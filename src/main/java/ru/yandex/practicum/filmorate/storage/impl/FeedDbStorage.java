@@ -185,7 +185,7 @@ public class FeedDbStorage implements FeedStorage {
             , timestamp.getTime()
             , "REVIEW"
             , "ADD"
-            , review.getId());
+            , review.getReviewId());
     }
 
     public void updateReview(Review review) {
