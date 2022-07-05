@@ -44,6 +44,7 @@ public class FilmDbStorage implements FilmStorage {
         setDirectors(film);
         setGenresToFilm(film);
         setUsersIdsMarks(film);
+        setFilmRating(film);
         return film;
     }
 
@@ -103,6 +104,12 @@ public class FilmDbStorage implements FilmStorage {
                     , rowSet.getInt("mark"));
         }
         film.setUsersIdsMarks(usersIdsMarks);
+    }
+
+    private void setFilmRating(Film film){
+        String sqlGetRating = "SELECT AVG(m.mark) FROM marks AS m WHERE m.film_id = ?";
+        double rating = jdbcTemplate.queryForObject(sqlGetRating, Double.class, film.getId());
+        film.setRating(rating);
     }
 
     private Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
@@ -246,14 +253,13 @@ public class FilmDbStorage implements FilmStorage {
         }).collect(Collectors.toList());
     }
 
-    //TODO
     public List<Film> getPopularFilms(Integer count, Integer year, Integer genreId) {
         String sqlGetPopularFilms = "SELECT  f.*, m.NAME" +
                 " FROM films AS f" +
                 " JOIN mpa AS m on m.ID = f.MPA_ID" +
                 " LEFT JOIN marks ON marks.FILM_ID = f.FILM_ID" +
                 " GROUP BY f.FILM_ID" +
-                " ORDER BY COUNT(marks.FILM_ID) DESC LIMIT ? ";
+                " ORDER BY AVG(marks.MARK) DESC LIMIT ? ";
         List<Film> films;
         if (Objects.nonNull(year) && Objects.nonNull(genreId)) {
             List<Film> years = getAllFilmsForYear(count, year);
@@ -266,12 +272,16 @@ public class FilmDbStorage implements FilmStorage {
             films = new ArrayList<>(getAllFilmsForGenre(count, genreId));
         } else {
             films = new ArrayList<>(jdbcTemplate.query(sqlGetPopularFilms, this::mapRowToFilm, count));
-            films.forEach(this::setGenresToFilm);
+            films.forEach(film -> {
+                setDirectors(film);
+                setGenresToFilm(film);
+                setUsersIdsMarks(film);
+                setFilmRating(film);
+            } );
         }
         return films;
     }
 
-    //TODO
     private List<Film> getAllFilmsForYear(Integer count, Integer year) {
         String sqlGetPopularFilmsWithYear = "SELECT f.*, m.NAME" +
                 " FROM films AS f" +
@@ -279,13 +289,17 @@ public class FilmDbStorage implements FilmStorage {
                 " LEFT JOIN marks ON marks.FILM_ID = f.FILM_ID" +
                 " WHERE EXTRACT(YEAR FROM f.RELEASE_DATE) = ?" +
                 " GROUP BY f.FILM_ID" +
-                " ORDER BY COUNT(marks.FILM_ID) DESC LIMIT ? ";
+                " ORDER BY AVG(marks.MARK) DESC LIMIT ? ";
         List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithYear, this::mapRowToFilm, year, count);
-        films.forEach(this::setGenresToFilm);
+        films.forEach(film -> {
+            setDirectors(film);
+            setGenresToFilm(film);
+            setUsersIdsMarks(film);
+            setFilmRating(film);
+        } );
         return films;
     }
 
-    //TODO
     private List<Film> getAllFilmsForGenre(Integer count, Integer genreId) {
         String sqlGetPopularFilmsWithGenre = "SELECT  f.*, m.name, gn.*" +
                 " FROM films AS f" +
@@ -295,23 +309,29 @@ public class FilmDbStorage implements FilmStorage {
                 " LEFT JOIN genre_names AS gn on gn.GENRE_ID = fg.GENRE_ID" +
                 " WHERE gn.GENRE_ID = ?" +
                 " GROUP BY f.FILM_ID" +
-                " ORDER BY COUNT(marks.FILM_ID) DESC LIMIT ?";
-        List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithGenre, this::mapRowToFilm, genreId, count);
-        films.forEach(this::setGenresToFilm);
-        return films;
+                " ORDER BY AVG(marks.MARK) DESC LIMIT ?";
+         List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithGenre, this::mapRowToFilm, genreId, count);
+        films.forEach(film -> {
+            setDirectors(film);
+            setGenresToFilm(film);
+            setUsersIdsMarks(film);
+            setFilmRating(film);
+        } );
+         return films;
     }
 
-    //TODO
     public Collection<Film> getDirectorFilms(long directorId, String sortBy) throws ValidationException, DirectorNotFoundException {
         String sqlQuery1 = "select count(*) from director_names where director_id = ?";
         long result = jdbcTemplate.queryForObject(sqlQuery1, Long.class, directorId);
         if (result != 1) throw new DirectorNotFoundException();
 
-        String sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name\n" +
-                "from films as f\n" +
-                "left join MPA on f.mpa_id = mpa.ID\n" +
-                "left join film_director_coupling as fdc ON f.film_id = fdc.film_id\n" +
-                "left join marks ON f.film_id = marks.film_id where fdc.director_id = ?\n";
+        String sqlQuery = "select f.film_id, f.name, f.description, f.release_date, f.duration, f.MPA_ID, mpa.name " +
+                "from films as f " +
+                "left join MPA on f.mpa_id = mpa.ID " +
+                "left join film_director_coupling as fdc ON f.film_id = fdc.film_id " +
+                "left join marks ON f.film_id = marks.film_id " +
+                "where fdc.director_id = ? " +
+                "order by avg(marks.mark)";
         List<Film> films;
         if (sortBy.equals("marks")) {
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
@@ -320,10 +340,8 @@ public class FilmDbStorage implements FilmStorage {
                 setDirectors(film);
                 setGenresToFilm(film);
                 setUsersIdsMarks(film);
-            });
-            films.sort(Comparator.comparingInt(
-                    o -> o.getUsersIdsMarks().size()));
-
+                setFilmRating(film);
+            } );
         } else if (sortBy.equals("year")) {
             sqlQuery = sqlQuery + "order by release_date ASC;";
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
@@ -331,14 +349,14 @@ public class FilmDbStorage implements FilmStorage {
                 setDirectors(film);
                 setGenresToFilm(film);
                 setUsersIdsMarks(film);
-            });
+                setFilmRating(film);
+            } );
         } else {
             throw new ValidationException("Такой вариант сортировки не предусмотрен");
         }
         return films;
     }
 
-    //TODO
     public List<Film> getAllFilmsWithMarksFromUser(Long userid) {
         String sqlGetAllFilmsWithMarksFromUser = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, mpa.name " +
                 "FROM films as f " +

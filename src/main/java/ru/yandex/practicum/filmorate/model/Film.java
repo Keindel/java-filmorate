@@ -28,6 +28,7 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
+    private double rating;
     //TODO marks
     private Map<Long, Integer> usersIdsMarks;
     private Set<Genre> genres;
