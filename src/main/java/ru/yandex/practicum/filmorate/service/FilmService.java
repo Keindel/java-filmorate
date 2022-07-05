@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class FilmService {
+    private final FeedService feedService;
     @Qualifier("filmDbStorage")
     private final FilmDbStorage filmStorage;
     @Qualifier("userDbStorage")
@@ -66,8 +67,12 @@ public class FilmService {
     }
 
     public void likeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
+        boolean result = feedService.updateLikeFromUser(filmId, userId);
         userStorage.getWithoutFriendsByIdOrThrowEx(userId);
         filmStorage.likeFromUser(filmId, userId);
+        if (!result) {
+            feedService.likeFromUser(filmId, userId);
+        }
     }
 
     public void unlikeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
