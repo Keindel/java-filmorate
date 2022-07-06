@@ -23,6 +23,7 @@ import ru.yandex.practicum.filmorate.util.RepositoryCleaner;
 import java.time.LocalDate;
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -43,7 +44,7 @@ class TestsForRefactoring {
     private Director director;
 
     @BeforeAll
-    public static void beforeAll() throws DirectorValidationException {
+    public static void beforeAll() {
         filmGenres = new HashSet<>();
         filmGenres.add(new Genre(6,"Боевик"));
     }
@@ -100,7 +101,6 @@ class TestsForRefactoring {
         filmService.markFromUser(1L,2L,2);
         filmService.markFromUser(2L,1L,10);
         filmService.markFromUser(2L,2L,10);
-
     }
 
     @Test
@@ -114,43 +114,12 @@ class TestsForRefactoring {
                     return array;
                 }
         );
-
         List<List<Long>> listsForTests = new ArrayList<>();
         List<Long> list = new ArrayList<>();
 
         list.add(1L);
         list.add(1L);
         list.add(2L);
-        listsForTests.add(list);
-        list = new ArrayList<>();
-        list.add(1L);
-        list.add(2L);
-        list.add(2L);
-        listsForTests.add(list);
-
-        Assertions.assertEquals(listsForTests.get(1), arrays.get(1));
-    }
-
-    @Test
-    public void testUpdateMarkFromUser() throws UserNotFoundException, FilmNotFoundException, MarkValidationException {
-        filmService.markFromUser(1L,1L,4);
-
-        String sqlQuery = "select * from marks";
-        List<List<Long>> arrays = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
-                    List<Long> array = new ArrayList<>();
-                    array.add (rs.getLong("film_id"));
-                    array.add (rs.getLong("mark_from_user"));
-                    array.add(rs.getLong("mark"));
-                    return array;
-                }
-        );
-
-        List<List<Long>> listsForTests = new ArrayList<>();
-        List<Long> list = new ArrayList<>();
-
-        list.add(1L);
-        list.add(1L);
-        list.add(4L);
         listsForTests.add(list);
         list = new ArrayList<>();
         list.add(1L);
@@ -210,14 +179,14 @@ class TestsForRefactoring {
     }
 
     @Test
-    public void testUnmarkFromNotExistedUser() throws UserNotFoundException, FilmNotFoundException {
+    public void testUnmarkFromNotExistedUser() {
         assertThrows(
                 UserNotFoundException.class, () -> filmService.unmarkFromUser(1L,8L)
         );
     }
 
     @Test
-    public void testUnmarkNotExistedFilmFromUser() throws UserNotFoundException, FilmNotFoundException {
+    public void testUnmarkNotExistedFilmFromUser() {
         assertThrows(
                 FilmNotFoundException.class, () -> filmService.unmarkFromUser(8L,1L)
         );
@@ -248,13 +217,19 @@ class TestsForRefactoring {
 
         filmService.markFromUser(3L,1L,2);
         filmService.markFromUser(3L,2L,2);
-        filmService.markFromUser(4L,1L,10);
+        filmService.markFromUser(4L,1L,9);
         filmService.markFromUser(4L,2L,10);
 
         List<Film> list = new ArrayList<>();
         list.add(film4);
         list.add(film3);
-
+        List<Film> filmsList = (List<Film>) filmService.mostPopularFilms(10,2001,6);
+        Optional<Film> filmOptional = Optional.of(filmsList.get(0));
+        assertThat(filmOptional)
+                .isPresent()
+                .hasValueSatisfying(film ->
+                        assertThat(film).hasFieldOrPropertyWithValue("rating", 9.5)
+                );
         Assertions.assertEquals(list, filmService.mostPopularFilms(10,2001,6));
         Assertions.assertEquals(new ArrayList<>(), filmService.mostPopularFilms(10,2001,3));
     }
@@ -324,7 +299,5 @@ class TestsForRefactoring {
         Assertions.assertEquals(films, userService.recommendFilmsForUser(2L));
         Assertions.assertTrue(userService.recommendFilmsForUser(5L).isEmpty());
     }
-
-
 
 }
