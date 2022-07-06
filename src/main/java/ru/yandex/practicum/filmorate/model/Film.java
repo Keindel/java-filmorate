@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -27,7 +28,9 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
-    private Set<Long> usersIdsLiked;
+    private double rating;
+    //TODO marks
+    private Map<Long, Integer> usersIdsMarks;
     private Set<Genre> genres;
     private Mpa mpa;
     private List<Director> directors;

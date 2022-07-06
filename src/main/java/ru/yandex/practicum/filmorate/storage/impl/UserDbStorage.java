@@ -152,11 +152,11 @@ public class UserDbStorage implements UserStorage {
     }
 
     public Collection<Long> getTopMatchedUsersIds(Long userId) {
-        String sqlFilmsOfUser = "(SELECT film_id FROM likes WHERE like_from_user = ?) ";
+        String sqlFilmsOfUser = "(SELECT film_id FROM marks WHERE mark_from_user = ?) ";
         String sqlGetTopMatchedUsers = "SELECT " +
-                " like_from_user AS other_user_id," +
+                " mark_from_user AS other_user_id," +
                 " COUNT (film_id) AS matches" +
-                " FROM likes" +
+                " FROM marks" +
                 " WHERE film_id IN " + sqlFilmsOfUser +
                 " GROUP BY other_user_id" +
                 " ORDER BY matches DESC" +

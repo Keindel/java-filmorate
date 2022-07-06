@@ -26,15 +26,15 @@ public interface FeedStorage {
      * @param filmId
      * @param userId
      */
-    void likeFromUser(long filmId, long userId);
+    void markFromUser(long filmId, long userId);
 
     /**
      * пользователь удаляет лайк
      * @param filmId
      * @param userId
      */
-    void unlikeFromUser(long filmId, long userId);
-    boolean updateLikeFromUser(long filmId, long userId);
+    void unmarkFromUser(long filmId, long userId);
+    boolean updateMarkFromUser(long filmId, long userId);
     void addReview(Review review);
     void updateReview(Review review);
     void deleteReview(Long reviewId);

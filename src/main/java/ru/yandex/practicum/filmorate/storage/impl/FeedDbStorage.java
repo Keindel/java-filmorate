@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
 
 
 @Slf4j
@@ -95,7 +96,7 @@ public class FeedDbStorage implements FeedStorage {
      * @param filmId
      * @param userId
      */
-    public void likeFromUser(long filmId, long userId) {
+    public void markFromUser(long filmId, long userId) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sqlQuery2 = "select user_id from users where user_id  = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery2, userId);
@@ -103,12 +104,12 @@ public class FeedDbStorage implements FeedStorage {
         while (rowSet.next()) {
             user_id = rowSet.getInt("user_id");
             String sqlQuery =
-                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                    " values(?,?, ?, ?,?)";
+                    "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
+                            " values(?, ?, ?, ?, ?)";
             jdbcTemplate.update(sqlQuery
                 , userId
                 , timestamp.getTime()
-                , "LIKE"
+                , "MARK"
                 , "ADD"
                 , filmId);
         }
@@ -119,7 +120,7 @@ public class FeedDbStorage implements FeedStorage {
      * @param filmId
      * @param userId
      */
-    public void unlikeFromUser(long filmId, long userId){
+    public void unmarkFromUser(long filmId, long userId) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sqlQuery2 = "select user_id from users where user_id  = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery2, userId);
@@ -127,12 +128,12 @@ public class FeedDbStorage implements FeedStorage {
         while (rowSet.next()) {
             user_id = rowSet.getInt("user_id");
             String sqlQuery =
-                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                    " values(?,?, ?, ?,?)";
+                    "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
+                            " values(?, ?, ?, ?, ?)";
             jdbcTemplate.update(sqlQuery
                 , userId
                 , timestamp.getTime()
-                , "LIKE"
+                , "MARK"
                 , "REMOVE"
                 , filmId);
         }
@@ -143,31 +144,31 @@ public class FeedDbStorage implements FeedStorage {
      * @param filmId
      * @param userId
      */
-    public boolean updateLikeFromUser(long filmId, long userId){
-        String sqlQuery = "select like_id from likes where film_id = ? and like_from_user = ?";
+    public boolean updateMarkFromUser(long filmId, long userId) {
+        String sqlQuery = "select mark_id from marks where film_id = ? and mark_from_user = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, filmId, userId);
-        int like_id = -1;
+        int mark_id = -1;
         while (rowSet.next()) {
-            like_id = rowSet.getInt("like_id");
+            mark_id = rowSet.getInt("mark_id");
         }
-        if (like_id != -1) {
+        if (mark_id != -1) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             int entityId = 0;
             sqlQuery =
                 "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
                     " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
-                , userId
-                , timestamp.getTime()
-                , "LIKE"
-                , "UPDATE"
-                , entityId);
+                    , userId
+                    , timestamp.getTime()
+                    , "MARK"
+                    , "UPDATE"
+                    , entityId);
             return true;
         }
         return false;
     }
 
-    public void addReview(Review review){
+    public void addReview(Review review) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sqlQuery =
             "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
@@ -222,7 +223,7 @@ public class FeedDbStorage implements FeedStorage {
 
     private Feed mapRowToFeed(ResultSet rs, int rowNum) throws SQLException {
         return Feed.builder()
-            .timestamp( rs.getLong("timestamp"))
+            .timestamp(rs.getLong("timestamp"))
             .userId(rs.getInt("userId"))
             .eventType(rs.getString("eventType"))
             .operation(rs.getString("operation"))

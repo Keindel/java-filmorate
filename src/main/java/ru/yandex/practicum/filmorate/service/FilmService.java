@@ -55,6 +55,10 @@ public class FilmService {
         }
     }
 
+    private void validateMark(int mark) throws MarkValidationException {
+        if (mark < 1 || mark > 10) throw new MarkValidationException();
+    }
+
     public long getSize() {
         return filmStorage.getCount();
     }
@@ -66,18 +70,19 @@ public class FilmService {
         return film;
     }
 
-    public void likeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
-        boolean result = feedService.updateLikeFromUser(filmId, userId);
+    public void markFromUser(Long filmId, Long userId, Integer mark) throws UserNotFoundException, FilmNotFoundException, MarkValidationException {
+        validateMark(mark);
+        boolean result = feedService.updateMarkFromUser(filmId, userId);
         userStorage.getWithoutFriendsByIdOrThrowEx(userId);
-        filmStorage.likeFromUser(filmId, userId);
+        filmStorage.markFromUser(filmId, userId, mark);
         if (!result) {
-            feedService.likeFromUser(filmId, userId);
+            feedService.markFromUser(filmId, userId);
         }
     }
 
-    public void unlikeFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
+    public void unmarkFromUser(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
         userStorage.getWithoutFriendsByIdOrThrowEx(userId);
-        filmStorage.unlikeFromUser(filmId, userId);
+        filmStorage.unmarkFromUser(filmId, userId);
     }
 
     public Collection<Genre> getGenres() {
@@ -101,12 +106,12 @@ public class FilmService {
     }
 
     public Collection<Film> getCommonFilms(Long userId, Long friendId) throws UserNotFoundException {
-        List<Film> userLikesFilms = (List<Film>) filmStorage.getAllFilmsWithLikesFromUser(userId);
-        List<Film> friendLikesFilms = (List<Film>) filmStorage.getAllFilmsWithLikesFromUser(friendId);
-        userLikesFilms.retainAll(friendLikesFilms);
-        return userLikesFilms
+        List<Film> userMarksFilms = filmStorage.getAllFilmsWithMarksFromUser(userId);
+        List<Film> friendMarksFilms = filmStorage.getAllFilmsWithMarksFromUser(friendId);
+        userMarksFilms.retainAll(friendMarksFilms);
+        return userMarksFilms
                 .stream()
-                .sorted((o1, o2) -> o2.getUsersIdsLiked().size() - o1.getUsersIdsLiked().size())
+                .sorted((o1, o2) -> o2.getUsersIdsMarks().size() - o1.getUsersIdsMarks().size())
                 .collect(Collectors.toList());
     }
 

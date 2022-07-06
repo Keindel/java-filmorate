@@ -50,9 +50,11 @@ public class FilmController {
      * @param filmId
      * @param userId
      */
-    @PutMapping("/{id}/like/{userId}")
-    public void addLikeFromUser(@PathVariable("id") Long filmId, @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
-        filmService.likeFromUser(filmId, userId);
+    //TODO
+    @PutMapping("/{id}/{mark}/{userId}")
+    public void addMarkFromUser(@PathVariable("id") Long filmId, @PathVariable Integer mark, @PathVariable Long userId)
+            throws UserNotFoundException, FilmNotFoundException, MarkValidationException {
+        filmService.markFromUser(filmId, userId, mark);
     }
 
     /**
@@ -60,12 +62,15 @@ public class FilmController {
      * @param filmId
      * @param userId
      */
-    @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLikeFromUser(@PathVariable("id") Long filmId, @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
-        filmService.unlikeFromUser(filmId, userId);
-        feedService.unlikeFromUser(filmId, userId);
+    //TODO
+    @DeleteMapping("/{id}/mark/{userId}")
+    public void deleteMarkFromUser(@PathVariable("id") Long filmId, @PathVariable Long userId)
+            throws UserNotFoundException, FilmNotFoundException {
+        filmService.unmarkFromUser(filmId, userId);
+        feedService.unmarkFromUser(filmId, userId);
     }
 
+    //TODO
     @GetMapping("/popular")
     public Collection<Film> mostPopularFilms(@RequestParam(defaultValue = "10") Integer count,
                                        @RequestParam(required = false) Integer year,
@@ -73,6 +78,7 @@ public class FilmController {
         return filmService.mostPopularFilms(count, year, genreId);
     }
 
+    //TODO
     @GetMapping("/director/{directorId}")
     public Collection<Film> getSortedFilms(@PathVariable long directorId, @RequestParam String sortBy) throws ValidationException, DirectorNotFoundException {
         return filmService.getSortedFilms(directorId, sortBy);
