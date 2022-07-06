@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
+import com.fasterxml.jackson.databind.type.CollectionLikeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.*;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -14,8 +16,7 @@ import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
 import javax.xml.bind.ValidationException;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -120,5 +121,9 @@ public class FilmService {
 
     public Collection<Film> getSortedFilms(long directorId, String sortBy) throws ValidationException, DirectorNotFoundException {
         return filmStorage.getDirectorFilms(directorId, sortBy);
+    }
+
+    public Collection<Film> getSearch(String query, String by) {
+        return filmStorage.getSearch(query, by);
     }
 }

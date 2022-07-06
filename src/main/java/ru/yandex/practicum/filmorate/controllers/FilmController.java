@@ -94,4 +94,8 @@ public class FilmController {
     public Collection<Film> getCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) throws UserNotFoundException {
         return filmService.getCommonFilms(userId, friendId);
     }
+    @GetMapping("/search")
+    public Collection<Film> getSearch(@RequestParam String query, @RequestParam String by) {
+        return filmService.getSearch(query, by);
+    }
 }
