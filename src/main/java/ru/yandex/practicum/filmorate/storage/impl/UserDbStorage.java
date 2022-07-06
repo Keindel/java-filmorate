@@ -7,7 +7,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -149,21 +148,5 @@ public class UserDbStorage implements UserStorage {
         jdbcTemplate.update(sqlQuery
                 , userId
                 , friendToDellId);
-    }
-
-    public Collection<Long> getTopMatchedUsersIds(Long userId) {
-        String sqlFilmsOfUser = "(SELECT film_id FROM marks WHERE mark_from_user = ?) ";
-        String sqlGetTopMatchedUsers = "SELECT " +
-                " mark_from_user AS other_user_id," +
-                " COUNT (film_id) AS matches" +
-                " FROM marks" +
-                " WHERE film_id IN " + sqlFilmsOfUser +
-                " GROUP BY other_user_id" +
-                " ORDER BY matches DESC" +
-                " LIMIT ?";
-        return jdbcTemplate.queryForList(sqlGetTopMatchedUsers
-                , Long.class
-                , userId
-                , USERS_MATCHING_LIMIT);
     }
 }

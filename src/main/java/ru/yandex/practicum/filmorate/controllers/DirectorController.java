@@ -44,7 +44,7 @@ public class DirectorController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteDirectorById(@PathVariable long id) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, DirectorNotFoundException, GenreNotFoundException {
+    public void deleteDirectorById(@PathVariable long id) throws UserNotFoundException, FilmNotFoundException, DirectorNotFoundException {
         directorService.deleteDirectorById(id);
     }
 

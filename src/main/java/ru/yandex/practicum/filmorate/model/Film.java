@@ -29,7 +29,6 @@ public class Film {
     @Min(1)
     private int duration;
     private double rating;
-    //TODO marks
     private Map<Long, Integer> usersIdsMarks;
     private Set<Genre> genres;
     private Mpa mpa;

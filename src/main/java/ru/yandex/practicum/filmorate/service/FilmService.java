@@ -105,7 +105,7 @@ public class FilmService {
         filmStorage.deleteById(filmId);
     }
 
-    public Collection<Film> getCommonFilms(Long userId, Long friendId) throws UserNotFoundException {
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) {
         List<Film> userMarksFilms = filmStorage.getAllFilmsWithMarksFromUser(userId);
         List<Film> friendMarksFilms = filmStorage.getAllFilmsWithMarksFromUser(friendId);
         userMarksFilms.retainAll(friendMarksFilms);

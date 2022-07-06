@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getMutualFriends (@PathVariable Long id, @PathVariable Long otherId) throws UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException, DirectorNotFoundException {
+    public Collection<User> getMutualFriends (@PathVariable Long id, @PathVariable Long otherId) throws UserNotFoundException {
         return userService.getMutualFriendsIds(id, otherId).stream()
                 .map(id1 -> {
                     try {
@@ -97,7 +97,7 @@ public class UserController {
      * @param friendId
      */
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriendship(@PathVariable Long id, @PathVariable Long friendId) throws UserNotFoundException, FilmNotFoundException {
+    public void deleteFriendship(@PathVariable Long id, @PathVariable Long friendId) throws UserNotFoundException {
         feedService.deleteFriend(id, friendId);
         userService.deleteFriend(id, friendId);
     }
