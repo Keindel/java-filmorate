@@ -21,7 +21,10 @@ public class RepositoryCleaner {
                         " ALTER TABLE USERS ADD UNIQUE (email);" +
 
                         " DELETE FROM films;" +
-                        " ALTER TABLE films ALTER COLUMN film_id RESTART START WITH 1;";
+                        " ALTER TABLE films ALTER COLUMN film_id RESTART START WITH 1;" +
+
+                        " DELETE FROM director_names;" +
+                        " ALTER TABLE director_names ALTER COLUMN director_id RESTART START WITH 1;";
         jdbcTemplate.update(sqlTruncate);
     }
 }
