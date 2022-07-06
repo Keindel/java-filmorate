@@ -1,3 +1,5 @@
+
+
 package ru.yandex.practicum.filmorate;
 
 import lombok.RequiredArgsConstructor;
@@ -94,7 +96,6 @@ class TestsForRefactoring {
                 .directors(directors)
                 .build());
 
-
         filmService.markFromUser(1L,1L,2);
         filmService.markFromUser(1L,2L,2);
         filmService.markFromUser(2L,1L,10);
@@ -159,7 +160,6 @@ class TestsForRefactoring {
 
         Assertions.assertEquals(listsForTests.get(1), arrays.get(1));
     }
-
 
     @Test
     public void testAddMarkToNotExistedFilmFromUser() {
@@ -266,7 +266,7 @@ class TestsForRefactoring {
 
     @Test
     void recommendFilmsForUserTest() throws UserNotFoundException, FilmNotFoundException, MarkValidationException {
-        Film film = filmDbStorage.create(Film.builder()
+        Film film3 = filmDbStorage.create(Film.builder() // filmNo.3
                 .name("Again and again")
                 .description("Amazing film!").releaseDate(LocalDate.of(2000, 1, 1))
                 .releaseDate(LocalDate.of(2000, 2, 1))
@@ -277,21 +277,53 @@ class TestsForRefactoring {
                 .directors(directors)
                 .build());
 
-        userDbStorage.create(User.builder()
+        Film film4 = filmDbStorage.create(Film.builder() // filmNo.3
+                .name("Again and again 2")
+                .description("Amazing film! Second part!").releaseDate(LocalDate.of(2000, 1, 1))
+                .releaseDate(LocalDate.of(2005, 2, 1))
+                .duration(125).genres(filmGenres)
+                .mpa(new Mpa(1, "G"))
+                .genres(filmGenres)
+                .usersIdsMarks(new HashMap<>())
+                .directors(directors)
+                .build());
+
+        userDbStorage.create(User.builder() // userNo.3
                 .email("abc212@mail.ru")
                 .login("login3")
                 .name("name3")
                 .birthday(LocalDate.of(2022, 2, 2))
                 .build());
 
+        userDbStorage.create(User.builder() // userNo.4
+                .email("abc42@mail.ru")
+                .login("login4")
+                .name("name4")
+                .birthday(LocalDate.of(2022, 2, 2))
+                .build());
+
+        userDbStorage.create(User.builder() // userNo.4
+                .email("abc52@mail.ru")
+                .login("login54")
+                .name("name5")
+                .birthday(LocalDate.of(2022, 2, 2))
+                .build());
+
         filmService.markFromUser(2L, 3L, 9);
         filmService.markFromUser(3L, 1L, 6);
+        filmService.markFromUser(1L,4L,2);
+        filmService.markFromUser(2L,4L,10);
+        filmService.markFromUser(4L,3L,10);
         List<Film> resultList = (List<Film>) userService.recommendFilmsForUser(3L);
-        Assertions.assertEquals(film, resultList.get(0));
+        Assertions.assertEquals(film3, resultList.get(0));
+        resultList = (List<Film>) userService.recommendFilmsForUser(1L);
+        Assertions.assertEquals(film4, resultList.get(0));
+        ArrayList<Film> films = new ArrayList();
+        films.add(film3);
+        films.add(film4);
+        Assertions.assertEquals(films, userService.recommendFilmsForUser(2L));
+        Assertions.assertTrue(userService.recommendFilmsForUser(5L).isEmpty());
     }
-
-
-
 
 
 
