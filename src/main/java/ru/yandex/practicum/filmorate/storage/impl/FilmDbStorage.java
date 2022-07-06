@@ -226,7 +226,7 @@ public class FilmDbStorage implements FilmStorage {
                 , userId);
     }
 
-    public Collection<Film> getFilmsWithOneSideMarkFromOthers(Long userId) {
+    public Collection<Film> getRecommendedFilmsForUser(Long userId) {
         String sqlAllMarkedFilmsOfUser = "(SELECT m1.film_id FROM marks AS m1 WHERE mark_from_user = ?)";
         String sqlGoodFilmsOfUserWithMarks = "(SELECT m2.film_id, m2.mark FROM marks AS m2" +
                 " WHERE m2.mark_from_user = ? AND m2.mark > 5) AS good_films_user ";

@@ -79,7 +79,7 @@ public class UserService {
     }
 
     public Collection<Film> recommendFilmsForUser(Long id) {
-        return filmStorage.getFilmsWithOneSideMarkFromOthers(id);
+        return filmStorage.getRecommendedFilmsForUser(id);
     }
 
     public void deleteById(Long userId) throws UserNotFoundException, FilmNotFoundException {
