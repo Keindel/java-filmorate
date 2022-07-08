@@ -55,21 +55,8 @@ public class UserService {
         userStorage.deleteFriendFromUser(userId, friendToDellId);
     }
 
-    public Collection<Long> getMutualFriendsIds(Long user1Id, Long user2Id) throws UserNotFoundException {
-        long userIdWithLessFriends = Long.min(getFriendsNum(user1Id), getFriendsNum(user2Id));
-        if (userIdWithLessFriends == 0) return Collections.emptyList();
-        long otherUserId = user1Id - userIdWithLessFriends + user2Id ;
-
-        return userStorage.getById(userIdWithLessFriends).getFriends().keySet()
-                .stream()
-                .filter(friendId -> {
-                    try {
-                        return userStorage.getById(otherUserId).getFriends().containsKey(friendId);
-                    } catch (UserNotFoundException e) {
-                        return false;
-                    }
-                })
-                .collect(Collectors.toList());
+    public Collection<Long> getMutualFriendsIds(Long userId, Long otherUserId) throws UserNotFoundException {
+        return userStorage.getMutualFriendsIds(userId, otherUserId);
     }
 
     private int getFriendsNum(Long userId) throws UserNotFoundException {

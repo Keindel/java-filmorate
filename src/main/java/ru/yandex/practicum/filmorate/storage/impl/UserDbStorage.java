@@ -149,4 +149,23 @@ public class UserDbStorage implements UserStorage {
                 , userId
                 , friendToDellId);
     }
+
+    public Collection<Long> getMutualFriendsIds(Long userId, Long otherUserId) throws UserNotFoundException {
+        String sqlCheckUsersExistance = "SELECT user_id" +
+                " FROM users" +
+                " WHERE user_id IN (?, ?)";
+        List<Long> usersIdsFoundInDb =
+                jdbcTemplate.queryForList(sqlCheckUsersExistance, Long.class, userId, otherUserId);
+        if (usersIdsFoundInDb.size() < 2) throw new UserNotFoundException();
+
+        String sqlGetMutualFriends = "SELECT friends_of_first.friend_id" +
+                " FROM friends AS friends_of_first" +
+                " JOIN (SELECT friend_id FROM friends WHERE user_id = ?) AS friends_of_second" +
+                "     ON friends_of_first.friend_id = friends_of_second.friend_id" +
+                " WHERE user_id = ?";
+        return jdbcTemplate.queryForList(sqlGetMutualFriends
+                , Long.class
+                , userId
+                , otherUserId);
+    }
 }
