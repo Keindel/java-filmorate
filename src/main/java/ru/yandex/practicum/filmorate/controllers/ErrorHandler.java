@@ -15,8 +15,10 @@ import java.util.Map;
     "ru.yandex.practicum.filmorate.service"})
 public class ErrorHandler {
 
-    @ExceptionHandler({FilmValidationException.class, UserValidationException.class
-            , MarkValidationException.class, ValidationException.class})
+    @ExceptionHandler({FilmValidationException.class
+            , UserValidationException.class
+            , MarkValidationException.class
+            , ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationException(final Exception e) {
         return Map.of("error: ", "validation failed");

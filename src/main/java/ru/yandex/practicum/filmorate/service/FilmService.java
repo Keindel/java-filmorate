@@ -1,12 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
-import com.fasterxml.jackson.databind.type.CollectionLikeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.*;
-import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -111,7 +109,7 @@ public class FilmService {
         userMarksFilms.retainAll(friendMarksFilms);
         return userMarksFilms
                 .stream()
-                .sorted((o1, o2) -> o2.getUsersIdsMarks().size() - o1.getUsersIdsMarks().size())
+                .sorted((o1, o2) -> (int) (100 * (o2.getRating() - o1.getRating())))
                 .collect(Collectors.toList());
     }
 
@@ -123,7 +121,7 @@ public class FilmService {
         return filmStorage.getDirectorFilms(directorId, sortBy);
     }
 
-    public Collection<Film> getSearch(String query, String by) {
+    public Collection<Film> search(String query, String by) {
         return filmStorage.getSearch(query, by);
     }
 }

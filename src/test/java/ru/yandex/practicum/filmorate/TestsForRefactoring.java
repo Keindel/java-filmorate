@@ -46,7 +46,7 @@ class TestsForRefactoring {
     @BeforeAll
     public static void beforeAll() {
         filmGenres = new HashSet<>();
-        filmGenres.add(new Genre(6, "Боевик"));
+        filmGenres.add(new Genre(6,"Боевик"));
     }
 
     @BeforeEach
@@ -69,7 +69,7 @@ class TestsForRefactoring {
                 .birthday(LocalDate.of(2022, 2, 2))
                 .build());
         HashSet<Genre> filmGenres = new HashSet<>();
-        filmGenres.add(new Genre(6, "Боевик"));
+        filmGenres.add(new Genre(6,"Боевик"));
 
         director = new Director(1, "Tom");
         directors = new ArrayList<>();
@@ -78,8 +78,8 @@ class TestsForRefactoring {
 
         filmDbStorage.create(Film.builder()
                 .name("Never again")
-                .description("Amazing film").releaseDate(LocalDate.of(2000, 1, 1))
-                .releaseDate(LocalDate.of(2000, 1, 1))
+                .description("Amazing film").releaseDate(LocalDate.of(2000,1,1))
+                .releaseDate(LocalDate.of(2000,1,1))
                 .duration(120).genres(filmGenres)
                 .mpa(new Mpa(1, "G"))
                 .genres(filmGenres)
@@ -89,7 +89,7 @@ class TestsForRefactoring {
         filmDbStorage.create(Film.builder()
                 .name("Always again")
                 .description("Funny film")
-                .releaseDate(LocalDate.of(2000, 1, 1))
+                .releaseDate(LocalDate.of(2000,1,1))
                 .duration(120).genres(filmGenres)
                 .mpa(new Mpa(1, "G"))
                 .genres(filmGenres)
@@ -97,10 +97,10 @@ class TestsForRefactoring {
                 .directors(directors)
                 .build());
 
-        filmService.markFromUser(1L, 1L, 2);
-        filmService.markFromUser(1L, 2L, 2);
-        filmService.markFromUser(2L, 1L, 10);
-        filmService.markFromUser(2L, 2L, 10);
+        filmService.markFromUser(1L,1L,2);
+        filmService.markFromUser(1L,2L,2);
+        filmService.markFromUser(2L,1L,10);
+        filmService.markFromUser(2L,2L,10);
     }
 
     @Test
@@ -108,12 +108,13 @@ class TestsForRefactoring {
         String sqlQuery = "select * from marks";
         List<List<Long>> arrays = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
                     List<Long> array = new ArrayList<>();
-                    array.add(rs.getLong("film_id"));
-                    array.add(rs.getLong("mark_from_user"));
+                    array.add (rs.getLong("film_id"));
+                    array.add (rs.getLong("mark_from_user"));
                     array.add(rs.getLong("mark"));
                     return array;
                 }
         );
+
         List<List<Long>> listsForTests = new ArrayList<>();
         List<Long> list = new ArrayList<>();
 
@@ -329,5 +330,7 @@ class TestsForRefactoring {
         Assertions.assertEquals(films, userService.recommendFilmsForUser(2L));
         Assertions.assertTrue(userService.recommendFilmsForUser(5L).isEmpty());
     }
+
+
 
 }
