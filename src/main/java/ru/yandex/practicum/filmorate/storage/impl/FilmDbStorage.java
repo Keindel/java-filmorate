@@ -243,8 +243,8 @@ public class FilmDbStorage implements FilmStorage {
                 " AND m4.mark_from_user IN " + sqlGetTopMatchedUsers +
                 " GROUP BY m4.film_id" +
                 " HAVING AVG(m4.mark) >= 6";
-        Collection<Long> filmsIds = jdbcTemplate.queryForList(sqlGetRecommendedFilmsIds
-                , Long.class, userId, userId, userId, USERS_MATCHING_LIMIT);
+        Collection<Long> filmsIds = jdbcTemplate.queryForList(sqlGetRecommendedFilmsIds,
+                Long.class, userId, userId, userId, USERS_MATCHING_LIMIT);
         return filmsIds.stream().map(x -> {
             try {
                 return getById(x);
