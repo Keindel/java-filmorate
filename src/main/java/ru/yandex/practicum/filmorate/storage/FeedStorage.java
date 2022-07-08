@@ -13,13 +13,13 @@ public interface FeedStorage {
      * @param friendToAddId
      * @throws UserNotFoundException
      */
-    void addFriend(long userId, long friendToAddId);
+    void addFriend(long userId, long friendToAddId) throws UserNotFoundException;
     /**
      * удаление из друзей
      * @param userId
      * @param friendId
      */
-    void deleteFriend(long userId, long friendId);
+    void deleteFriend(long userId, long friendId) throws UserNotFoundException;
     boolean updateFriend(long userId, long friendId);
     /**
      * пользователь ставит лайк фильму

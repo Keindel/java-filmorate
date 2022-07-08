@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class FeedDbStorage implements FeedStorage {
      * @param friendToAddId
      * @throws UserNotFoundException
      */
-    public void addFriend(long userId, long friendToAddId) {
+    public void addFriend(long userId, long friendToAddId) throws UserNotFoundException {
         String action = "ADD";
         addOrRemoveFriend(userId, friendToAddId, action);
     }
@@ -37,11 +38,10 @@ public class FeedDbStorage implements FeedStorage {
      * @param userId
      * @param friendId
      */
-    public void deleteFriend(long userId, long friendId) {
+    public void deleteFriend(long userId, long friendId) throws UserNotFoundException {
         String action = "REMOVE";
         addOrRemoveFriend(userId, friendId, action);
     }
-
 
     /**
      * пользователь ставит лайк фильму
@@ -204,16 +204,25 @@ public class FeedDbStorage implements FeedStorage {
                 , review.getReviewId());
     }
 
-    private void addOrRemoveFriend(long userId, long friendId, String action){
+    private void addOrRemoveFriend(long userId, long friendId, String action) throws UserNotFoundException {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sqlQuery =
                 "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                        " values(?,?, ?, ?,?)";
-        jdbcTemplate.update(sqlQuery
-                , userId
-                , timestamp.getTime()
-                , "FRIEND"
-                , action
-                , friendId);
+                        "values(select user_id " +
+                        "from users " +
+                        "where user_id = ?, ?, ?, ?," +
+                        "select user_id " +
+                        "from users " +
+                        "where user_id = ?) ";
+        try {
+            jdbcTemplate.update(sqlQuery
+                    , userId
+                    , timestamp.getTime()
+                    , "FRIEND"
+                    , action
+                    , friendId);
+        } catch (IncorrectResultSizeDataAccessException e){
+            throw new UserNotFoundException();
+        }
     }
 }

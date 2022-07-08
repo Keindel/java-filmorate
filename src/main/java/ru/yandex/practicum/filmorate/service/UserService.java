@@ -2,21 +2,15 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.GenreNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.MpaNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exceptions.*;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +41,7 @@ public class UserService {
         return user;
     }
 
-    public void requestFriendship(Long userId, Long friendToAddId) throws UserNotFoundException, FilmNotFoundException {
+    public void requestFriendship(Long userId, Long friendToAddId) throws UserNotFoundException {
         userStorage.requestFriendship(userId, friendToAddId);
     }
 

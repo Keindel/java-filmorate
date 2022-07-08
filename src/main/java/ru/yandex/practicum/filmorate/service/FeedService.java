@@ -14,7 +14,6 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class FeedService {
     private final FeedStorage feedStorage;
-    private final UserDbStorage userStorage;
 
     /**
      * Возвращает ленту событий пользователя
@@ -31,8 +30,6 @@ public class FeedService {
      * @throws UserNotFoundException
      */
     public void addFriend(long userId, long friendToAddId) throws UserNotFoundException {
-        userStorage.getWithoutFriendsByIdOrThrowEx(userId);
-        userStorage.getWithoutFriendsByIdOrThrowEx(friendToAddId);
         feedStorage.addFriend(userId, friendToAddId);
     }
 
@@ -41,7 +38,7 @@ public class FeedService {
      * @param userId
      * @param friendId
      */
-    public void deleteFriend(long userId, long friendId) {
+    public void deleteFriend(long userId, long friendId) throws UserNotFoundException {
         feedStorage.deleteFriend(userId, friendId);
     }
 
