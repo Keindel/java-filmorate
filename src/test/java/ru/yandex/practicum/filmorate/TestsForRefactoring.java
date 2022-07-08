@@ -46,7 +46,7 @@ class TestsForRefactoring {
     @BeforeAll
     public static void beforeAll() {
         filmGenres = new HashSet<>();
-        filmGenres.add(new Genre(6,"Боевик"));
+        filmGenres.add(new Genre(6, "Боевик"));
     }
 
     @BeforeEach
@@ -69,7 +69,7 @@ class TestsForRefactoring {
                 .birthday(LocalDate.of(2022, 2, 2))
                 .build());
         HashSet<Genre> filmGenres = new HashSet<>();
-        filmGenres.add(new Genre(6,"Боевик"));
+        filmGenres.add(new Genre(6, "Боевик"));
 
         director = new Director(1, "Tom");
         directors = new ArrayList<>();
@@ -78,8 +78,8 @@ class TestsForRefactoring {
 
         filmDbStorage.create(Film.builder()
                 .name("Never again")
-                .description("Amazing film").releaseDate(LocalDate.of(2000,1,1))
-                .releaseDate(LocalDate.of(2000,1,1))
+                .description("Amazing film").releaseDate(LocalDate.of(2000, 1, 1))
+                .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(120).genres(filmGenres)
                 .mpa(new Mpa(1, "G"))
                 .genres(filmGenres)
@@ -89,7 +89,7 @@ class TestsForRefactoring {
         filmDbStorage.create(Film.builder()
                 .name("Always again")
                 .description("Funny film")
-                .releaseDate(LocalDate.of(2000,1,1))
+                .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(120).genres(filmGenres)
                 .mpa(new Mpa(1, "G"))
                 .genres(filmGenres)
@@ -97,10 +97,10 @@ class TestsForRefactoring {
                 .directors(directors)
                 .build());
 
-        filmService.markFromUser(1L,1L,2);
-        filmService.markFromUser(1L,2L,2);
-        filmService.markFromUser(2L,1L,10);
-        filmService.markFromUser(2L,2L,10);
+        filmService.markFromUser(1L, 1L, 2);
+        filmService.markFromUser(1L, 2L, 2);
+        filmService.markFromUser(2L, 1L, 10);
+        filmService.markFromUser(2L, 2L, 10);
     }
 
     @Test
@@ -108,8 +108,8 @@ class TestsForRefactoring {
         String sqlQuery = "select * from marks";
         List<List<Long>> arrays = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
                     List<Long> array = new ArrayList<>();
-                    array.add (rs.getLong("film_id"));
-                    array.add (rs.getLong("mark_from_user"));
+                    array.add(rs.getLong("film_id"));
+                    array.add(rs.getLong("mark_from_user"));
                     array.add(rs.getLong("mark"));
                     return array;
                 }
@@ -133,35 +133,53 @@ class TestsForRefactoring {
     @Test
     public void testAddMarkToNotExistedFilmFromUser() {
         assertThrows(
-                FilmNotFoundException.class, () -> filmService.markFromUser(4L,1L,2)
+                FilmNotFoundException.class, () -> filmService.markFromUser(0L, 1L, 2)
+        );
+        assertThrows(
+                FilmNotFoundException.class, () -> filmService.markFromUser(-1L, 1L, 2)
+        );
+        assertThrows(
+                FilmNotFoundException.class, () -> filmService.markFromUser(4L, 1L, 2)
         );
     }
 
     @Test
     public void testAddMarkFromNotExistedUser() {
         assertThrows(
-                UserNotFoundException.class, () -> filmService.markFromUser(1L,8L,2)
+                UserNotFoundException.class, () -> filmService.markFromUser(1L, 8L, 2)
+        );
+        assertThrows(
+                UserNotFoundException.class, () -> filmService.markFromUser(1L, -1L, 2)
+        );
+        assertThrows(
+                UserNotFoundException.class, () -> filmService.markFromUser(1L, 0L, 2)
         );
     }
 
     @Test
-    public void wrongMarkValidationTest(){
+    public void wrongMarkValidationTest() {
         assertThrows(
-                MarkValidationException.class, () -> filmService.markFromUser(1L,1L,0)
+                MarkValidationException.class, () -> filmService.markFromUser(1L, 1L, -1)
+        );
+        assertThrows(
+                MarkValidationException.class, () -> filmService.markFromUser(1L, 1L, 0)
+        );
+        assertThrows(
+                MarkValidationException.class, () -> filmService.markFromUser(1L, 1L, 11)
         );
     }
 
     @Test
     public void testUnmarkFromUser() throws UserNotFoundException, FilmNotFoundException {
-        filmService.unmarkFromUser(1L,2L);
-        filmService.unmarkFromUser(2L,1L);
-        filmService.unmarkFromUser(2L,2L);
+        filmService.unmarkFromUser(1L, 2L);
+        filmService.unmarkFromUser(2L, 1L);
+        filmService.unmarkFromUser(2L, 2L);
 
         String sqlQuery = "select * from marks";
         List<List<Long>> arrays = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
                     List<Long> array = new ArrayList<>();
-                    array.add (rs.getLong("film_id"));
-                    array.add (rs.getLong("mark_from_user"));
+                    array.add(rs.getLong("film_id"));
+                    array.add(rs.getLong("mark_from_user"));
                     array.add(rs.getLong("mark"));
                     return array;
                 }
@@ -181,14 +199,26 @@ class TestsForRefactoring {
     @Test
     public void testUnmarkFromNotExistedUser() {
         assertThrows(
-                UserNotFoundException.class, () -> filmService.unmarkFromUser(1L,8L)
+                UserNotFoundException.class, () -> filmService.unmarkFromUser(1L, 8L)
+        );
+        assertThrows(
+                UserNotFoundException.class, () -> filmService.unmarkFromUser(1L, -1L)
+        );
+        assertThrows(
+                UserNotFoundException.class, () -> filmService.unmarkFromUser(1L, 0L)
         );
     }
 
     @Test
     public void testUnmarkNotExistedFilmFromUser() {
         assertThrows(
-                FilmNotFoundException.class, () -> filmService.unmarkFromUser(8L,1L)
+                FilmNotFoundException.class, () -> filmService.unmarkFromUser(8L, 1L)
+        );
+        assertThrows(
+                FilmNotFoundException.class, () -> filmService.unmarkFromUser(-1L, 1L)
+        );
+        assertThrows(
+                FilmNotFoundException.class, () -> filmService.unmarkFromUser(0L, 1L)
         );
     }
 
@@ -215,28 +245,28 @@ class TestsForRefactoring {
                 .directors(directors)
                 .build());
 
-        filmService.markFromUser(3L,1L,2);
-        filmService.markFromUser(3L,2L,2);
-        filmService.markFromUser(4L,1L,9);
-        filmService.markFromUser(4L,2L,10);
+        filmService.markFromUser(3L, 1L, 2);
+        filmService.markFromUser(3L, 2L, 2);
+        filmService.markFromUser(4L, 1L, 9);
+        filmService.markFromUser(4L, 2L, 10);
 
         List<Film> list = new ArrayList<>();
         list.add(film4);
         list.add(film3);
-        List<Film> filmsList = (List<Film>) filmService.mostPopularFilms(10,2001,6);
+        List<Film> filmsList = (List<Film>) filmService.mostPopularFilms(10, 2001, 6);
         Optional<Film> filmOptional = Optional.of(filmsList.get(0));
         assertThat(filmOptional)
                 .isPresent()
                 .hasValueSatisfying(film ->
                         assertThat(film).hasFieldOrPropertyWithValue("rating", 9.5)
                 );
-        Assertions.assertEquals(list, filmService.mostPopularFilms(10,2001,6));
-        Assertions.assertEquals(new ArrayList<>(), filmService.mostPopularFilms(10,2001,3));
+        Assertions.assertEquals(list, filmService.mostPopularFilms(10, 2001, 6));
+        Assertions.assertEquals(new ArrayList<>(), filmService.mostPopularFilms(10, 2001, 3));
     }
 
     @Test
     public void testMostPopularFilmsOfEmptyYear() {
-        Assertions.assertEquals(new ArrayList<>(), filmService.mostPopularFilms(10,3001,6));
+        Assertions.assertEquals(new ArrayList<>(), filmService.mostPopularFilms(10, 3001, 6));
     }
 
     @Test
@@ -286,9 +316,9 @@ class TestsForRefactoring {
 
         filmService.markFromUser(2L, 3L, 9);
         filmService.markFromUser(3L, 1L, 6);
-        filmService.markFromUser(1L,4L,2);
-        filmService.markFromUser(2L,4L,10);
-        filmService.markFromUser(4L,3L,10);
+        filmService.markFromUser(1L, 4L, 2);
+        filmService.markFromUser(2L, 4L, 10);
+        filmService.markFromUser(4L, 3L, 10);
         List<Film> resultList = (List<Film>) userService.recommendFilmsForUser(3L);
         Assertions.assertEquals(film3, resultList.get(0));
         resultList = (List<Film>) userService.recommendFilmsForUser(1L);
