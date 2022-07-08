@@ -13,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.List;
 
 
 @Slf4j
@@ -29,16 +28,8 @@ public class FeedDbStorage implements FeedStorage {
      * @throws UserNotFoundException
      */
     public void addFriend(long userId, long friendToAddId) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlQuery =
-            "insert into feeds( userId, timestamp, eventType, operation, entityId)" +
-                " values(?,?, ?, ?,?)";
-        jdbcTemplate.update(sqlQuery
-            , userId
-            , timestamp.getTime()
-            , "FRIEND"
-            , "ADD"
-            , friendToAddId);
+        String action = "ADD";
+        addOrRemoveFriend(userId, friendToAddId, action);
     }
 
     /**
@@ -47,16 +38,39 @@ public class FeedDbStorage implements FeedStorage {
      * @param friendId
      */
     public void deleteFriend(long userId, long friendId) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlQuery =
-                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                    " values(?,?, ?, ?,?)";
-            jdbcTemplate.update(sqlQuery
-                , userId
-                , timestamp.getTime()
-                , "FRIEND"
-                , "REMOVE"
-                , friendId);
+        String action = "REMOVE";
+        addOrRemoveFriend(userId, friendId, action);
+    }
+
+
+    /**
+     * пользователь ставит лайк фильму
+     * @param filmId
+     * @param userId
+     */
+    public void markFromUser(long filmId, long userId) {
+        String action = "ADD";
+        addOrRemoveMarkFromUser(userId, filmId, action);
+    }
+
+    /**
+     * пользователь удаляет лайк
+     * @param filmId
+     * @param userId
+     */
+    public void unmarkFromUser(long filmId, long userId) {
+        String action = "REMOVE";
+        addOrRemoveMarkFromUser(userId, filmId, action);
+    }
+
+    public void addReview(Review review) {
+        String action = "ADD";
+        addOrUpdateReview(review, action);
+    }
+
+    public void updateReview(Review review) {
+        String action = "UPDATE";
+        addOrUpdateReview(review, action);
     }
 
     /**
@@ -78,65 +92,17 @@ public class FeedDbStorage implements FeedStorage {
                 entityId = rowSet.getInt("entityId");
             }
             sqlQuery =
-                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                    " values(?,?, ?, ?,?)";
+                    "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
+                            " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
-                , userId
-                , timestamp.getTime()
-                , "FRIEND"
-                , "UPDATE"
-                , entityId);
+                    , userId
+                    , timestamp.getTime()
+                    , "FRIEND"
+                    , "UPDATE"
+                    , entityId);
             return true;
         }
         return false;
-    }
-
-    /**
-     * пользователь ставит лайк фильму
-     * @param filmId
-     * @param userId
-     */
-    public void markFromUser(long filmId, long userId) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlQuery2 = "select user_id from users where user_id  = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery2, userId);
-        int user_id = -1;
-        while (rowSet.next()) {
-            user_id = rowSet.getInt("user_id");
-            String sqlQuery =
-                    "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                            " values(?, ?, ?, ?, ?)";
-            jdbcTemplate.update(sqlQuery
-                , userId
-                , timestamp.getTime()
-                , "MARK"
-                , "ADD"
-                , filmId);
-        }
-    }
-
-    /**
-     * пользователь удаляет лайк
-     * @param filmId
-     * @param userId
-     */
-    public void unmarkFromUser(long filmId, long userId) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlQuery2 = "select user_id from users where user_id  = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery2, userId);
-        int user_id = -1;
-        while (rowSet.next()) {
-            user_id = rowSet.getInt("user_id");
-            String sqlQuery =
-                    "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                            " values(?, ?, ?, ?, ?)";
-            jdbcTemplate.update(sqlQuery
-                , userId
-                , timestamp.getTime()
-                , "MARK"
-                , "REMOVE"
-                , filmId);
-        }
     }
 
     /**
@@ -168,32 +134,6 @@ public class FeedDbStorage implements FeedStorage {
         return false;
     }
 
-    public void addReview(Review review) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String sqlQuery =
-            "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                " values(?,?, ?, ?,?)";
-        jdbcTemplate.update(sqlQuery
-            , review.getUserId()
-            , timestamp.getTime()
-            , "REVIEW"
-            , "ADD"
-            , review.getReviewId());
-    }
-
-    public void updateReview(Review review) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            String sqlQuery =
-                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                    " values(?,?, ?, ?,?)";
-            jdbcTemplate.update(sqlQuery
-                , 1
-                , timestamp.getTime()
-                , "REVIEW"
-                , "UPDATE"
-                , 1);
-
-    }
 
     public void deleteReview(Long reviewId) {
         String sqlQuery = "select user_id from reviews where review_id = ?";
@@ -230,5 +170,50 @@ public class FeedDbStorage implements FeedStorage {
             .eventId(rs.getInt("eventId"))
             .entityId(rs.getInt("entityId"))
             .build();
+    }
+
+    private void addOrRemoveMarkFromUser (long userId, long filmId, String action){
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String sqlQuery2 = "select user_id from users where user_id  = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery2, userId);
+        int user_id = -1;
+        while (rowSet.next()) {
+            user_id = rowSet.getInt("user_id");
+            String sqlQuery =
+                    "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
+                            " values(?, ?, ?, ?, ?)";
+            jdbcTemplate.update(sqlQuery
+                    , userId
+                    , timestamp.getTime()
+                    , "MARK"
+                    , action
+                    , filmId);
+        }
+    }
+
+    private void addOrUpdateReview(Review review, String action){
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String sqlQuery =
+                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
+                        " values(?,?, ?, ?,?)";
+        jdbcTemplate.update(sqlQuery
+                , review.getUserId()
+                , timestamp.getTime()
+                , "REVIEW"
+                , action
+                , review.getReviewId());
+    }
+
+    private void addOrRemoveFriend(long userId, long friendId, String action){
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String sqlQuery =
+                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
+                        " values(?,?, ?, ?,?)";
+        jdbcTemplate.update(sqlQuery
+                , userId
+                , timestamp.getTime()
+                , "FRIEND"
+                , action
+                , friendId);
     }
 }

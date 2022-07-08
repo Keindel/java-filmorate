@@ -60,7 +60,7 @@ public class FeedService {
      * @param userId
      */
     public void markFromUser(long filmId, long userId) {
-        feedStorage.markFromUser( filmId, userId);
+        feedStorage.markFromUser(filmId, userId);
     }
 
     /**
@@ -69,7 +69,7 @@ public class FeedService {
      * @param userId
      */
     public void unmarkFromUser(long filmId, long userId) {
-        feedStorage.unmarkFromUser( filmId, userId);
+        feedStorage.unmarkFromUser(filmId, userId);
     }
 
     /**
