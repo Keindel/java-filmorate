@@ -106,7 +106,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setUsersIdsMarks(usersIdsMarks);
     }
 
-    private void setFilmRating(Film film){
+    private void setFilmRating(Film film) {
         String sqlGetRating = "SELECT AVG(m.mark) FROM marks AS m WHERE m.film_id = ?";
         double rating = jdbcTemplate.queryForObject(sqlGetRating, Double.class, film.getId());
         film.setRating(rating);
@@ -278,7 +278,7 @@ public class FilmDbStorage implements FilmStorage {
                 setGenresToFilm(film);
                 setUsersIdsMarks(film);
                 setFilmRating(film);
-            } );
+            });
         }
         return films;
     }
@@ -297,7 +297,7 @@ public class FilmDbStorage implements FilmStorage {
             setGenresToFilm(film);
             setUsersIdsMarks(film);
             setFilmRating(film);
-        } );
+        });
         return films;
     }
 
@@ -311,14 +311,14 @@ public class FilmDbStorage implements FilmStorage {
                 " WHERE gn.GENRE_ID = ?" +
                 " GROUP BY f.FILM_ID" +
                 " ORDER BY AVG(marks.MARK) DESC LIMIT ?";
-         List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithGenre, this::mapRowToFilm, genreId, count);
+        List<Film> films = jdbcTemplate.query(sqlGetPopularFilmsWithGenre, this::mapRowToFilm, genreId, count);
         films.forEach(film -> {
             setDirectors(film);
             setGenresToFilm(film);
             setUsersIdsMarks(film);
             setFilmRating(film);
-        } );
-         return films;
+        });
+        return films;
     }
 
     public Collection<Film> getDirectorFilms(long directorId, String sortBy) throws ValidationException, DirectorNotFoundException {
@@ -342,7 +342,7 @@ public class FilmDbStorage implements FilmStorage {
                 setGenresToFilm(film);
                 setUsersIdsMarks(film);
                 setFilmRating(film);
-            } );
+            });
         } else if (sortBy.equals("year")) {
             sqlQuery = sqlQuery + "order by release_date ASC;";
             films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
@@ -351,7 +351,7 @@ public class FilmDbStorage implements FilmStorage {
                 setGenresToFilm(film);
                 setUsersIdsMarks(film);
                 setFilmRating(film);
-            } );
+            });
         } else {
             throw new ValidationException("Такой вариант сортировки не предусмотрен");
         }
@@ -367,41 +367,35 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlGetAllFilmsWithMarksFromUser, this::mapRowToFilm, userid);
     }
 
-    public Collection<Film> getSearch(String query, String by) {
+    public Collection<Film> search(String query, String by) {
         query = query.toLowerCase();
         Collection<Film> films;
         List<Long> filmIds;
+        String sqlFilmIdFromFilms = " SELECT f.film_id FROM films AS f ";
+        String sqlJoinMarks = " LEFT JOIN marks AS l ON l.film_id = f.film_id ";
+        String sqlSort = " ORDER BY COUNT(l.FILM_ID) DESC ";
         switch (by) {
-            case "director":
-                String sqlQueryDirector = "SELECT f.film_id" +
-                        " FROM films AS f" +
-                        " RIGHT JOIN film_director_coupling AS fdc ON f.film_id = fdc.film_id" +
-                        " RIGHT JOIN director_names AS dn ON fdc.director_id = dn.director_id" +
-                        " LEFT JOIN marks AS l ON l.FILM_ID = f.FILM_ID" +
-                        " WHERE lower(dn.director_name) LIKE CONCAT('%', ?, '%')" +
-                        " GROUP BY f.Film_id, dn.DIRECTOR_NAME" +
-                        " ORDER BY COUNT(l.FILM_ID) DESC";
-                filmIds = jdbcTemplate.queryForList(sqlQueryDirector, Long.class, query);
-                break;
             case "title":
-                String sqlQueryTitle = "SELECT f.Film_id" +
-                        " FROM films AS f" +
-                        " LEFT JOIN marks AS l ON l.FILM_ID = f.FILM_ID" +
+                String sqlQueryTitle = sqlFilmIdFromFilms + sqlJoinMarks +
                         " WHERE lower(f.name) LIKE CONCAT('%', ?, '%')" +
-                        " GROUP BY f.Film_id" +
-                        " ORDER BY COUNT(l.FILM_ID) DESC";
+                        " GROUP BY f.film_id" + sqlSort;
                 filmIds = jdbcTemplate.queryForList(sqlQueryTitle, Long.class, query);
                 break;
+            case "director":
+                String sqlQueryDirector = sqlFilmIdFromFilms +
+                        " RIGHT JOIN film_director_coupling AS fdc ON f.film_id = fdc.film_id" +
+                        " RIGHT JOIN director_names AS dn ON fdc.director_id = dn.director_id" + sqlJoinMarks +
+                        " WHERE lower(dn.director_name) LIKE CONCAT('%', ?, '%')" +
+                        " GROUP BY f.film_id, dn.director_name" + sqlSort;
+                filmIds = jdbcTemplate.queryForList(sqlQueryDirector, Long.class, query);
+                break;
             default:
-                String sqlQueryAnyway = "SELECT f.film_id" +
-                        " FROM films AS f" +
-                        " LEFT JOIN film_director_coupling as fdc ON f.film_id = fdc.film_id" +
-                        " LEFT JOIN director_names AS dn ON dn.director_id = fdc.director_id" +
-                        " LEFT JOIN marks AS l ON l.FILM_ID = f.FILM_ID" +
+                String sqlQueryAnyway = sqlFilmIdFromFilms +
+                        " LEFT JOIN film_director_coupling AS fdc ON f.film_id = fdc.film_id" +
+                        " LEFT JOIN director_names AS dn ON fdc.director_id = dn.director_id" + sqlJoinMarks +
                         " WHERE LOWER(f.name) LIKE CONCAT('%', ?, '%')" +
                         " OR LOWER(dn.director_name) LIKE CONCAT('%', ?, '%')" +
-                        " GROUP BY f.Film_id, dn.DIRECTOR_NAME" +
-                        " ORDER BY COUNT(l.FILM_ID) DESC";
+                        " GROUP BY f.film_id, dn.director_name" + sqlSort;
                 filmIds = jdbcTemplate.queryForList(sqlQueryAnyway, Long.class, query, query);
                 break;
         }

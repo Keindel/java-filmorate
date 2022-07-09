@@ -123,6 +123,6 @@ public class FilmService {
     }
 
     public Collection<Film> search(String query, String by) {
-        return filmStorage.getSearch(query, by);
+        return filmStorage.search(query, by);
     }
 }
