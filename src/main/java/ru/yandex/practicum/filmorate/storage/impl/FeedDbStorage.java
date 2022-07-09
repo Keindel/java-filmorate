@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -225,7 +226,7 @@ public class FeedDbStorage implements FeedStorage {
                     , "FRIEND"
                     , action
                     , friendId);
-        } catch (IncorrectResultSizeDataAccessException e) {
+        } catch (DataAccessException e) {
             throw new UserNotFoundException();
         }
     }
