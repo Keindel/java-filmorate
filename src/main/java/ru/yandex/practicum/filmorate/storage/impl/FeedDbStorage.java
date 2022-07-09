@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.FeedStorage;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -24,6 +25,7 @@ public class FeedDbStorage implements FeedStorage {
 
     /**
      * добавление в друзья
+     *
      * @param userId
      * @param friendToAddId
      * @throws UserNotFoundException
@@ -35,6 +37,7 @@ public class FeedDbStorage implements FeedStorage {
 
     /**
      * удаление из друзей
+     *
      * @param userId
      * @param friendId
      */
@@ -45,6 +48,7 @@ public class FeedDbStorage implements FeedStorage {
 
     /**
      * пользователь ставит лайк фильму
+     *
      * @param filmId
      * @param userId
      */
@@ -55,6 +59,7 @@ public class FeedDbStorage implements FeedStorage {
 
     /**
      * пользователь удаляет лайк
+     *
      * @param filmId
      * @param userId
      */
@@ -75,6 +80,7 @@ public class FeedDbStorage implements FeedStorage {
 
     /**
      * обновление друзей
+     *
      * @param userId
      * @param friendId
      */
@@ -107,6 +113,7 @@ public class FeedDbStorage implements FeedStorage {
 
     /**
      * пользователь обновляет лайк фильму
+     *
      * @param filmId
      * @param userId
      */
@@ -121,8 +128,8 @@ public class FeedDbStorage implements FeedStorage {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             int entityId = 0;
             sqlQuery =
-                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                    " values(?,?, ?, ?,?)";
+                    "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
+                            " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
                     , userId
                     , timestamp.getTime()
@@ -145,34 +152,34 @@ public class FeedDbStorage implements FeedStorage {
         if (userId != -1) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             sqlQuery =
-                "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                    " values(?,?, ?, ?,?)";
+                    "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
+                            " values(?,?, ?, ?,?)";
             jdbcTemplate.update(sqlQuery
-                , userId
-                , timestamp.getTime()
-                , "REVIEW"
-                , "REMOVE"
-                , reviewId);
+                    , userId
+                    , timestamp.getTime()
+                    , "REVIEW"
+                    , "REMOVE"
+                    , reviewId);
         }
     }
 
-    public Collection<Feed> feeds(Long id){
-        String sqlQuery ="select timestamp, userId, eventType, operation, eventId, entityId from feeds where userId = ?";
+    public Collection<Feed> feeds(Long id) {
+        String sqlQuery = "select timestamp, userId, eventType, operation, eventId, entityId from feeds where userId = ?";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFeed, id);
     }
 
     private Feed mapRowToFeed(ResultSet rs, int rowNum) throws SQLException {
         return Feed.builder()
-            .timestamp(rs.getLong("timestamp"))
-            .userId(rs.getInt("userId"))
-            .eventType(rs.getString("eventType"))
-            .operation(rs.getString("operation"))
-            .eventId(rs.getInt("eventId"))
-            .entityId(rs.getInt("entityId"))
-            .build();
+                .timestamp(rs.getLong("timestamp"))
+                .userId(rs.getInt("userId"))
+                .eventType(rs.getString("eventType"))
+                .operation(rs.getString("operation"))
+                .eventId(rs.getInt("eventId"))
+                .entityId(rs.getInt("entityId"))
+                .build();
     }
 
-    private void addOrRemoveMarkFromUser (long userId, long filmId, String action){
+    private void addOrRemoveMarkFromUser(long userId, long filmId, String action) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sqlQuery2 = "select user_id from users where user_id  = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery2, userId);
@@ -191,7 +198,7 @@ public class FeedDbStorage implements FeedStorage {
         }
     }
 
-    private void addOrUpdateReview(Review review, String action){
+    private void addOrUpdateReview(Review review, String action) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sqlQuery =
                 "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
@@ -208,12 +215,9 @@ public class FeedDbStorage implements FeedStorage {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sqlQuery =
                 "insert into feeds(userId, timestamp, eventType, operation, entityId)" +
-                        "values(select user_id " +
-                        "from users " +
-                        "where user_id = ?, ?, ?, ?," +
-                        "select user_id " +
-                        "from users " +
-                        "where user_id = ?) ";
+                        "values((select user_id from users where user_id = ?), " +
+                        "?, ?, ?," +
+                        "(select user_id from users where user_id = ?)) ";
         try {
             jdbcTemplate.update(sqlQuery
                     , userId
@@ -221,7 +225,7 @@ public class FeedDbStorage implements FeedStorage {
                     , "FRIEND"
                     , action
                     , friendId);
-        } catch (IncorrectResultSizeDataAccessException e){
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new UserNotFoundException();
         }
     }
