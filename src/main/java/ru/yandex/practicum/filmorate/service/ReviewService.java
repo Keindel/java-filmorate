@@ -42,7 +42,7 @@ public class ReviewService {
     }
 
 
-    public Review removeReviewById(Long id) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Review removeReviewById(Long id) throws ReviewNotFoundException{
         validateReviewId(id);
         Review review = reviewStorage.getById(id);
         feedService.deleteReview(id);
@@ -65,7 +65,7 @@ public class ReviewService {
     }
 
 
-    public void addLikeFromUser(Long id, Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+    public void addLikeFromUser(Long id, Long userId)  {
         Review review = reviewStorage.getById(id);
         review.getLikes().add(userId);
         calculateUseful(review);
@@ -73,7 +73,7 @@ public class ReviewService {
     }
 
 
-    public void addDislikeFromUser(Long id, Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+    public void addDislikeFromUser(Long id, Long userId)  {
         Review review = reviewStorage.getById(id);
         review.getDislikes().add(userId);
         calculateUseful(review);
