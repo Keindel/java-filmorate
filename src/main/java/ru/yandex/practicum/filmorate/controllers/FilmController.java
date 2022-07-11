@@ -50,9 +50,10 @@ public class FilmController {
      * @param filmId
      * @param userId
      */
-    @PutMapping("/{id}/like/{userId}")
-    public void addLikeFromUser(@PathVariable("id") Long filmId, @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
-        filmService.likeFromUser(filmId, userId);
+    @PutMapping("/{id}/{mark}/{userId}")
+    public void addMarkFromUser(@PathVariable("id") Long filmId, @PathVariable Integer mark, @PathVariable Long userId)
+            throws UserNotFoundException, FilmNotFoundException, MarkValidationException {
+        filmService.markFromUser(filmId, userId, mark);
     }
 
     /**
@@ -60,10 +61,11 @@ public class FilmController {
      * @param filmId
      * @param userId
      */
-    @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLikeFromUser(@PathVariable("id") Long filmId, @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
-        filmService.unlikeFromUser(filmId, userId);
-        feedService.unlikeFromUser(filmId, userId);
+    @DeleteMapping("/{id}/mark/{userId}")
+    public void deleteMarkFromUser(@PathVariable("id") Long filmId, @PathVariable Long userId)
+            throws UserNotFoundException, FilmNotFoundException {
+        filmService.unmarkFromUser(filmId, userId);
+        feedService.unmarkFromUser(filmId, userId);
     }
 
     @GetMapping("/popular")
@@ -85,7 +87,11 @@ public class FilmController {
     }
 
     @GetMapping("/common")
-    public Collection<Film> getCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) throws UserNotFoundException {
+    public Collection<Film> getCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) {
         return filmService.getCommonFilms(userId, friendId);
+    }
+    @GetMapping("/search")
+    public Collection<Film> search(@RequestParam String query, @RequestParam String by) {
+        return filmService.search(query, by);
     }
 }

@@ -33,7 +33,7 @@ public class ReviewController {
 
 
     @DeleteMapping("/{reviewId}")
-    public Review deleteReviewById(@PathVariable Long reviewId) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Review deleteReviewById(@PathVariable Long reviewId) throws ReviewNotFoundException {
         return reviewService.removeReviewById(reviewId);
     }
 
@@ -53,14 +53,14 @@ public class ReviewController {
 
     @PutMapping("/{reviewId}/like/{userId}")
     public void addLikeFromUser(@PathVariable Long reviewId,
-                                @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+                                @PathVariable Long userId) {
         reviewService.addLikeFromUser(reviewId, userId);
     }
 
 
     @PutMapping("/{reviewId}/dislike/{userId}")
     public void addDislikeFromUser(@PathVariable Long reviewId,
-                                   @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+                                   @PathVariable Long userId) {
         reviewService.addDislikeFromUser(reviewId, userId);
     }
 

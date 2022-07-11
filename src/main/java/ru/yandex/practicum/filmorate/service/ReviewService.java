@@ -42,7 +42,7 @@ public class ReviewService {
     }
 
 
-    public Review removeReviewById(Long id) throws ReviewNotFoundException, UserNotFoundException, FilmNotFoundException, MpaNotFoundException, GenreNotFoundException {
+    public Review removeReviewById(Long id) throws ReviewNotFoundException{
         validateReviewId(id);
         Review review = reviewStorage.getById(id);
         feedService.deleteReview(id);
@@ -65,7 +65,7 @@ public class ReviewService {
     }
 
 
-    public void addLikeFromUser(Long id, Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+    public void addLikeFromUser(Long id, Long userId)  {
         Review review = reviewStorage.getById(id);
         review.getLikes().add(userId);
         calculateUseful(review);
@@ -73,7 +73,7 @@ public class ReviewService {
     }
 
 
-    public void addDislikeFromUser(Long id, Long userId) throws UserNotFoundException, FilmNotFoundException, ReviewNotFoundException {
+    public void addDislikeFromUser(Long id, Long userId)  {
         Review review = reviewStorage.getById(id);
         review.getDislikes().add(userId);
         calculateUseful(review);
@@ -96,8 +96,8 @@ public class ReviewService {
 
 
     private void validateReview(Review review) throws ReviewNotFoundException, FilmNotFoundException, UserNotFoundException, DirectorNotFoundException {
-        if (review.getId() != null) {
-            validateReviewId(review.getId());
+        if (review.getReviewId() != null) {
+            validateReviewId(review.getReviewId());
         }
         if (filmStorage.getById(review.getFilmId()) == null) {
             log.warn("film with ID not found");
@@ -117,7 +117,7 @@ public class ReviewService {
     }
 
     private void calculateUseful(Review review) {
-        int defaultUseful = reviewStorage.getById(review.getId()).getUseful();
+        int defaultUseful = reviewStorage.getById(review.getReviewId()).getUseful();
         if (Objects.nonNull(review.getLikes()) && !review.getLikes().isEmpty()) {
             review.setUseful(defaultUseful + review.getLikes().size());
         } else if (Objects.nonNull(review.getDislikes()) && !review.getDislikes().isEmpty()) {

@@ -7,7 +7,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -151,19 +150,22 @@ public class UserDbStorage implements UserStorage {
                 , friendToDellId);
     }
 
-    public Collection<Long> getTopMatchedUsersIds(Long userId) {
-        String sqlFilmsOfUser = "(SELECT film_id FROM likes WHERE like_from_user = ?) ";
-        String sqlGetTopMatchedUsers = "SELECT " +
-                " like_from_user AS other_user_id," +
-                " COUNT (film_id) AS matches" +
-                " FROM likes" +
-                " WHERE film_id IN " + sqlFilmsOfUser +
-                " GROUP BY other_user_id" +
-                " ORDER BY matches DESC" +
-                " LIMIT ?";
-        return jdbcTemplate.queryForList(sqlGetTopMatchedUsers
+    public Collection<Long> getMutualFriendsIds(Long userId, Long otherUserId) throws UserNotFoundException {
+        String sqlCheckUsersExistance = "SELECT user_id" +
+                " FROM users" +
+                " WHERE user_id IN (?, ?)";
+        List<Long> usersIdsFoundInDb =
+                jdbcTemplate.queryForList(sqlCheckUsersExistance, Long.class, userId, otherUserId);
+        if (usersIdsFoundInDb.size() < 2) throw new UserNotFoundException();
+
+        String sqlGetMutualFriends = "SELECT friends_of_first.friend_id" +
+                " FROM friends AS friends_of_first" +
+                " JOIN (SELECT friend_id FROM friends WHERE user_id = ?) AS friends_of_second" +
+                "     ON friends_of_first.friend_id = friends_of_second.friend_id" +
+                " WHERE user_id = ?";
+        return jdbcTemplate.queryForList(sqlGetMutualFriends
                 , Long.class
                 , userId
-                , USERS_MATCHING_LIMIT);
+                , otherUserId);
     }
 }
