@@ -1,7 +1,30 @@
-# java-filmorate
-Filmorate project - social network with rating of films based on likes from users. Users can add each other to friendlist.
+# _Java-filmorate_
+Filmorate project - social network with rating of films based on marks from users. Users can add each other to friendlist.
 
-You can see [db ER-diagram](https://github.com/Keindel/java-filmorate/blob/0ac815afa76e4b551ffa5aa7c34d22c2992e7cb9/filmorate%20ER%20diagram.png)
+### _Technologies used_
+REST API service with Spring-Boot, Jdbc, H2-database, Java 11, Lombok
+
+### _Additional features implemented during teamwork_
+1. _add-reviews_ - users make reviews on films, like or dislike and sort by rating - by [ABoyarov](https://github.com/aboyarov)
+2. _add-feed_ - ability to get last events happened on the platform - by https://github.com/kompasvideo
+3. _add-director_ - get films by director sorted by year or likes - by https://github.com/Rexsus-bit
+4. _add-search_ - search by film title and director name - by https://github.com/Mark33SC
+5. _add-recommendations_ - recommendation system based on similar users and number of likes - by myself: [Andrey Maksimov](https://github.com/Keindel)
+6. _add-marks_ - refactor **likes** to **marks**
+   - change likes to marks in the project - by myself: [Andrey Maksimov](https://github.com/Keindel)
+   - actualize rating and popular films listing - by [ABoyarov](https://github.com/aboyarov)
+   - make new recommendation algorithm with marks - by myself: [Andrey Maksimov](https://github.com/Keindel)
+
+### _Entity relationship diagram_
+![db ER-diagram](./filmorate%20ER%20diagram.png)
+
+### _Starting the service_
+CLI start commands:  
+`mvn package`  
+`cd target`  
+`java -jar filmorate-0.0.1-SNAPSHOT.jar`
+
+___
 DB request examples:
 
 - get all films
