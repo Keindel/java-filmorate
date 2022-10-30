@@ -39,17 +39,6 @@ SELECT *
 FROM users
 ```
 
-- get top-10 popular films
-```
-SELECT f.name,
-  COUNT(l.likes_from_user) AS likes_num
-FROM films AS f
-LEFT OUTER JOIN likes AS l ON f.film_id = l.film_id
-GROUP BY likes_num
-ORDER BY DESC
-LIMIT 10
-```
-
 - get all approved friends for user ID1
 ```
 SELECT f.friend_id AS fid
